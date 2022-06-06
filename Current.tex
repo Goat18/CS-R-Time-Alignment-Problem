@@ -61,7 +61,7 @@
 	\maketitle 
 	
 	\begin{abstract}
-		The subject of this paper is to study conformance checking for timed models, that is, process models that consider both the sequence of events in a process as well as the timestamps at which each event is recorded. Time-aware process mining is a growing area in the field, and as tools that seek to discover timing related properties in processes develop, so to does the need for conformance checking techniques that can tackle time constraints and provide insightful quality measures for time-aware process models. In particular, one of the most useful conformance artefacts is the alignment, that is, finding the minimal changes necessary to correct a new observation to conform to a process model.  From alignments, one can derive measures of fitness, precision, and generalisation of a process model, which are crucial to analysing its performance. We develop three metrics by which to compare timed processes, and seek to solve the alignment problem, that is, the problem of calculating the closest trace in the language of a timed model to a particular observed event trace, where each such metric devised provides a new notion of closeness. 
+		The subject of this paper is to study conformance checking for timed models, that is, process models that consider both the sequence of events in a process as well as the timestamps at which each event is recorded. Time-aware process mining is a growing subfield of research, and as tools that seek to discover timing related properties in processes develop, so to does the need for conformance checking techniques that can tackle time constraints and provide insightful quality measures for time-aware process models. In particular, one of the most useful conformance artefacts is the alignment, that is, finding the minimal changes necessary to correct a new observation to conform to a process model.  From alignments, one can derive measures of fitness, precision, and generalisation of a process model, which are crucial to analysing its performance. We develop three metrics by which to compare timed processes, and seek to solve the alignment problem, that is, the problem of calculating the closest trace in the language of a timed model to a particular observed event trace, where each such metric devised provides a new notion of closeness. 
 	\end{abstract}
 	
 	\section{Introduction} 
@@ -70,11 +70,11 @@
 		
 	Process mining studies vast systems through their event logs, and seeks to extract meaningful ways to model the underlying patterns or processes that govern the behaviour of the system, sometimes in order to better understand the system, or as is often the case, predict future behaviour \cite{A16}. Once such a process model is obtained, through machine learning or other related techniques, it is natural to ask how one is sure the obtained model is a reasonable approximation of the system’s behaviour at all, especially given the lack of explainability in the blackbox approach ML takes to producing solutions. This is where conformance checking comes into the picture, as it is the art of judging the performance of a process model by comparing its behaviour to the observed behaviour of the system, that is, relating modelled and recorded behaviour of a process to each other, independent of the origin of the model \cite{CDSW18}. Observed behaviour usually comes in the form the traces of an event log, as a sequence of events that often belong to multiple distinct interleaved instances of processes of the system. On the other hand, we have process models, that were either obtained automatically through mining, or were constructed manually, and act a blueprint to describe what the underlying processes of any given system are supposed to look like.  Measures of how well a model reflects reality include fitness, precision, generalisation, and simplicity. We often do not want the system to always precisely generate any and all possible future system behaviour as this will give trivial models accepting for example all execution strings, neither should they simply regurgitate the event log and accept no new system behaviours, a phenomenon known as overfitting. What is often much more useful is a process model that can, up to some small error factor, approximate any reasonable future system behaviour quite closely. This flexible boundary between what is expected and what is possible is precisely what makes a model useful. 
 	
-	In Aryan Adriansyah's \cite{Adriansyah2014AligningOA} seminal thesis, we obtain the notion of an alignment, that is, the minimal series of corrections needed to transform an observed event trace into the execution of the process model that most closely mimics it.  It is often seen as an execution of the synchronised product of the process model and a “trace model” ie a simple model that captures exactly one event log trace. This gives us a series of edits, usually insertions or deletions, that can transform a model run into the observed run.  For our purposes we will use the term alignment to mean the optimal run of the model that aligns closest to the observation, and how to transform this optimal execution to the observed one will be addressed separately as a matter of distance computation over a set of edit moves. Alignments thereby help pinpoint exactly where inevitable deviations from expected behaviour occur, and the more distant the aligning word of a model is to its observed trace, the worse the model is at reflecting real life behaviour. This can either be used as a tool to help repair the process model to more accurately reflect the observation, or, it can be used to repair the log, or even issue feedback on the behaviour of the underlying system to help it conform to the model better, depending on which components of the operation are most trustworthy. 
+	In Aryan Adriansyah's seminal thesis \cite{Adriansyah2014AligningOA} , we obtain the notion of an alignment, that is, the minimal series of corrections needed to transform an observed event trace into the execution of the process model that most closely mimics it.  It is often seen as an execution of the synchronised product of the process model and a \emph{trace model} ie a simple model that captures exactly one event log trace. This gives us a series of edits, usually insertions or deletions, that can transform a model run into the observed run.  For our purposes we will use the term alignment to mean the optimal run of the model that aligns closest to the observation, and how to transform this optimal execution to the observed one will be addressed separately as a matter of distance computation over a set of edit moves. Alignments thereby help pinpoint exactly where inevitable deviations from expected behaviour occur, and the more distant the aligning word of a model is to its observed trace, the worse the model is at reflecting real life behaviour. This can either be used as a tool to help repair the process model to more accurately reflect the observation, or, it can be used to repair the log, or even issue feedback on the behaviour of the underlying system to help it conform to the model better, depending on which components of the operation are the most trustworthy. 
 	
 	\subsection{Time-aware Processes}
 	
-		Process models are often formalised using the notion of a Petri net, a standard object used to express  distributed systems. They both offer a graphical means by which to represent a complex system, and a formal semantics for their execution, which allows one to mathematically analyse the same. They are useful when trying to express dependencies in seemingly parallel parts of the system, the graph structure allowing for branching (i.e. choice), convergence (i.e. synchronisation), and cycles (i.e iteration) in system behaviour. Assuming the event logs are a list of words over a finite alphabet (the set of possible discrete events), the problem of calculating the alignment has been extensively studied \cite{Adriansyah2014AligningOA}, \cite{BCC21}. The notion of distance used on these words used is usually either Hamming distance or Levenshtein's edit distance. Given that Petri net processes already do have certain temporal characteristics, such as a (partial) sense of what happens before and after, and a notion of causal dependency between events, it is natural to want to study explicitly timed systems, that is, systems that not only retain the sequence of events that occur, but the timestamps that show when each event happens. By considering events along with their timestamps when mining processes, observations regarding complex time constraints can be obtained, such as the minimum delay between two events, or the maximum duration the system takes to converge upon a state, or meeting deadlines, all of which are highly relevant in real world applications \cite{Cheikhrouhou2014TheTP}, \cite{Eder1999TimeCI}, \cite{inbook}. In addition, one may want to predict the timestamps of processes \cite{SSA11}. In order to formalise such timed process models, we can use Time Petri nets, that are Petri nets augmented with the ability to record and check the duration it takes to fire a transition once enabled, using which one can impose certain constraints on the relationships between the timestamps of different events. 
+		Process models are often formalised using the notion of a Petri net, a standard object used to describe  distributed systems. They both offer a graphical means by which to represent a complex system, and a formal semantics for their execution, which allows one to mathematically analyse the same. They are useful when trying to express dependencies in seemingly parallel parts of the system, the graph structure allowing for branching (i.e. choice), convergence (i.e. synchronisation), and cycles (i.e iteration) in system behaviour. Assuming the event logs are a list of words over a finite alphabet (the set of possible discrete events), the problem of calculating the alignment has been extensively studied \cite{Adriansyah2014AligningOA}, \cite{BCC21}. The notion of distance used on these words used is usually either Hamming distance or Levenshtein's edit distance. Given that Petri net processes already do have certain temporal characteristics, such as a (partial) sense of what happens before and after, and a notion of causal dependency between events, it is natural to want to study explicitly timed systems, that is, systems that not only retain the sequence of events that occur, but the timestamps that show when each event happens. By considering events along with their timestamps when mining processes, observations regarding complex time constraints can be obtained, such as the minimum delay between two events, or the maximum duration the system takes to converge upon a state, or meeting deadlines, all of which are highly relevant in real world applications \cite{Cheikhrouhou2014TheTP}, \cite{Eder1999TimeCI}, \cite{inbook}. In addition, one may want to predict the timestamps of processes \cite{SSA11}. In order to formalise such timed process models, we can use Time Petri nets, that are Petri nets augmented with the ability to record and check the duration it takes to fire a transition once enabled, using which one can impose certain constraints on the relationships between the timestamps of different events. 
 		
 		So far in the study of the alignment problem for process models, we find one notable gap. The process models concerned often do not consider event timestamps, and constraints imposed upon them. Time-aware process mining seeks to study both what sort of underlying processes govern system behaviour, and what sort of time constraints they can impose on when certain events can occur \cite{RMAW13}, \cite{CRHA20}, \cite{AS21}. The need for such a setting is clear, as specifying and verifying temporal properties, and concrete time constraints regarding the durations of events can provide critical information about a system's behaviour. As time-aware process mining grows popular, new quality measures and conformance checking techniques must be developed that are sensitive to temporal constraints. For this, crucially, one needs to define distance functions that can meaningfully compare and separate different time processes. This paper seeks to provide a framework by which to do the very same.
 		
@@ -85,7 +85,7 @@
 
 	\section{Preliminaries}
 	\subsection{Timed Process Models}
-	Assume bounded?  
+
 	
 		We represent events as timed letters, that is of the form $(a,t)$ where $a \in \Sigma$ is the name of the action taken during an event, and $t$ denotes the time at which said action was taken. An event trace is then a sequence of events of the form $\gamma \in (\Sigma \times \mathbb{R}^+)^*$, seen as a timed word.  The timed process model that attempts to capture the behaviour of all observed event traces recorded from the system is represented here as a time Petri net. 
 	
@@ -107,7 +107,7 @@
 	
 	A transition $t$ of a time Petri net is \textit{enabled} at marking $M$ iff $\pre t \subseteq M$. The set of all enabled transitions at a marking $M$ is denoted by \textit{Enabled(M)}. A \textit{state} of a time Petri net $N = (P, T, F, SI, M_0)$ is a pair $S = (M, I)$, where $M$ is a marking of $N$ and $I : Enabled(M) \rightarrow \mathbb{T}$ is called the \textit{clock function}. A transition $t$ may fire from state $S = (M, I)$ after delay $\theta \in \mathbb{T}$ iff $t$ is enabled at $M$, firing $t$ will not result in more than one token at any given place, and updating the clock function with delay $\theta$ will keep $t$'s clock below its latest firing time as determined by the static interval function.  Once it is fired, the marking is updated to $M'$ as in the untimed case (subtracting one token from each preplace, and adding one token to each postplace), and the clock function is updated to increase by $\theta$ for any transition that was enabled at both $M$ and $M'$, set to 0 for any transitions newly enabled by $M'$ that were not enabled at $M$, and left undefined for any that are not currently enabled. 
 	
-	An important feature of time Petri nets is the notion of urgency, that is, if a transition has been enabled then it must either be disabled (lose some tokens from its preset due to another transition firing) or be fired before the latest firing time lapses. It cannot be allowed to \emph{time-out}, waiting throughout the period of time is it capable of firing, unfired, and then be disabled just by having the Lft pass. 
+	An important feature of time Petri nets is the notion of urgency, that is, if a transition has been enabled then it must either be disabled (lose some tokens from its preset due to another transition firing) or be fired before the latest firing time lapses. It cannot be allowed to simply \emph{time-out}, i.e, waiting, unfired, throughout the period of time is it capable of firing, and then being disabled just by having the Lft lapse.  
 	
 	Now we will want to build some vocabulary to help us talk about individual executions of timed words on time Petri nets. These correspond to runs in nondeterministic automata, but in this setting every configuration is a set of token-filled places, so to represent a particular execution we use what we define below as causal processes. 
 	
@@ -240,7 +240,7 @@
 
 	It will often be convenient to consider the following representation when speaking about delay moves, and so we define a way by which to view a timed word not in terms of its absolute timestamps, but by the delays between relevant timestamps. 
 	
-	Given a causal process $(CN, p)$ over $N$, where $CN = (B, E, G)$, and a (not necessarily valid) timing function $\tau : E \to \mathbb{R}^+$, we first define the auxilliary \textit{flow} function $f_{\tau} : E \to \mathbb{R}^+$ such that 
+	Given a causal process $(CN, p)$ over $N$, where $CN = (B, E, G)$, and a (not necessarily valid) timing function $\tau : E \to \mathbb{R}^+$, we first define the auxiliary \textit{flow} function $f_{\tau} : E \to \mathbb{R}^+$ such that 
 
 	$$f_{\tau}(e) = \begin{cases} 
 	\tau(e) & \pre \pre e = \emptyset\\
@@ -439,7 +439,7 @@ $$
 	
 	
 	\begin{proof}
-		By theorem \ref{thm35} proved in Aura and Lilius' article \cite{AL97}, we know that in order to ensure that this is a valid time process, we need only ensure three equalities hold as the time process $\gamma$ evolves. 
+		By theorem \ref{thm35} proved in Aura and Lilius' article \cite{AL97}, we know that in order to ensure that this is a valid time process, we need only ensure three inequalities hold as the time process $\gamma$ evolves. 
 		
 		\begin{enumerate}
 			\item$ \forall e \in E :  Eft(p(e)) \leq \gamma(e) - TOE(\pre e, p(e))$
@@ -452,7 +452,7 @@ $$
 			
 			\item $(CN, p)$ is complete with respect to $\gamma$, i.e, for every extension transition $t$ of the process, $$\max\{\gamma(e)| e \in E\} \leq TOE(Cut(E), t) + Lft(t)$$
 			
-			At every point when assigning a timestamp to an event, it is ensured that it belongs to $Soon$, a set defined to prioritise enabled events with the least value of $l + toe$, or, $TOE(Cut(E), p(e)) + Lft(p(e))$. This ensures that whenever an event $e$ is assigned a timestamp $\gamma(e)$, for all extension transitions $t$  (which must either be causal descendents of $e$ or already enabled when $e$ was picked, thereby being in $Enabled$, by extended free choice) we know that $\gamma(e) \leq TOE(Cut(E), p(e)) + Lft(p(e)) \leq TOE(Cut(E), t) + Lft(t)$. 
+			At every point when assigning a timestamp to an event, it is ensured that it belongs to $Soon$, a set defined to contain only those enabled events that have the least value of $l + toe$, or, $TOE(Cut(E), p(e)) + Lft(p(e))$. This ensures that whenever an event $e$ is assigned a timestamp $\gamma(e)$, for all extension transitions $t$  (which must either be causal descendents of $e$ or already enabled when $e$ was picked, thereby being in $Enabled$, by extended free choice) we know that $\gamma(e) \leq TOE(Cut(E), p(e)) + Lft(p(e)) \leq TOE(Cut(E), t) + Lft(t)$. 
 			
 			Hence, $(CN, p, \gamma)$ is a valid time process of $N$. 
 			
@@ -468,7 +468,7 @@ $$
 	
 	
 	\section{Stamp Only} 
-	\subsubsection{Linear Case} 
+	\subsection{Linear Case} 
 
 We are given a process model $N$, an observed trace $\sigma$, and its underlying linear causal process $CN = (B, E, G)$ with homomorphism $p$ for the untimed run of $\sigma$ on $N$. Suppose we tried to express the cost of aligning a prefix of $\sigma$ to some timing function $\tau$ on the truncation of the linear causal process up to the $i$th transition, call it $cost$. 
 
@@ -540,21 +540,12 @@ If we can calculate the family of functions $\forall i \leq n : g_i$ efficiently
 	The observed trace is $$\sigma = (1,2,4,6,6,8)$$
 	%%
 	
-	\begin{figure}[h]
-		\centering
-		\includegraphics[width=\textwidth]{g12.png}
-		\caption{$g_1$ and $g_2$}
+	\begin{figure}
+		\centering 
+		\includegraphics[width = \textwidth]{stampgraph.png}
+		\caption{Visual representation of the algorithm on the example above}
 	\end{figure}
-	\begin{figure}[h]
-		\centering
-		\includegraphics[width=0.9\linewidth]{g34.png}
-		\caption{$g_3$ and $g_4$ }
-	\end{figure}
-	\begin{figure}[h]
-		\caption{$g_5$ and $g_6$}
-		\includegraphics[width=0.9\linewidth]{g56.png}
-	\end{figure}%
-	
+
 	Now, we begin to compute the family of functions $g_i$, starting with $g_1(x) = |1-x|$ in the domain $[0,1]$.
 	
 	Now, utilising the recursion, we try to compute $g_2$.  
@@ -735,22 +726,76 @@ With this context, we present the following algorithm that progressively calcula
 	\end{algorithmic}
 \end{algorithm}
 
-\begin{theorem}\label{StampAlgoCorr} Algorithm \ref{StampAlgo} is correct, that is, given a linear causal process of a time Petri Net $N$, its result $\gamma$ has the properties : 
+	\begin{theorem}\label{StampAlgoCorr} Algorithm \ref{StampAlgo} is correct, that is, given a linear causal process of a time Petri Net $N$, its result $\gamma$ has the properties : 
 	\begin{enumerate}
 		\item $\gamma \in \mathcal{L}(N)$
 		\item $\forall x \in \mathcal{L}(N)  : d_t(\gamma, \sigma)  \leq  {d_t(x, \sigma)}$
 	\end{enumerate}
 \end{theorem}
 
+Before we prove Theorem \ref{StampAlgoCorr}, we prove a small, relevant lemma. 
 
+\begin{lemma}\label{minpwc}
+	For any convex piecewise linear function $g$, the following function $g'$ is also convex and piecewise linear. 
+	$$g'(d) = \min_{d-d' \in [a,b]} g(d')$$
+	
+\end{lemma}
+
+\begin{proof}
+	For any piecewise linear convex function $g$, the function $g'(d) = \min_{d-d' \in [a,b]} g(d')$ is also piecewise linear. If the domain of $g$ was $[l, h]$, the domain of $g'$ is $[l + a, h + b]$. 
+	
+	Say the leftmost minimum of $g$ (if $g$ has multiple minima they are all on the same flat line segment) is at $m \in [l,h]$. For all $x \in [l + a, m+ a] $ and $x - y \in [a, b]$ and $y \in [l,h]$ implies $y \in [x-b+a, x-a] \cap [l, h] \subseteq [l, h] \cap [l-b+a m] = [l,m]$ meaning for each $x$, in the possible domain of $y$ $g(y)$ is a strictly decreasing function, hence  we have $$\forall x \in [l + a, m+ a] : \min_{x - y \in [a,b]} g(y) = g(x - a) $$
+	
+	Now, let the rightmost minimum of $g$ is $m'$. For all $x \in [m + a, m' + b] $ and $x - y \in [a, b]$ and $y \in [l,h]$ implies $y \in [x-b, x-a] \cap [l, h]$, and $[x - b, x - a] \cap [m, m'] \neq \emptyset$. Now, this means for each $x \in [m+a, m' + b]$ the domain of $y$ has a minimum of $g$, so we have $$\forall x \in [m + a, m'+ b] : \min_{x - y \in [a,b]} g(y) = g(m) $$
+	
+	Lastly, let  $x \in [m' + b, h + b] $ and $x - y \in [a, b]$ and $y \in [l,h]$. This implies $y \in [x-b, x-a] \cap [l, h] = [m', h]$, so for each $x \in [m+a, m' + b]$ the domain of $y$ is in a region where $g$ is strictly increasing, so we have $$\forall x \in [m + a, m'+ b] : \min_{x - y \in [a,b]} g(y) = g(x+b) $$
+	
+	So we see that for any convex piece-wise linear function $g$, $$\min_{d-d' \in [a,b]} g(d') = \begin{cases}
+		g(d-a) & l + a \leq d < m + a \\
+		g(m) & m+a \leq d \leq m' + b \\
+		g(d+b) & m' + b < d \leq h + b   \\
+	\end{cases}$$
+	
+	Hence $g'$ is also convex and piecewise linear, and has at most one more linear segment than $g$. 
+\end{proof}
+
+We may now prove Theorem \ref{StampAlgoCorr} as follows : 
+
+\begin{proof}
+	We are given a process model $N$, an observed trace $\sigma$, and its underlying linear causal process $CN = (B, E, G)$ with homomorphism $p$ for the untimed run of $\sigma$ on $N$. 
+	As discussed earlier, for linear process models, we define $$g_i(d) = \min_{\tau|_i \in \mathcal{L}^i(N) \wedge \tau_i = d} cost(\tau|_i)$$
+	
+	This family of functions is seen to obey the following recursion: 
+	
+	$$g_{i+1}(d) = |d - \sigma_{i+1}| + \min_{d-d' \in [a,b]} g_i(d')$$
+	
+	If we can calculate the family of functions $\forall i \leq n : g_i$ efficiently, then the minimal cost for aligning $\sigma$ to $N$ is simply $$\min_{d} g_n(d)$$
+	
+	Hence to prove the correctness of Theorem \ref{StampAlgoCorr} we only need show that the auxiliary subfunctions called do indeed do their job correctly, as the main function simply implements the recursion. 
+	
+	To this end, we first notice that the family of functions $g_i(d)$ are convex and piecewise linear. This can be seen through induction : 
+	
+	Firstly $g_1(d) = |d - \sigma_1|$ so the base case is covered. 
+	
+	Now suppose $g_{i-1}$ is known to be convex and piecewise linear for some $i \geq 2$. By Lemma \ref{minpwc} we see that $\min_{d-d' \in [a_i,b_i]} g_{i-1}(d')$  is also convex and piecewise linear, and so is $|d - \sigma_i|$ and both these properties are preserved by addition, so $g_i(d)$ must also be convex and piecewise linear. 
+	
+	Now that we have this result, our representation of the graph as a sequence of line segments, each represented as a triple (left x endpoint, slope, right x endpoint) is justified. The y value of any graph $g_i$ can be back calculated because we know the value of the cost of the leftmost endpoint, it represents the word obtained by firing every transition at the earliest possible time. 
+	
+	Now subfunction \textsc{graphAddMod} is adding the point $\sigma_i$ if it is inside the domain of the function, and changing the slopes of the segments before it by subtracting one, and of those after it by adding one, which has the effect of adding the modulus component $|d - \sigma_i|$ to the previous graph. 
+	
+	Subfunction \textsc{graphMin} is even simpler, as Lemma \ref{minpwc} suggests all it does is translate the whole graph forward by $a$, and then translate the strictly increasing portion from $[m', h]$ by an addition $b-a$, adding an extra flat segment of length $b-a$ in between to keep the two portions of the function connected. 
+	
+	Subfunction \textsc{backTrack} takes the minimum cost obtained by the calculation of the $g_n$ function, finds the value of $d$, ie $\gamma_n$ for which the minimum is achieved, and subtracts the cost aligning only the last place incurs, thereby finding the minimum cost for aligning the $n-1$ length prefix. It then proceeds to do the same iteratively for each prefix, reverse-engineering a trace $\gamma$ for which the total minimum cost of aligning to $\sigma$ is achieved. 
+	
+\end{proof}
 
 \begin{remark} Note that the subfunctions \textsc{graphMin} and  \textsc{graphAddMod} both run through the list of segments of the graph once each, and hence are linear in the sizes of their inputs, and Algorithm \ref{StampAlgo} calls each of these subfunctions once for each letter of the observed trace, each time on a graph of the size of the current prefix. So the cost calculation section of Algorithm \ref{StampAlgo} has quadratic time complexity in the size of the input. 
 	
 	The backtracking subfunction \textsc{backTrack} runs a binary search on each stored graph in $graphlist$ to find a trace in the language that does indeed give the minimum cost, letter by letter, and so overall takes $O(nlogn)$ time, keeping the overall time complexity of Algorithm \ref{StampAlgo} $O(n^2)$ where $n = |\sigma|$.
 \end{remark}
 
-
-The alignment problem in this case can be viewed as a problem of convex optimization, minimizing the stamp only cost, that is, $$cost(\tau|_i) = \sum_{j = 1}^{i} |\tau_j - \sigma_j|$$ over the set of possible timestamp series. What remains is to show that the space of valid runs of the model is a convex set, and this space is well explored by \cite{BM82}. In this paper, the concept of a firing domain is proposed, that is, at each configuration of the Time Petri Net, the set of valid time intervals in which a transition enabled at that configuration can fire. Calculating equivalence classes of the same, successively, till we find final configurations, gives a characterisation of the solution set of all valid timestamp series, and this is proved to be of the following form, which is a set of constraints defining a convex set. 
+\subsection{General Bounded Time Petri Nets}
+The alignment problem in this case can be viewed as a problem of convex optimization, minimizing the stamp only cost, that is, $$cost(\tau|_i) = \sum_{j = 1}^{i} |\tau_j - \sigma_j|$$ over the set of possible timestamp series. What remains is to show that the space of valid runs of the model is a convex set, and this set has been studied extensively in \cite{BM82}. In this paper, the concept of a firing domain is proposed, that is, at each configuration of the time Petri net, the set of valid time intervals in which a transition enabled at that configuration can fire. Calculating equivalence classes of the same, successively, till we find final configurations, gives a characterisation of the solution set of all valid timestamp series, and this is proved to be of the following form, which is a set of constraints defining a convex set. 
 
 Hence, we claim that using an efficient encoding of the target function using the firing domain formulation described above, the problem can be solved using the simplex algorithm, which is used to solve convex optimization problems in good time in practice, and having worst case exponential time complexity. 
 
@@ -768,12 +813,18 @@ Hence, we claim that using an efficient encoding of the target function using th
 
 	
 	\section{Mixed Case} 
+			
+	Solving $d_t$ alignment seems hard, while $d_\theta$ alignment is very easy, so we hope that $d_N$ is somewhere in between. This seems to be a more versatile, but also overly forgiving notion of distance, as it assigns equal cost to delay-type errors and absolute timestamp-type errors, that is, $d_N \leq \min(d_t, d_\theta)$ so it will recognise more valid executions as "close" under a given threshold. Maybe in the future this could be generalised by setting different weights to the timestamp cost and the delay cost so as to adapt to a given context's needs.
 	
-	\subsection{Chronology, Co-operation, and Stability}
-		Solving $d_t$ alignment seems hard, while $d_\theta$ alignment is very easy, so we hope that $d_N$ is somewhere in between. This seems to be a more versatile, but also overly forgiving notion of distance, as it assigns equal cost to delay-type errors and absolute timestamp-type errors, that is, $d_N \leq \min(d_t, d_\theta)$ so it will recognise more valid executions as "close" under a given threshold. Maybe in the future this could be generalised by setting different weights to the timestamp cost and the delay cost so as to adapt to a given context's needs.
+	Given the non-constructive nature of the definition of $d_N$, it is not clear how one can efficiently calculate the distance between two fixed timed traces, as a minimal cost sequence of moves is not obvious. In fact, it is not immediately clear that there is a minimal cost run, that is, $d_N$ may not even be well defined. Before we propose an algorithm that does calculate minimal cost for linear timed traces, we first define a few properties that seem to characterise classes of well formed minimal cost runs, prove that $d_N$ is well defined along the way, and then proceed to prove that these properties both improve cost, and are satisfied solely by the run calculated by the algorithm we provide. 
 	
-	Given the non-constructive nature of the definition of $d_N$, it is not clear how one can efficiently calculate the distance between two fixed timed traces, as a minimal cost sequence of moves is not obvious. In fact, it is not immediately clear that there is a minimal cost run, that is, $d_N$ may not even be well defined. Before we propose an algorithm that does calculate minimal cost for linear timed traces, we first define a few properties that seem to characterise well formed minimal cost runs, prove that $d_N$ is well defined along the way, and then proceed to prove that these properties both improve cost, and are satisfied solely by the run calculated by the algorithm we provide. 
+	\subsection{Backwards or Forwards? }
 	
+	We take a minute to study the effect of mixed moves on linear traces, which suggests that depending on the choice of setting, one may want to view a sequence of moves on a word in one of two different ways. 
+	
+	
+	
+	\subsection{Chronology, Co-operation, and Stability}	
 	\textbf{Property 0 (Chronology) :} 	A sequence of moves aligning $\gamma$ to $\sigma$ is said to be \textit{chronological} if for all positions $i < j \leq n = |\gamma|$, all the moves at position $i$ are performed before any move at position $j$ and exactly one mixed move (where one or both components may be zero) takes place at each position, that is $\rho \in Moves(CN, p)^*$ is chronological iff  
 	
 	$$\forall i \in \{1, 2, \dots n\},  \exists s_i, d_i \in \mathbb{R} : \rho = (s_1, d_1, 1)(s_2, d_2, 2)\dots (s_n, d_n, n) $$
@@ -791,6 +842,44 @@ Hence, we claim that using an efficient encoding of the target function using th
 		$$\gamma \xmapsto{(-1, 1, 1)} (1, 2, 3, 5, 6) \xmapsto{(0, 0, 2)} (1, 2, 3, 5, 6) \xmapsto{(0.3, 0.8, 3)} (1, 2, 2.5, 4.2, 5.2) \xmapsto{(0, 0, 4)} (1, 2, 2.5, 4.2, 5.2) \xmapsto{(0, -0.2, 5)} \sigma $$
 	\end{example}
 	
+	As the above example suggests, we claim the following : 
+	
+	\begin{lemma}\label{linescommute} There is a minimal cost sequence of moves aligning any two linear timed traces that is chronological/reverse chronological. 
+	\end{lemma}
+	
+			\begin{proof}
+		We assume that there is at least one mixed move at each position, adding zero moves as needed. We first observe the following. 
+		
+		$$\forall 1 \leq i < j \leq n : (s, d, i)(s', d', j)(\gamma) = \gamma' = (s', d', j)(s, d, i)(\gamma)$$
+		
+		Where $$\forall 1 \leq k \leq n : \gamma'_k = \begin{cases}
+			\gamma_k & k <i \\
+			\gamma_k + s + d & k = i \\
+			\gamma_k + d & i < k < j \\
+			\gamma_k + s' + d + d' & k = j \\
+			\gamma_k + d + d' & k > j
+		\end{cases}$$
+		
+		That is, on linear timed traces, mixed moves are commutative. Clearly permuting the moves of a run does not change its cost, so we can assume any sequence of moves to be in increasing order of positions without loss of generality.
+		
+		Now we can write $m'$ as follows : 
+		
+		$$m' = (s_{11}, d_{11}, 1)\dots (s_{ij}, d_{ij}, i)\dots(s_{nk_n}, d_{nk_n}, n)$$ 
+		
+		Where for each $i$, $k_i \geq 1$ is the number of mixed moves at position $i$. 
+		
+		$$cost(m') = \sum_{i = i}^{n} (\sum_{j = 1}^{k_i} |s_{ij}| + |d_{ij}|)$$ 
+		
+		Define $s_i = \sum_{j = 1}^{k_i} s_{ij}$, $d_i =\sum_{j = 1}^{k_i} d_{ij}$, giving us the chronological run $$m = (s_1, d_1, 1)\dots (s_i, d_i, i)\dots (s_n, d_n, n)$$
+		
+		Now, by the triangle inequality we know that 
+		
+		$$\forall i : \sum_{j = 1}^{k_i} |s_{ij}| + |d_{ij}| \geq | \sum_{j = 1}^{k_i} s_{ij} | + | \sum_{j = 1}^{k_i} d_{ij} | = cost(s_i, d_i, i) $$
+		
+		Thereby giving us that $$cost(m) \leq cost(m')$$ 
+		
+	\end{proof}
+	
 	\textbf{Property 1 (Co-operation) :} A mixed move is said to be co-operative if its delay edit and stamp edit are in the same direction, that is, 
 	
 	$$(s, d, i) \textrm{ is co-operative iff } sd \geq 0$$
@@ -800,6 +889,47 @@ Hence, we claim that using an efficient encoding of the target function using th
 	\begin{example}The previous example (that was a cost 3.3 run, recall) can hence be further improved to become co-operative cost 1.7 run as follows : 
 		$$\gamma \xmapsto{(0, 0, 1)} (1, 1, 2, 4, 5) \xmapsto{(1, 0, 2)} (1, 2, 2, 4, 5) \xmapsto{(0.5, 0, 3)} (1, 2, 2.5, 4, 5) \xmapsto{(0.2, 0, 4)} (1, 2, 2.5, 4.2, 5) \xmapsto{(0, 0, 5)} \sigma $$
 	\end{example}
+
+	Once again, as the example suggests, one can convert a non-cooperative run into a cooperative one and improve cost while we're at it. 
+	
+	\begin{lemma}\label{linescoop} There is a cooperative minimal cost chronological (or reverse chronological) sequence of moves aligning any two linear timed traces. 
+	\end{lemma}
+
+		\begin{proof}
+	Assume $|\gamma| = |\sigma| = n$. 
+	
+	We proceed by induction on the first index $k$ at which $m' = (s_1, d_1, 1)\dots(s_n, d_n, n)$ uses a non co-operative move. 
+	
+	\textbf{Base case} : $k = n$.
+	
+	This gives us $$s_n d_n < 0 \implies |s_n + d_n| < |s_n| + |d_n|$$ 
+	$$\implies m = m'|_{n-1}(0, s_n + d_n, n)$$ costs less than $m'$, aligns the words and is co-operative. 
+	
+	\textbf{Induction hypothesis} : Suppose we've demonstrated that there is a sequence of moves $m''$ that aligns $\gamma$ to $\sigma$, is co-operative for the first $k-1 < n-1$ steps, is non co-operative at step $k$ and $cost(m'') \leq cost(m)$
+	
+	\textbf{Claim} : There is a sequence of moves $m$ that aligns $\gamma$ to $\sigma$, is co-operative for at least the first $k$ steps and $$cost(m) \leq cost(m'') \leq cost(m')$$
+	
+	\textbf{Proof} : Let $m'' = (s_1, d_1, 1)\dots(s_n, d_n, n)$. 
+	
+	We first define $m_i = m''|_{k-1}$, $m_f = (s_{k_2}, d_{k+2}, k+2)\dots (s_n, d_n, n)$, thereby giving us $$m'' = m_i(s_k, d_k, k)(s_{k+1}, d_{k+1}, k+1)m_f$$
+	
+	We know that $s_kd_k < 0$. This can be split into the following cases : 
+	
+	\textbf{Case 1} : $|d_k + s_k| = |d_k| - |s_k|$
+	
+	We define the following aligning, chronological run that is co-operative up to (and including) the $k$th step : 
+	$$m = m_i( 0, d_k + s_k, k)( s_{k+1}, d_{k+1} - s_k, k+1)m_f$$
+	$$cost(m'') - cost(m) = |s_{k+1}| + |d_{k+1}| + |s_k| + |d_k| - ( | d_k + s_k| + | s_{k+1}| + | d_{k+1} - s_k |) $$ $$\geq (|s_{k+1}| + |d_{k+1}|  - |s_{k+1}| + | d_{k+1}|  )+ (  |s_k| + |d_k|  -| d_k + s_k|  -|s_k |)   \geq 0$$
+	
+	\textbf{Case 2} : $|d_k + s_k| = |s_k| - |d_k|$
+	
+	We define the following aligning, chronological run that is co-operative up to (and including) the $k$th step : 
+	$$m = m_i( d_k + s_k, 0, k)( s_{k+1}, d_k + d_{k+1}, k+1)m_f$$
+	$$cost(m'') - cost(m) = |s_{k+1}| + |d_{k+1}| + |s_k| + |d_k| - (|s_k + d_k | + | s_{k+1}| + | d_{k+1} + d_k |) $$
+	$$\geq |d_{k+1}| + |s_k| + |d_k| - (|s_k + d_k | + | d_{k+1}| + |d_k |) \geq 0$$
+	
+	By induction we can hence conclude that there is a sequence of moves that is co-operative throughout and has lower cost than $m'$. 
+\end{proof}
 	
 	\textbf{Property 2 (Stability) :} A mixed, co-operative move is said to be stable if there is no other co-operative move that aligns the next position (if it exists) better, that is, if $m = (s, d, i)$ is a stable move aligning $\gamma = (\gamma_1, \gamma_2, \dots \gamma_n)$ to $\sigma = (\sigma_1, \sigma_2, \dots \sigma_n)$ completely at position $i$, then the following must hold : 
 	
@@ -817,50 +947,47 @@ Hence, we claim that using an efficient encoding of the target function using th
 	\end{example}
 	
 	
-	What is interesting about these properties are the following results : 
+	What is interesting about this property are the following results : 
 	
-		\begin{lemma}\label{stablebest} There is a stable minimal cost sequence of moves aligning any two linear timed traces. 
+	\begin{lemma}\label{stablebest} There is a stable minimal cost sequence of moves aligning any two linear timed traces. 
 	\end{lemma}
 	
 	\begin{lemma}\label{stableunique} The stable minimal cost sequence of moves aligning any two linear timed traces is unique. 
 		
 	\end{lemma}
-	
-	
-	\subsection{Algorithms}
 
+	\subsection{Algorithms}
+	
 	\begin{algorithm}
-		\caption{$d_N$ Computation Algorithm}
-		\label{MixWordAlgo}
+		\caption{$d_N$ Backwards Computation Algorithm}
+		\label{MixBackwardsAlgo}
 		\begin{algorithmic}
 			\State \textbf{Input : }  $\sigma$, $\gamma$
 			\State \textbf{Output : }  $d_N(\gamma, \sigma)$
 			\State $cost \gets 0$
-			\State $i \gets 1$
-			\While {$i < n$}
-			\State $a \gets \sigma - \gamma_i$
-			\State $b \gets \sigma_{i+1} - \gamma_{i+1}$
+			\State $i \gets n$
+			\While {$i > 1$}
+			\State $a \gets f_\sigma(i) - f_\gamma(i)$
+			\State $b \gets f_\sigma(i-1) - f_\gamma(i-1)$
 			
-			\If{$a\cdot b < 0$} 
-			\Comment{$(a,0,i)$} %: Stability and co-operation desire opposite delays, so $d_i$ is zero}
-		\State $\gamma \gets (a, 0, i) \gamma$
+			\If{$a\cdot b \geq 0$} 
+			\Comment{$(0,a,i)$} %: Stability and co-operation desire opposite delays, so $d_i$ is zero}
+		\State $\gamma \gets (0, a, i) \gamma$
 		
-		\ElsIf{$|b| \leq |a|$}
-		\Comment{$(a-b, b, i)$} %: Co-operation allows for completely correcting $i+1$ as well} 
+		\ElsIf{$|a| < |b|$}
+		\Comment{$(-a, 0, i-1)(0, 0, i)$} %: Co-operation allows for completely correcting $i+1$ as well} 
 	
-	\State $\gamma \gets (a-b, b, i)\gamma$
+	\State $\gamma \gets (-a, 0, i-1)\gamma$
 	\Else
-	\Comment{$(0, a, i)$}% : Stability desires a full delay, and co-operation allows no more}
-
-
-\State $\gamma \gets (0, a, i) \gamma$
+	\Comment{$(b, 0, i-1)(0, a-b, i)$}% : Stability desires a full delay, and co-operation allows no more}
+\State $\gamma \gets (b, 0, i-1)(0, a-b, i) \gamma$
 \EndIf
 
-\State  $cost \gets cost + |a|$ \Comment{By chronology}
-\State $i \gets i+1$
+\State  $cost \gets cost + |a|$ 
+\State $i \gets i-1$
 \EndWhile
 
-\State $cost \gets cost + |\gamma_n - \sigma_n|$  \Comment $(0, |\sigma_n - \gamma_n|, n)$
+\State $cost \gets cost + |\gamma_1 - \sigma_1|$  \Comment $(0, |\sigma_1- \gamma_1|, 1)$
 
 \end{algorithmic}
 \end{algorithm}
@@ -868,100 +995,31 @@ Hence, we claim that using an efficient encoding of the target function using th
 \begin{lemma}\label {mixwordalgostable} Given two time sequences $\sigma = (\sigma_1, \sigma_2, \dots \sigma_n)$ and $\gamma = (\gamma_1, \gamma_2, \dots , \gamma_n)$ with linear underlying causal processes, the sequence of moves the above algorithm calculates ($m$) corresponds to the unique stable sequence of moves that aligns $\sigma$ to $\gamma$. 
 \end{lemma}
 
-\begin{theorem}\label{MixAlgoCorr} Algorithm \ref{MixWordAlgo} is correct, that is, its result \textsf(cost) $ = d_N(\gamma, \sigma)$
+		Now, the proof of Lemma \ref{mixwordalgostable} is quite simply the following : 
+
+\begin{proof}
+	Say $m$ is a minimal cost run aligning $\gamma$ to $\sigma$. Then by Lemma 3 there is a chronological run $m'$ aligning the two, upon which applications of Lemma 4 and Lemma 7 give us, respectively, a co-operative run $m''$ and a stable run $m'''$ with the following inequalities : 
+	
+	$$cost(m''') \leq cost(m'') \leq cost(m') \leq cost(m)$$
+	
+	As $m$ was a minimal cost run, all of these inequalities must in fact be equalities, hence $m'''$ is the stable minimal cost run we seek. 
+	
+\end{proof}
+
+\begin{theorem}\label{MixAlgoCorr} Algorithm \ref{MixBackwardsAlgo} is correct, that is, its result \textsf(cost) $ = d_N(\gamma, \sigma)$
 \end{theorem}
 
-\begin{theorem}\label{MixAlign} Given a linear causal process of a time Petri Net $N$ and a linear observed trace $\sigma$, the word $\gamma_\theta \in \mathcal{L}(N)$ such that $\gamma_\theta = \argmin_{x \in \mathcal{L}(N)}{d_\theta(x, \sigma)}$ also has the property $\gamma_\theta = \argmin_{x \in \mathcal{L}(N)}{d_N(x, \sigma)}$. 
+\begin{theorem}\label{MixAlign} Given a linear causal process of a time Petri Net $N$ and a linear observed trace $\sigma$, the word $\gamma_\theta \in \mathcal{L}(N)$ such that $\gamma_\theta = \underset{x \in \mathcal{L}(N)}{\argmin} \hspace{0.5em}{d_\theta(x, \sigma)}$ also has the property $\gamma_\theta = \underset{x \in \mathcal{L}(N)}{\argmin} \hspace{0.5em}{d_N(x, \sigma)}$. 
 \end{theorem}
+
 
 	\subsection{Trees that branch forward} 
 	
-	\section{Proofs}
+	\section{Old Unused Proofs}
 
 	\subsection{Mixed Linear Words : Sawtooth diagrams}
 	
-	\begin{proof}
-		We break up the proof of Theorem \ref{stablebest} into a few sections on order to prove optimality one property at a time. 
-		
-		\textsc{Chronology and Co-operation}
-		
-		\begin{lemma} Given two linear timed traces $\gamma, \sigma$ over the same causal process $(CN, p)$ and a sequence of moves $m'$ aligning $\gamma$ to $\sigma$, there exists a chronological sequence of moves $m$ that aligns $\gamma$ to $\sigma$ such that $cost(m) \leq cost(m')$.
-		\end{lemma}
-		
-		\begin{proof}
-			We assume that there is at least one mixed move at each position, adding zero moves as needed. We first observe the following. 
-			
-			$$\forall 1 \leq i < j \leq n : (s, d, i)(s', d', j)(\gamma) = \gamma' = (s', d', j)(s, d, i)(\gamma)$$
-			
-			Where $$\forall 1 \leq k \leq n : \gamma'_k = \begin{cases}
-				\gamma_k & k <i \\
-				\gamma_k + s + d & k = i \\
-				\gamma_k + d & i < k < j \\
-				\gamma_k + s' + d + d' & k = j \\
-				\gamma_k + d + d' & k > j
-			\end{cases}$$
-			
-			That is, on linear timed traces, mixed moves are commutative. Clearly permuting the moves of a run does not change its cost, so we can assume any sequence of moves to be in increasing order of positions without loss of generality.
-			
-			Now we can write $m'$ as follows : 
-			
-			$$m' = (s_{11}, d_{11}, 1)\dots (s_{ij}, d_{ij}, i)\dots(s_{nk_n}, d_{nk_n}, n)$$ 
-			
-			Where for each $i$, $k_i \geq 1$ is the number of mixed moves at position $i$. 
-			
-			$$cost(m') = \sum_{i = i}^{n} (\sum_{j = 1}^{k_i} |s_{ij}| + |d_{ij}|)$$ 
-			
-			Define $s_i = \sum_{j = 1}^{k_i} s_{ij}$, $d_i =\sum_{j = 1}^{k_i} d_{ij}$, giving us the chronological run $$m = (s_1, d_1, 1)\dots (s_i, d_i, i)\dots (s_n, d_n, n)$$
-			
-			Now, by the triangle inequality we know that 
-			
-			$$\forall i : \sum_{j = 1}^{k_i} |s_{ij}| + |d_{ij}| \geq | \sum_{j = 1}^{k_i} s_{ij} | + | \sum_{j = 1}^{k_i} d_{ij} | = cost(s_i, d_i, i) $$
-			
-			Thereby giving us that $$cost(m) \leq cost(m')$$ 
-			
-		\end{proof}
-		
-		
-		\begin{lemma} Given two linear timed traces $\gamma, \sigma$ over the same causal process $(CN, p)$ and a chronological sequence of moves $m'$ aligning $\gamma$ to $\sigma$, there exists a co-operative sequence of moves $m$ that aligns $\gamma$ to $\sigma$ such that $cost(m) \leq cost(m')$.
-		\end{lemma}
-		
-		\begin{proof}
-			Assume $|\gamma| = |\sigma| = n$. 
-			
-			We proceed by induction on the first index $k$ at which $m' = (s_1, d_1, 1)\dots(s_n, d_n, n)$ uses a non co-operative move. 
-			
-			\textbf{Base case} : $k = n$.
-			
-			This gives us $$s_n d_n < 0 \implies |s_n + d_n| < |s_n| + |d_n|$$ 
-			$$\implies m = m'|_{n-1}(0, s_n + d_n, n)$$ costs less than $m'$, aligns the words and is co-operative. 
-			
-			\textbf{Induction hypothesis} : Suppose we've demonstrated that there is a sequence of moves $m''$ that aligns $\gamma$ to $\sigma$, is co-operative for the first $k-1 < n-1$ steps, is non co-operative at step $k$ and $cost(m'') \leq cost(m)$
-			
-			\textbf{Claim} : There is a sequence of moves $m$ that aligns $\gamma$ to $\sigma$, is co-operative for at least the first $k$ steps and $$cost(m) \leq cost(m'') \leq cost(m')$$
-			
-			\textbf{Proof} : Let $m'' = (s_1, d_1, 1)\dots(s_n, d_n, n)$. 
-			
-			We first define $m_i = m''|_{k-1}$, $m_f = (s_{k_2}, d_{k+2}, k+2)\dots (s_n, d_n, n)$, thereby giving us $$m'' = m_i(s_k, d_k, k)(s_{k+1}, d_{k+1}, k+1)m_f$$
-			
-			We know that $s_kd_k < 0$. This can be split into the following cases : 
-			
-			\textbf{Case 1} : $|d_k + s_k| = |d_k| - |s_k|$
-			
-			We define the following aligning, chronological run that is co-operative up to (and including) the $k$th step : 
-			$$m = m_i( 0, d_k + s_k, k)( s_{k+1}, d_{k+1} - s_k, k+1)m_f$$
-			$$cost(m'') - cost(m) = |s_{k+1}| + |d_{k+1}| + |s_k| + |d_k| - ( | d_k + s_k| + | s_{k+1}| + | d_{k+1} - s_k |) $$ $$\geq (|s_{k+1}| + |d_{k+1}|  - |s_{k+1}| + | d_{k+1}|  )+ (  |s_k| + |d_k|  -| d_k + s_k|  -|s_k |)   \geq 0$$
-			
-			\textbf{Case 2} : $|d_k + s_k| = |s_k| - |d_k|$
-			
-			We define the following aligning, chronological run that is co-operative up to (and including) the $k$th step : 
-			$$m = m_i( d_k + s_k, 0, k)( s_{k+1}, d_k + d_{k+1}, k+1)m_f$$
-			$$cost(m'') - cost(m) = |s_{k+1}| + |d_{k+1}| + |s_k| + |d_k| - (|s_k + d_k | + | s_{k+1}| + | d_{k+1} + d_k |) $$
-			$$\geq |d_{k+1}| + |s_k| + |d_k| - (|s_k + d_k | + | d_{k+1}| + |d_k |) \geq 0$$
-			
-			By induction we can hence conclude that there is a sequence of moves that is co-operative throughout and has lower cost than $m'$. 
-		\end{proof}
-		
-		\textsc{Sawtooth Diagrams}
+		\subsubsection{Sawtooth Diagrams}
 		
 		Now, we take a brief interlude in order to observe something about co-operative runs.
 		
@@ -1041,7 +1099,7 @@ Hence, we claim that using an efficient encoding of the target function using th
 			
 		\end{example}
 		
-		\textsc{Stability}
+		\subsubsection{Stability}
 		
 		\begin{lemma}
 			Given any two timed linear traces, there is a unique sequence of moves aligning them that is stable. 
@@ -1225,18 +1283,9 @@ Hence, we claim that using an efficient encoding of the target function using th
 		\end{proof}
 		
 		
-		Now, the proof of Theorem \ref{mixwordalgostable} is quite simply the following : 
+
 		
-		\begin{proof}
-			Say $m$ is a minimal cost run aligning $\gamma$ to $\sigma$. Then by Lemma 3 there is a chronological run $m'$ aligning the two, upon which applications of Lemma 4 and Lemma 7 give us, respectively, a co-operative run $m''$ and a stable run $m'''$ with the following inequalities : 
-			
-			$$cost(m''') \leq cost(m'') \leq cost(m') \leq cost(m)$$
-			
-			As $m$ was a minimal cost run, all of these inequalities must in fact be equalities, hence $m'''$ is the stable minimal cost run we seek. 
-			
-		\end{proof}
-		
-		By Lemma 7 we already know that there is only one stable sequence of moves aligning any two given linear timed traces. So, in order to prove the theorem, all we need to check is that each move calculated by the algorithm is stable. 
+		By Lemma \ref{stableunique} we already know that there is only one stable sequence of moves aligning any two given linear timed traces. So, in order to prove the theorem, all we need to check is that each move calculated by the algorithm is stable. 
 		
 		There is one move per position, and they're chosen in order, so $m$ is clearly chronological. It is also co-operative as at each point the moves are either a pure stamp move, a pure delay move, or a mixed move of the form $(a-b, b, 0)$ exactly when $|a| \geq |b|$ and $a \cdot b = |a||b|$, giving us 
 		
@@ -1269,10 +1318,9 @@ Hence, we claim that using an efficient encoding of the target function using th
 			
 		\end{mycase}
 		
-	\end{proof}
+
 	
 	
-	\subsection{Mixed Linear Models : Forwards and backwards}
 
 	\section{Relating timed process models back to BPMN} 
 	
