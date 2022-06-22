@@ -759,7 +759,16 @@ This leaves us once again with the question of how to balance the tradeoff betwe
 
 \section{Implementation}
 
-We have implemented the stamp only alignment algorithm in python, available at <link>. This algorithm is quadratic in time complexity, and runs well in practice, as seen below : 
+We have implemented the stamp only alignment algorithm in python, available at https://github.com/NehaRino/TimedAlignments. This algorithm is quadratic in time complexity, and runs well in practice, as seen below : 
+\begin{tabular}{|c| |c|}
+	\hline
+	Length of Trace & Running Time (seconds)\\ 
+	\hline
+	10 & 0.0013287267000123392\\
+	100 & 0.10211773350001749\\
+	1000 &9.899462208500154\\
+	\hline
+\end{tabular}
 
 \section{Perspectives and Conclusion}
 
