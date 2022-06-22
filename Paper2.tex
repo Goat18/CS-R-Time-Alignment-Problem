@@ -9,7 +9,7 @@
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
-
+\usepackage{hyperref}
 \usepackage{babel}
 
 \usepackage{algorithm}
@@ -144,7 +144,7 @@
 		One process trace is $(draft, 5)(dispatch, 6)(sent, 11)$, which depicts drafting the message in 5 units and then dispatching it, and having it send successfully. An example of an observed trace which does not conform to the process above would be $(draft, 3)(draft, 5)(dispatch, 7)(dispatch, 7)(sent, 12)$. Clearly, there is an extraneous letter here, as the same message cannot be dispatched twice, and the timestamps for dispatch and sending come too late. One possible optimally close process trace for this observation is $(draft, 3)(draft,6)(dispatch, 7)(sent, 12)$, which deletes the extra $dispatch$, and extends the second $draft$ event by a unit, allowing the rest of the trace to thereby be in time. 
 	\end{example}
 	
-	In <paper 1> we use time Petri nets (the object used in the example above) to model time-aware processes. Time Petri nets have the ability to record the timestamps at which events occur, and check the duration of time any transition remained enabled against membership in a real interval, the static interval constraint. Time Petri nets offer both a graphical means by which to represent concurrent systems, but their semantics also allow one to express complex time constraints. 
+	In <paper 1> we use time Petri nets (the object used in the example above) to model time-aware processes. Time Petri nets have the ability to record the timestamps at which events occur, and check the duration of time any transition remained enabled against membership in a real interval, the static interval constraint. %Time Petri nets offer both a graphical means by which to represent concurrent systems, but their semantics also allow one to express complex time constraints. 
 	
 	\begin{definition}[The General Alignment Problem]
 		Given a process model $N$ denoted by a Time Petri Net and an observed timed trace $\sigma$ we wish to find a timed word $\gamma \in \mathcal{L}(N)$ such that $d(\sigma, \gamma) = \underset{x \in \mathcal{L}(N)}{\min} d(\sigma, x)$ for some distance function $d$ on timed words. 
@@ -156,6 +156,31 @@
 		Given a linear process model $N$ denoted by a Time Petri Net and an observed timed trace $(w, \sigma)$, such that $w \in Untime(\mathcal{L}(N))$ we wish to find a valid timestamp sequence $\gamma$ such that $d(\sigma, \gamma) = \underset{x \in \mathcal{L}(N)}{\min} d(\sigma, x)$.
 	\end{definition}
 	
+	We informally look at an instance of the purely timed problem below : 
+	
+	\begin{example}
+	Consider the process model $N_1$:  
+	\adjustbox{scale = 0.9}{
+		\begin{tikzcd}
+			&{}&& {}&&{} & \\
+			\eye &\fbox{d}& \bigcirc & {\fbox{e}} & \bigcirc & \fbox{f} & \bigcirc_f\\
+			\arrow[from=2-1, to=2-2]
+			\arrow[ from=2-2, to=2-3]
+			\arrow[from=2-3, to=2-4]
+			\arrow[from=2-4, to=2-5]
+			\arrow[from=2-5, to=2-6]
+			\arrow[from=2-6, to=2-7]
+			\arrow["{[1,3]}"{description, pos=0.2}, draw=white, from=2-2, to=1-2]
+			\arrow["{[1,4]}"{description, pos=0.3}, draw=white, from=2-4, to=1-4]
+			\arrow["{[0, 3]}"{description, pos=0.2}, draw=white, from=2-6, to=1-6]
+		\end{tikzcd}
+	}
+	Now, say we observed the trace $(u_1, \sigma_1) = (def)(4, 6, 6)$ that did not fit the model, and we wished to analyse how best to modify them to fit them back into the model. We note that the untimed part does match the model's specification, and in order to make the timestamps fit we can simply edit the timestamp of $d$ to give the following process trace $(v_1, \gamma_1) = (def)(3,6,6)$. 
+	
+	%%Should stick to a uniform notion of letter,timestamp or word,timeseries?
+	
+	\end{example}
+
 	The first part of this paper will focus on the problem of computing the distance function $d_N$ and afterwards, we return to the problem of aligning linear process models to observed traces. We present linear time algorithms for both computing $d_N$ and solving the alignment problem in this setting, but once again only for linear timed words, and linear process models.  
 	
 	\section{Preliminaries : Edit Moves for Timed Words}
@@ -164,32 +189,14 @@
 	In order to formalise the same, we define what the valid moves of such a transformation could be. 
 	We define \textit{moves} as functions that map one time sequence to another. 
 	What sort of functions are useful notions of transformation on a timed system? 
+
 	\begin{example}
-		Let us study the following process model $N_1$:  
-		\adjustbox{scale = 0.9}{
-			\begin{tikzcd}
-				&{}&& {}&&{} & \\
-				\eye &\fbox{d}& \bigcirc & {\fbox{e}} & \bigcirc & \fbox{f} & \bigcirc_f\\
-				\arrow[from=2-1, to=2-2]
-				\arrow[ from=2-2, to=2-3]
-				\arrow[from=2-3, to=2-4]
-				\arrow[from=2-4, to=2-5]
-				\arrow[from=2-5, to=2-6]
-				\arrow[from=2-6, to=2-7]
-				\arrow["{[1,3]}"{description, pos=0.2}, draw=white, from=2-2, to=1-2]
-				\arrow["{[1,4]}"{description, pos=0.3}, draw=white, from=2-4, to=1-4]
-				\arrow["{[0, 3]}"{description, pos=0.2}, draw=white, from=2-6, to=1-6]
-			\end{tikzcd}
-		}
-		Now, say we had the following words that did not fit the model, and we wished to analyse how best to modify them to fit them back into the model. 
+		Say we sought to align the time trace $(4,6,6)$ with $(3, 6, 6)$. 
+		It feels reasonable to say the distance between the two is 1. 
+		A way to arrive at this conclusion is that if the first timestamp  were just shifted to fire at 3 instead, the whole process would match. This sort of local, almost typographical error can often happen in systems, and it is the simplest kind to fix.  
 		
-		We start with $(u_1, \sigma_1) = (def)(4, 6, 6)$
-		A reasonable candidate for the closest valid execution would be if the timing function $\sigma_1$ were replaced by $\gamma = (3, 6, 6)$, and it feels reasonable to say that the cost for aligning $\sigma_1$ to this $\gamma$ is 1. 
-		A way to arrive at this conclusion is by trying to execute $\sigma$'s firing sequence, where we see that only the guard for $d$ fails. If $d$ were just shifted to fire at 3 instead, the whole run would execute without a hitch. This sort of local, almost typographical error can often happen in systems, and it is the simplest kind to fix.  
-		
-		We start with $(u_1, \sigma_2) = (def)(4, 8, 11)$
-		The closest valid timing function would try to preserve firing times, but the moment it tries to fire $d$, $\sigma_2$ runs late throughout. The closest we can get, intuitively, is to fire every transition in the model as late as possible, giving $\gamma = (3, 7, 10)$. 
-		Now, when trying to compare these firing sequences, we can view it just like we did for $\sigma_1$, as $d$, $e$ and $f$ all fire later than they should, and so moving each timestamp back once, giving an aligning cost of 3. There is however, another way to see this deviation. This cascading chain of errors can be fixed if $d$ is moved back to fire at 4, and all the relative relationships between $d$ and its successors are preserved. This views the tasks $e$ and $f$ as only caring about when $d$ ended, which makes sense, because they are causally linked and hence do only start once their predecessor ends. This means, the switch from the timestamp series $(4, 8, 11)$ to $(3, 7, 10)$ can be viewed as only a cost 1 edit in this sense. This is a slightly more complex error to conceive of, but it is of natural practical use, as if a delay at the beginning caused the whole process to occur too late, the important thing to fix is just the delay at the beginning, and one can sometimes assume with that sorted, the rest of the process will now conform to the model as needed. 
+		Now consider aligning the time traces $(4, 8, 11)$ and $(3, 7, 10)$. 
+		Now, when trying to compare these firing sequences, we can view it just like we did for the previous pair, as all of the timestamps firing later than they should, and so moving each timestamp back once, giving an aligning cost of 3. There is however, another way to see this deviation. This cascading chain of errors can be fixed if the first event is moved back to fire at 4, and all the relative relationships between it and its successors are preserved. This views the second and third tasks as only caring about when the first ended, which makes sense, because they are causally linked and hence do only start once their predecessor ends. This means, the switch from the timestamp series $(4, 8, 11)$ to $(3, 7, 10)$ can be viewed as only a cost 1 edit in this sense. This is a slightly more complex error to conceive of, but it is of natural practical use, as if a delay at the beginning caused the whole process to occur too late, the important thing to fix is just the delay at the beginning, and one can sometimes assume with that sorted, the rest of the process will now conform to the model as needed. 
 	\end{example}
 	
 	Based on the above example, we naturally arrived at two types of moves in <paper 1>.  
@@ -303,25 +310,25 @@
 	
 	\begin{example}\label{wordandflow}
 		
-		Consider the following process model $N_2$: 
-		
-		\adjustbox{scale = 0.8}{
-			\begin{tikzcd}	
-				& {} && {} && {} \\
-				\eye & {\fbox{a}} & \bigcirc & {\fbox{b}} & \bigcirc & {\fbox{c}} & \bigcirc \\
-				\arrow[from=2-1, to=2-2]
-				\arrow[from=2-2, to=2-3]
-				\arrow[from=2-3, to=2-4]
-				\arrow[from=2-4, to=2-5]
-				\arrow[from=2-5, to=2-6]
-				\arrow[from=2-6, to=2-7]
-				\arrow["{[0, 2]}"{description, pos=0.1}, "\lrcorner"{text=white, anchor=center, pos=0.125, rotate=135}, draw=none, from=2-2, to=1-2]
-				\arrow["{[3,3]}"{description, pos=0.1}, "\lrcorner"{text=white, anchor=center, pos=0.125, rotate=135}, draw=none, from=2-4, to=1-4]
-				\arrow["{[3,5]}"{description, pos=0.1}, "\lrcorner"{text=white, anchor=center, pos=0.125, rotate=135}, draw=none, from=2-6, to=1-6]
-			\end{tikzcd}
-		}
-		
-		The word $w = (abc)(1, 5, 9)$ is not a member of $\mathcal{L}(N_2)$ but its untimed part belongs to the language of the untimed underlying net. For this net and word, we can confuse transition labels with event labels, so we can define its flow function as $(1, 4, 4)$. 
+%		Consider the following process model $N_2$: 
+%		
+%		\adjustbox{scale = 0.8}{
+%			\begin{tikzcd}	
+%				& {} && {} && {} \\
+%				\eye & {\fbox{a}} & \bigcirc & {\fbox{b}} & \bigcirc & {\fbox{c}} & \bigcirc \\
+%				\arrow[from=2-1, to=2-2]
+%				\arrow[from=2-2, to=2-3]
+%				\arrow[from=2-3, to=2-4]
+%				\arrow[from=2-4, to=2-5]
+%				\arrow[from=2-5, to=2-6]
+%				\arrow[from=2-6, to=2-7]
+%				\arrow["{[0, 2]}"{description, pos=0.1}, "\lrcorner"{text=white, anchor=center, pos=0.125, rotate=135}, draw=none, from=2-2, to=1-2]
+%				\arrow["{[3,3]}"{description, pos=0.1}, "\lrcorner"{text=white, anchor=center, pos=0.125, rotate=135}, draw=none, from=2-4, to=1-4]
+%				\arrow["{[3,5]}"{description, pos=0.1}, "\lrcorner"{text=white, anchor=center, pos=0.125, rotate=135}, draw=none, from=2-6, to=1-6]
+%			\end{tikzcd}
+%		}
+%		
+		Consider the word $w = (abc)(1, 5, 9)$. For this linear timed trace, the flow function measuring its successive delays is $(1, 4, 4)$. 
 	\end{example}
 	
 	As defined, $f_\tau$ as defined produces exactly the time durations that the guards of each transition in the model checks, ie the clock function values during the run.
@@ -481,8 +488,6 @@
 	\begin{lemma}\label{stablebest} There is a stable minimal cost sequence of moves aligning any two linear timed traces. 
 	\end{lemma}
 	
-	
-	
 	\subsection{Computing $d_N$}
 	\begin{figure}[!t]
 		\removelatexerror
@@ -581,16 +586,16 @@ This of course means that we have a linear time algorithm for aligning linear ca
 \end{figure}
 \section{Implementation}
 
-We have implemented the $d_N$ computation algorithm and the $d_N$ alignment algorithm for linear process models in python, available at https://github.com/NehaRino/TimedAlignments. Both algorithms have linear time complexity, and so, they have efficient running times, as evidenced by the table below : 
-\begin{tabular}{|r| |r|}
+We have implemented the $d_N$ computation algorithm and the $d_N$ alignment algorithm for linear process models in python, available at \url{https://github.com/NehaRino/TimedAlignments}. Both algorithms have linear time complexity, and so, they have efficient running times, as evidenced by the table below : 
+\begin{tabular}{|c| |c|}
 	\hline
 	Trace Length & Running Time (seconds) \\ 
 	\hline
-	10 & 2.4853510003595146e-05\\
-	100 & 0.00023651171000892645\\
-	1000 &0.0025955689300099036\\
-	10000& 0.02811378448999676\\
-	100000& 0.33130915412000833\\
+	10 & 0.0000248535100036\\
+	100 & 0.0002365117100089\\
+	1000 &0.0025955689300099\\
+	10000& 0.0281137844899968\\
+	100000& 0.3313091541200083\\
 	1000000& 3.4431409046599946\\
 	\hline
 \end{tabular}
