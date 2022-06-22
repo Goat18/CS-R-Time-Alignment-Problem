@@ -106,19 +106,19 @@
 	
 	\subsection{Conformance Checking and Alignments} 
 	
-	Process mining studies vast systems through their event logs, and seeks to extract meaningful ways to model the underlying patterns or processes that govern the behaviour of the system, sometimes in order to better understand the system, or as is often the case, predict future behaviour \cite{A16}.
-	Once such a process model is obtained, through machine learning or other related techniques, it is natural to ask how one is sure the obtained model is a reasonable approximation of the system’s behaviour at all, especially given the lack of explainability in the black box approach ML takes to producing solutions.
-	This is where conformance checking comes into the picture, as it is the art of judging the performance of a process model by relating modelled and observed behaviour of a process to each other, without referring to the origin of the model \cite{CDSW18}.
-	Observed behaviour usually comes in the form the traces of an event log, as a sequence of events that often belong to multiple distinct interleaved instances of processes of the system.
-	On the other hand we have process models which act as a blueprint to describe what the underlying processes of any given system are supposed to look like.
-	We often do not want the system to always precisely generate all possible future system behaviour as this can give trivial models accepting for example all execution strings, but on the other hand, neither should they simply regurgitate the event log and accept no new system behaviours, which would reflect a failure to generalise properly. 
+	Process mining studies vast systems through their event logs, and seeks to extract meaningful ways to model the underlying patterns or processes that govern the behaviour of the system in order to better understand the system, or predict future behaviour \cite{A16}.
+	Once such a process model is obtained, through machine learning or other related techniques, it is natural to ask how one is sure the obtained model is a reasonable approximation of the system’s behaviour at all, especially given the lack of explainability in the blackbox approach ML takes to producing solutions.
+	This is where conformance checking comes into the picture, as it is the art of judging the performance of a process model by relating modelled and observed behaviour of a process to each other, without depending on the origin of the model \cite{CDSW18}.
+	Observed behaviour comes in the form the traces of an event log, as a sequence of events occurring during the functioning of the system, while process models are blueprints that describe what the underlying processes of any given system are supposed to look like.
+	Measures of how well a model reflects system behaviour include fitness, precision, generalisation, and simplicity.
+	We often do not want the system to always precisely generate any and all possible future system behaviour, but neither should they simply regurgitate the event log and accept no new system behaviours. 
 	What is often much more useful is a process model that can, up to some small error factor, approximate any reasonable future system behaviour. 
 	
 	In Aryan Adriansyah's seminal thesis \cite{Adriansyah2014AligningOA}, we obtain the notion of an alignment, that is, the minimal series of corrections needed to transform an observed event trace into the execution of the process model that most closely mimics it.  
-	It is often seen as an execution of the synchronised product of the process model and a \emph{trace model} which gives us a series of edits, usually insertions or deletions, that can transform a process trace into the observed trace.  
-	For our purposes we will use the term aligning word to mean the optimal run of the model that aligns closest to the observation, and how to transform this optimal execution to the observed one i.e, to align the observed trace to the aligning word will be addressed separately as a matter of distance computation over a set of edit moves. 
+	It is often seen as an execution of the synchronised product of the process model and a \emph{trace model} ie a simple model that captures exactly one event log trace. 
+	This gives us a series of edits, usually insertions or deletions, that can transform a process trace into the observed trace.  
+	For our purposes we will use the term alignment to mean the process trace of the model that aligns closest to the observation, and how to transform this optimal execution to the observed one is clear depending on the edit moves available.
 	Alignments thereby help pinpoint exactly where inevitable deviations from expected behaviour occur, and the more distant the aligning word of a model is to its observed trace, the worse the model is at reflecting real system behaviour. 
-	This can either be used as a tool to help repair the process model to more accurately reflect the observation, or, it can be used to repair the log, or even issue feedback on the behaviour of the underlying system to help it conform to the model better, depending on which components of the operation are considered the most trustworthy. 
 	
 	\subsection{Timed Alignments}
 	The need for time-aware process mining is clear, and setting the alignment problem in a time-aware context yields the ability to meaningfully evaluate time-aware process models, detect timing related errors in processes and help repair them accordingly, which will massively improve the ability to study and ensure scheduling and deadline constraints in large processes. In <paper 1> we set the general timed alignment problem in order to do the very same, an example of which we provide here. 
@@ -581,8 +581,19 @@ This of course means that we have a linear time algorithm for aligning linear ca
 \end{figure}
 \section{Implementation}
 
-We have implemented the $d_N$ computation algorithm and the $d_N$ alignment algorithm for linear process models in python, available at <link>. Both algorithms have linear time complexity, and so, they have efficient running times, as evidenced by the table below : 
-
+We have implemented the $d_N$ computation algorithm and the $d_N$ alignment algorithm for linear process models in python, available at https://github.com/NehaRino/TimedAlignments. Both algorithms have linear time complexity, and so, they have efficient running times, as evidenced by the table below : 
+\begin{tabular}{|r| |r|}
+	\hline
+	Trace Length & Running Time (seconds) \\ 
+	\hline
+	10 & 2.4853510003595146e-05\\
+	100 & 0.00023651171000892645\\
+	1000 &0.0025955689300099036\\
+	10000& 0.02811378448999676\\
+	100000& 0.33130915412000833\\
+	1000000& 3.4431409046599946\\
+	\hline
+\end{tabular}
 \section{Perspectives and Conclusion}
 
 
