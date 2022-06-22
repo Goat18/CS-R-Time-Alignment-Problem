@@ -3,7 +3,7 @@
 % The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
 \usepackage{cite}
 \usepackage{amsmath,amssymb,amsfonts}
-
+\usepackage{hyperref}
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage[T1]{fontenc}
@@ -99,7 +99,6 @@
 	The subject of this paper is to study conformance checking for timed models, that is, process models that consider both the sequence of events in a process as well as the timestamps at which each event is recorded. 
 	Time-aware process mining is a growing subfield of research, and as tools that seek to discover timing related properties in processes develop, so to does the need for conformance checking techniques that can tackle time constraints and provide insightful quality measures for time-aware process models. 
 	In particular, one of the most useful conformance artefacts is the alignment, that is, finding the minimal changes necessary to correct a new observation to conform to a process model.  
-	From alignments, one can derive measures of fitness, precision, and generalisation of a process model, which are crucial to analysing its performance. 
 	In this paper, we set our problem of timed alignment and solve two cases each corresponding to a different metric over time processes. For the first, we have an algorithm whose time complexity is linear both in the size of the observed trace and the process model, while for the second we have a quadratic time algorithm for linear process models. 
 \end{abstract}
 
@@ -124,7 +123,7 @@ What is often much more useful is a process model that can, up to some small err
 In Aryan Adriansyah's seminal thesis \cite{Adriansyah2014AligningOA}, we obtain the notion of an alignment, that is, the minimal series of corrections needed to transform an observed event trace into the execution of the process model that most closely mimics it.  
 It is often seen as an execution of the synchronised product of the process model and a \emph{trace model} ie a simple model that captures exactly one event log trace. 
 This gives us a series of edits, usually insertions or deletions, that can transform a process trace into the observed trace.  
-For our purposes we will use the term alignment to mean the process trace of the model that aligns closest to the observation, and how to transform this optimal execution to the observed one is clear depending on the edit moves available.
+%For our purposes we will use the term alignment to mean the process trace of the model that aligns closest to the observation, and how to transform this optimal execution to the observed one is clear depending on the edit moves available.
 Alignments thereby help pinpoint exactly where inevitable deviations from expected behaviour occur, and the more distant the aligning word of a model is to its observed trace, the worse the model is at reflecting real system behaviour. 
 
 \subsection{Time-aware Processes}
@@ -133,9 +132,11 @@ Process models can be represented using a variety of formal objects, including P
 They both offer a graphical means by which to represent concurrent systems, and a formal semantics for their execution, which allows one to mathematically analyse the same. 
 Assuming the event logs are a list of words over a finite alphabet (the set of possible discrete events), the problem of calculating the alignment has been extensively studied \cite{Adriansyah2014AligningOA} \cite{BCC21}. 
 The notion of distance used on these words used is usually either Hamming distance or Levenshtein's edit distance. 
-It is natural to want to study explicitly timed systems, that is, systems that record the timestamps that show when each event happens, as by considering events along with their timestamps when mining processes, we can obtain observations regarding complex time constraints, such as the minimum delay between two events, or the maximum duration the system takes to converge upon a state, or meeting deadlines, all of which are highly relevant in real world applications \cite{Cheikhrouhou2014TheTP} \cite{Eder1999TimeCI} \cite{inbook}. 
+It is natural to want to study explicitly timed systems
+%, that is, systems that record the timestamps that show when each event happens, 
+as by considering events along with their timestamps when mining processes, we can obtain observations regarding complex time constraints, such as the minimum delay between two events, or the maximum duration the system takes to converge upon a state, or meeting deadlines, all of which are highly relevant in real world applications \cite{Cheikhrouhou2014TheTP} \cite{Eder1999TimeCI} \cite{inbook}. 
 In addition, one may want to predict the timestamps of processes \cite{SSA11}. 
-In the process mining community, there are ways to use existing process model notation in order to denote some time constraints. BPMN 2.0 comes equipped with \emph{timer events}, which may be catching or interrupting in nature, and can record absolute, relative, and cyclical time constraints. 
+In the process mining community, there are ways to use existing process model notation in order to denote some time constraints. BPMN 2.0 comes equipped with \emph{timer events} and can record absolute, relative, and cyclical time constraints. 
 For our purposes, we use an extension of Petri nets equipped with the ability to express the relative and cyclical time constraints that BPMN equipped with timers can. 
 What we are referring to are time Petri nets, that is, Petri nets augmented with the ability to record and check the duration it takes to fire a transition once enabled, using which one can impose certain constraints on the relationships between the timestamps of different events. 
 
@@ -193,7 +194,8 @@ Once $t$ is fired, the marking is updated to $M'$ as in the untimed case (subtra
 
 An important feature of time Petri nets is the notion of urgency, that is, if a transition has been enabled then it cannot be allowed to simply \emph{time-out}, i.e, waiting, unfired, throughout the period of time is it capable of firing, and then being disabled just by having the Lft lapse. If $t$ is enabled at marking $M$ and has clock value $Lft(t)$, it must fire, or another transition must fire at the same instant disabling $t$.  
 
-We need a notion of valid instances of processes the model wishes to recognise. This is why we equip our time Petri nets with a notion of a final marking. A valid execution begins at the initial marking, fires a sequence of transitions (representing a series of activities occuring at certain times) and at the end of the firing sequence reached a marking $M_f$, with any clock function $I$. 
+%We need a notion of valid instances of processes the model wishes to recognise. This is why we equip our time Petri nets with a notion of a final marking. 
+A valid execution of the model begins at the initial marking, fires a sequence of transitions (representing a series of activities occuring at certain times) and at the end of the firing sequence reached a marking $M_f$, with any clock function $I$. 
 
 \begin{definition}[Language of a time Petri net]
 	A word $w = (a_0, a_1, \dots a_n) \in A*$ is in the language of the labelled time Petri net $\mathcal{L}(N)$ if there is a firable sequence of transitions $(t_0, t_1 \dots t_n) \in T^*$ such that $\lambda((t_0, t_1, \dots, t_n)) = w $ and they transform the initial marking into the final one, that is, for some clock function $I$ on $M_f$, $$(M_0, \mathbf{0}) [t_0, t_1, \dots t_n\rangle (M_f, I)$$
@@ -232,7 +234,7 @@ We need a notion of valid instances of processes the model wishes to recognise. 
 \end{example}
 
 Now we will want to build some vocabulary to help us talk about individual executions of timed words on time Petri nets. 
-These correspond to runs in nondeterministic automata, but in this setting every configuration is a set of token-filled places, so to represent a particular execution we use what we define below as causal processes. 
+%These correspond to runs in nondeterministic automata, but in this setting every configuration is a set of token-filled places, so to represent a particular execution we use what we define below as causal processes. 
 
 \begin{definition}[Causal Net] \label{cn}
 	A \textit{causal net} $CN = (B, E, G)$ is a finitary, acyclic net where 
@@ -272,14 +274,14 @@ In the untimed setting, this is viewed as a problem of minimizing cost over a se
 \begin{example}
 	Consider the process model of Example \ref{TPN} and an observed trace $\sigma_1 = (a, 0)(a, 1)(b,2)(d,3)(e,3)(f,5)$. Clearly, there is an extra $a$ event that cannot have occurred as no process trace has more than one $a$, and also, the $e$ event fires too early, it should have waited at least one time unit after the firing of event $d$. 
 	
-	On the other hand, consider an observed trace of the form $\sigma_2 = (a, 1)(b,1)(d,3)(e,4)(f,5)$. Here, either we can assume the $b$ fired too early, and correct to $(b,2)$, or assume that $b$ event was supposed to be a $c$ event as those two are parallel exclusive choices. 
+	On the other hand, consider an observed trace of the form $\sigma_2 = (a, 1)(b,1)(d,3)(e,4)(f,5)$. Here, either we can assume the $b$ fired too early, and correct to $(b,2)$, or that was supposed to be a $c$ event as those two are parallel choices. 
 	
 	Thirdly, consider an observed trace of the form $\sigma_3 = (a, 1)(d,1)(d,2)(e,4)(f,5)$. Clearly one of the $d$'s needs to be converted to a $b$ or a $c$ event, but which $d$? The reasonable choices seem to be either correcting $(d,1)$ to $(c,1)$ or $(d,2)$ to $(b,2)$ or $(c,2)$. 
 	Timestamps are attached to the letters they belong to, so in a sense, firing event $b$ at time $2$ as compared to firing event $c$ at time $1$ are not easily comparable, as the time constraints on different events are often different. In this manner, it is not clear how meaningful it would be to define edit moves that transform timestamps that are attached to different tasks. 
 \end{example}
 
 
-This is why, we first restrict our attention to the case where the untimed part of $\sigma$ does match the model, that is to say, if $\sigma = (w, \tau)$ where $w$ is the untimed letter sequence and $\tau$ is the timestamp sequence. then we assume that $w$ has a valid causal process $(CN, p)$ over $N$. Clearly this degenerate case of the problem needs to be solved if the general timed alignment problem is to be solved, and we proceed to show that this case is interesting and complex in its own right. 
+This is why, we first restrict our attention to the case where the untimed part of $\sigma$ does match the model, that is to say, if $\sigma = (w, \tau)$ where $w$ is the action labels and $\tau$ is the timestamp sequence. then we assume that $w$ has a valid causal process $(CN, p)$ over $N$. Clearly this degenerate case of the problem needs to be solved if the general timed alignment problem is to be solved, and we argue that this case is interesting and complex in its own right. 
 
 This ensures that we can compare the timing constraints on analogous parts of the process, and hence reason meaningfully about deviances from the model that are purely based on the timing of the process. This gives us a slightly different problem than the general setting of the alignment problem, that focuses purely on timing properties, that is, a purely timed alignment problem, as defined below : 
 
@@ -299,25 +301,30 @@ In order to formalise the same, we need to define what the valid moves of such a
 We define \textit{moves} as functions that map one timing function over $(CN, p)$ to another. 
 What sort of functions are useful notions of transformation on a timed system? 
 
-
 \begin{example}
 	Let us go back to example \ref{TPN}, and study the process model $N$ presented there. 
 
 	Now, say we had the following words that did not fit the model, and we wished to analyse how best to modify them to fit them back into the model. 
 	
 	We start with $(u_1, \sigma_1) = (abdef)(1, 3, 4, 6, 6)$. 
-	A reasonable candidate for the closest valid execution would be if the timing function $\sigma_1$ were replaced by $\gamma = (1, 2, 4, 6, 6)$, and it feels reasonable to say that the cost for aligning $\sigma_1$ to this $\gamma$ is 1. 
+	One candidate for the closest valid execution would be if the timing function $\sigma_1$ were replaced by $\gamma = (1, 2, 4, 6, 6)$, and it feels reasonable to say that the cost for aligning $\sigma_1$ to this $\gamma$ is 1. 
 	A way to arrive at this conclusion is by trying to execute $\sigma$'s firing sequence, where we see that only the guard for $b$ fails. If $b$ were just shifted to fire at 2 instead, the whole run would execute without a hitch. This sort of local, almost typographical error can often happen in systems, and it is the simplest kind to fix.  
 	
 	We start with $(u_1, \sigma_2) = (abdef)(1, 2, 5, 9, 12)$. 
 	The closest valid timing function would try to preserve the positions of $a$ and $b$ but the moment it tries to fire $d$, $\sigma_2$ runs late throughout. The closest we can get, intuitively, is to fire every transition in the lower branch as late as possible, giving $\gamma = (1, 2, 4, 8, 11)$. 
-	Now, when trying to compare these firing sequences, we can view it just like we did for $\sigma_1$, as $d$, $e$ and $f$ all fire later than they should, each timestamp is moved back once, giving an aligning cost of 3. There is however, another way to see this deviation. This cascading chain of errors can be fixed if $d$ is moved back to fire at 4, and all the relative relationships between $d$ and its successors are preserved. This views the tasks $e$ and $f$ as only caring about when $d$ ended, which makes sense, because they depend on $d$'s completion. This means, the switch from the timestamp series $(5,9,12)$ to $(4, 8, 11)$ can be viewed as only a cost 1 edit, if we assume $e$ and $f$ only care about the relative durations or delays between activities. This is a slightly more complex error to conceive of, but it reflects the fact that if a delay at the beginning caused the whole process to occur too late, the important thing to fix is just that initial offset, and the rest of the process will now conform to the model as needed. 
+	Now, when trying to compare these firing sequences, we can view it just like we did for $\sigma_1$, as $d$, $e$ and $f$ all fire later than they should, each timestamp is moved back once, giving an aligning cost of 3. 
+	There is however, another way to see this deviation. 
+	This cascading chain of errors can be fixed if $d$ is moved back to fire at 4, and all the relative relationships between $d$ and its successors are preserved. 
+	This views the tasks $e$ and $f$ as only caring about when $d$ ended, which makes sense, because they depend on $d$'s completion. 
+	This means, the switch from the timestamp series $(5,9,12)$ to $(4, 8, 11)$ can be viewed as only a cost 1 edit
+	%, if we assume $e$ and $f$ only care about the relative durations or delays between activities
+	. 
+	This is a slightly more complex error to conceive of, but it reflects the fact that if a delay at the beginning caused the whole process to occur too late, the important thing to fix is just that initial offset, and the rest of the process will now conform to the model as needed. 
 \end{example}
 
 Based on the above example, we naturally arrive at two types of moves. 
 
 We define a \textit{stamp move} as a move that translates the timing function only at a point, ie, that edits a particular element of the timestamp series $\tau$. 
-Calculating $d_t$ between two traces can be viewed as a cost minimization process in aligning the traces using only stamp moves. 
 
 \begin{definition}[Stamp Move]
 	Given a timing function $\gamma : E \to \mathbb{R}$, formally, we define this as : 
@@ -484,18 +491,21 @@ If we can calculate the family of functions $\forall i \leq n : g_i$ efficiently
 	
 We begin to compute the family of functions $g_i$, starting with $g_1(x) = |1-x|$ in the domain $[0,1]$.
 Utilising the recursion, we proceed to compute $g_2$.  
-	
+	\begin{figure}[!t]
+		\centering 
+		\includegraphics[width = 0.5\textwidth]{stampgraph.png}
+		\caption{Visual representation of a run of the algorithm on Example \ref{stampcomp}}
+	\end{figure}
 	The new domain is $[2,3]$, a simple translation of the previous one because the guard on the second transition is the point $[2,2]$. 
 	Now, we want the sum of both $|x-2|$ and $\min_{x' - x \in [2,2]}g_1(x')$. 
 	The first of these functions, that is the contribution of the last timestamp to the error, is pictured in figure 1 in green dashed lines. 
-	The second component is pictured in black dashed lines. 
-	In this case, the non-green dashed component is simply a translation of $g_1$, as $\min_{x' - x \in [2,2]}g_1(x') = g_1 - 2$. 
+	The second component is pictured in black dashed lines, and is simply a translation of $g_1$, as $\min_{x' - x \in [2,2]}g_1(x') = g_1 - 2$. 
 	
 	Now, let us construct $g_3$ similarly, by summing the contribution of the last timestamp, $|x - 4|$, to  $\min_{x' - x \in [2,4]}g_2(x')$. 
 	We now have an orange segment in the second component! This is used to demarcate any additional segments in  $\min_{x' - x \in [a_i, b_i]}g_{i-1}(x')$ not present in $g_{i-1}$ (if any). 
 	We see the effect of the $\min$ operation is simply to attach a segment with the same length as the $i$th static interval constraint, at the lowest point of $g_{i-1}$. 
 	Now we begin to see a simple way to construct these graphs visually : The next black graph is a translation of the previous blue one, with an orange line segment or the same length as the next static interval constraint inserted at the lowest point, and the next green graph is simply $|x-\sigma_i|$ in the new domain, and summing these two gives the next blue graph. 
-	Even summation is simpler than it looks, as these are all piecewise linear graphs, so you can simply increment the slopes of all the segments of the black-orange curve by one if they're to the right of $\sigma_i$, and by minus one if they're to the left, and translate the height up as needed. 
+	Even summation is simpler than it looks, as these are all piecewise linear graphs, so one can simply increment the slopes of all the segments of the black-orange curve by one if they're to the right of $\sigma_i$, and by minus one if they're to the left, and translate the height up as needed. 
 	Clearly the orange, black and green segments of the next graph are obtained like this, and $g_4$ is their sum. 
 	
 	The procedure for constructing $g_5$ and $g_6$ are identical, and now finally we see that the minimum cost of $2$ is achieved in $g_6$ by setting the last timestamp to $8$. 
@@ -503,20 +513,15 @@ Utilising the recursion, we proceed to compute $g_2$.
 	Now $6$ gives a contribution of $0$ again to the error, letting us look at the preimage of $2$ once again on $g_4$, and so on. 
 	We can backtrack in this manner to build an optimal alignment, such as in this case, $(0,2,5,6,6,8)$. 
 \end{example}
-\begin{figure}[!t]
-	\centering 
-	\includegraphics[width = 0.5\textwidth]{stampgraph.png}
-	\caption{Visual representation of a run of the algorithm on Example \ref{stampcomp}}
-\end{figure}
+
 
 
 With this context, we present the following algorithm that progressively calculates the graphs of $g_i$ each round, and claim it is both correct and efficient. 
-
 The algorithm precisely executes the above procedure, where the subfunction \textsc{graphMin} takes $g_i(d)$ and outputs $$\min_{d-d' \in [a,b]} g(d') = \begin{cases}
 	g(d-a) & l + a \leq d < m + a \\
 	g(m) & m+a \leq d \leq m' + b \\
 	g(d+b) & m' + b < d \leq h + b   \\
-\end{cases}$$ Which is exactly the process of taking the last blue graph and creating the next orange-black graph, and subfunction \textsc{graphAddMod} takes $\min_{d-d' \in [a,b]} g(d')$ and adds $|d - \sigma_{i+1}|$ to it, which is precisely adding the green component to get the next blue graph.  Lastly, the \textsc{backTrack} algorithm backtracks through the graphlist constructed to reverse engineer a word that aligns with the minimal cost calculated. A more detailed algorithm for the same is included in the appendix. 
+\end{cases}$$ Which is exactly the process of taking the last blue graph and creating the next orange-black graph, and subfunction \textsc{graphAddMod} takes $\min_{d-d' \in [a,b]} g(d')$ and adds $|d - \sigma_{i+1}|$ to it, which is precisely adding the green component.  Lastly, the \textsc{backTrack} algorithm backtracks through the list of graphs $\{g_i\}_n$ constructed to reverse engineer a word that aligns with the minimal cost calculated. A more detailed algorithm for backtracking is included in the appendix. 
 
 \begin{figure}[!t]
 	\removelatexerror
@@ -564,21 +569,20 @@ The algorithm precisely executes the above procedure, where the subfunction \tex
 	\end{algorithm}
 \end{figure}
 
-		\begin{theorem}\label{StampAlgoCorr} Algorithm \ref{StampAlgo} is correct, that is, given a linear causal process of a time Petri Net $N$, its result $\gamma$ has the properties : 
-			\begin{enumerate}
-				\item $\gamma \in \mathcal{L}(N)$
+		\begin{theorem}\label{StampAlgoCorr} Algorithm \ref{StampAlgo} is correct, that is, given a linear causal process of a time Petri Net $N$, its result $\gamma$ has the properties :	
+			\begin{enumerate}	\item $\gamma \in \mathcal{L}(N)$
 				\item $\forall x \in \mathcal{L}(N)  : d_t(\gamma, \sigma)  \leq  {d_t(x, \sigma)}$
 			\end{enumerate}
 		\end{theorem}
 		
-		\begin{remark} Note that the subfunctions \textsc{graphMin} and  \textsc{graphAddMod} both run through the list of segments of the graph once each, and hence are linear in the sizes of their inputs, and Algorithm \ref{StampAlgo} calls each of these subfunctions once for each letter of the observed trace, each time on a graph of the size of the current prefix. 
+		\begin{remark} Note that the subfunctions \textsc{graphMin} and  \textsc{graphAddMod} both run through the list of segments of the graph once each, and hence are linear in the sizes of their inputs, and Algorithm \ref{StampAlgo} calls each of these subfunctions once for each letter of the observed trace, each time on a graph with size linear in the current prefix.  
 			So the cost calculation section of Algorithm \ref{StampAlgo} has quadratic time complexity in the size of the input. 
 			
-			The subfunction \textsc{backTrack} runs a binary search on each stored graph in $graphlist$ to find a trace in the language that does indeed give the minimum cost, letter by letter, and so overall takes $O(nlogn)$ time, keeping the \\overall time complexity  $O(n^2)$ where $n = |\sigma|$.
+			The subfunction \textsc{backTrack} runs a binary search on each stored graph in $graphlist$ to find a trace in the language that does indeed give the minimum cost, letter by letter, and so overall takes $O(nlogn)$ time, keeping the overall time complexity  $O(n^2)$ where $n = |\sigma|$.
 		\end{remark}
 		
 \section{Results and Algorithm : Delays Only Setting}
-With delay edits, which constitute a new way of thinking about how a time-series can be transformed, comes a new perspective with which we can view timing functions over causal processes. 
+With delay edits, which constitute a new way of thinking transformations over time-series, comes a new perspective with which we can view timing functions over causal processes. 
 There is of course the standard definition, $\tau : E \to \mathbb{R}^+$ that assigns to each event a timestamp that records exactly when the event occurs. 
 
 Instead, thinking along the lines of durations between events occurring, we will often benefit from considering the following representation when speaking about delay moves, defined as to view a timed word not in terms of its absolute timestamps, but by the delays between them. 
@@ -633,7 +637,7 @@ Instead, thinking along the lines of durations between events occurring, we will
 	Where the order of events is clear (such as here, where it is alphabetical, or in linear causal processes)  we can write the flow function as a tuple, as follows : $$f_w = (1, 2, 4, 4, 2, 2)$$
 \end{example}
 
-Note that $e'$ as defined here is the latest causal predecessor of $e$, that is, it is the firing of $e'$ that enabled $e$. 
+Note that $e'$ as defined here is the latest causal predecessor of $e$, i.e., it is the firing of $e'$ that enabled $e$. 
 Hence, $f_\tau$ as defined produces exactly the time durations that the guards of each transition in the model checks, ie the clock function values during the run. 
 
 As defined, we see that if a word is in the language of the model, then its $f$ function maps events to values that lie within the constraint that the event's corresponding transition demands, that is, it is perfectly aligned with the model with distance 0. 
@@ -641,9 +645,9 @@ This condition is unfortunately not sufficient though, due to urgency concerns, 
 
 Also note that given the underlying causal process and the resulting $f_\tau$, we can reconstruct $\tau$ quite straightforwardly as $$\forall e \in E : \tau(e) = \sum_{e' \leq_G e} f_\tau(e')$$
 
-\begin{lemma}\label{manhattan2}
-	[Delay only distance : $d_\theta$]
-	$d_\theta$ as defined above based on moves, is equivalent to the following formulation directly using the flow function previously defined, as follows : 
+\begin{lemma}[Delay only distance : $d_\theta$]\label{manhattan2}
+	
+	$d_\theta$ as defined previously is equivalent to the following formulation directly using the flow function:
 	$$d_\theta(\tau_1, \tau_2) = \sum_{e \in E}|f_{\tau_1}(e) - f_{\tau_2}(e)|$$
 \end{lemma}	
 
@@ -716,9 +720,9 @@ Hence, we present Algorithm \ref{DelayAlgo}, which minimizes the delay cost at e
 	\section{The General Timed Alignment Problem} \label{align}
 
 Now that we have provided some ways to tackle the purely timed alignment problem in a number of metrics and settings, we come back to the general timed alignment problem. 
-One simple approach for solving the general timed alignment problem would be simply to ignore the timed aspect completely at the start, viewing only the untimed part of the word $w$ and the process model $N$ (now reduced to the underlying untimed Petri net) and applying the $\mathbb{A}^*$ algorithm\cite{Adriansyah2014AligningOA}. This will produce a word in the language of the untimed model, that is, a word $w'$ with a valid causal process. This new untimed word $w'$ can then be given a timing function based on that of $w$, preserving time for substitution edits, synchronous moves, and repeating or deleting timestamps for any pure insertion or deletion moves. This yields a valid causal process and a potentially invalid timing function over it, which is then cast as a purely timed alignment problem. 
+One approach for solving the general timed alignment problem would be to ignore the timed aspect completely at the start, viewing only the untimed part of the word $w$ and the process model $N$ (now reduced to the underlying untimed Petri net) and applying the $\mathbb{A}^*$ algorithm\cite{Adriansyah2014AligningOA}. This will produce a word in the language of the untimed model, that is, a word $w'$ with a valid causal process. This new untimed word $w'$ can then be given a timing function based on that of $w$, preserving timestamps wherever possible and repeating or deleting timestamps for any pure insertion or deletion moves. This yields a valid causal process and a potentially invalid timing function over it, which is then cast as a purely timed alignment problem. 
 
-This approach is quite naive, as it may have a tendency to exaggerate the importance of action label errors. For example, in the following scenario, perhaps the second alignment is better than the first, but it would be overlooked by the approach we described above. 
+This approach is quite naive, as it may have a tendency to exaggerate the importance of action label errors. For example, consider the following scenario : 
 
 \begin{example}
 	Consider the following net $N_3$ where the final marking is presumed to be the sink place: 
@@ -755,17 +759,18 @@ This approach is quite naive, as it may have a tendency to exaggerate the import
 	But if we assign even a tenth of the cost of action edits to timestamp edits, clearly the closer word in the language was $w'' = (b, 100)(a, 100)(a, 100)$. 
 \end{example}
 
-This leaves us once again with the question of how to balance the tradeoff between timestamp edits and action label edits. A more balanced approach would assign a particular cost $c_A$ to action edits and another $c_T$ to time edits, and devise an algorithm to minimise their sum. A potential fix to our previous idea would be to essentially retain the above approach, but instead of just doing it for the best untimed alignment, take a selection of good untimed alignments (up to some allowable threshold), and try to align their timestamps for each untimed candidate, and then minimise the total cost over this set. This alleviates some of the bias towards preserving action labels by allowing for action deviations in case the timestamp alignment proves particularly easy, but this is still just an initial approach to the wider problem, and we hope to find better methods in the future. 
+This leaves us once again with the question balancing the tradeoff between timestamp edits and action label edits. A better approach would be to assign a particular cost $c_A$ to action edits and another $c_T$ to time edits, and devise an algorithm to minimise their sum. A potential fix to our previous idea would be to essentially retain the above approach, but instead of just doing it for the best untimed alignment, take a selection of good untimed alignments (up to some allowable threshold), and try to align timestamps for each untimed candidate, and then minimise the total cost over this set. This alleviates some of the bias towards preserving action labels by allowing for action deviations in case the timestamp alignment proves particularly easy, but this is still just an initial approach to the wider problem, and we hope to find better methods in the future. 
 
 \section{Implementation}
 
-We have implemented the stamp only alignment algorithm in python, available at https://github.com/NehaRino/TimedAlignments. This algorithm is quadratic in time complexity, and runs well in practice, as seen below : 
+We have implemented the stamp only alignment algorithm in python, available at \url{https://github.com/NehaRino/TimedAlignments}. This algorithm is quadratic in time complexity, and runs well in practice, as seen below 
+
 \begin{tabular}{|c| |c|}
 	\hline
-	Length of Trace & Running Time (seconds)\\ 
+	Trace Length & Running Time (seconds)\\ 
 	\hline
-	10 & 0.0013287267000123392\\
-	100 & 0.10211773350001749\\
+	10 & 0.001328726700012\\
+	100 & 0.102117733500017\\
 	1000 &9.899462208500154\\
 	\hline
 \end{tabular}
