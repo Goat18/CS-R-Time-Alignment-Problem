@@ -97,7 +97,7 @@
 	
 	\begin{abstract}
 	The subject of this paper is to study conformance checking for timed models, that is, process models that consider both the sequence of events in a process as well as the timestamps at which each event is recorded. 
-	Time-aware process mining is a growing subfield of research, and as tools that seek to discover timing related properties in processes develop, so to does the need for conformance checking techniques that can tackle time constraints and provide insightful quality measures for time-aware process models. 
+	Time-aware process mining is a growing subfield of research, and as tools that seek to discover timing related properties in processes develop, so does the need for conformance checking techniques that can tackle time constraints and provide insightful quality measures for time-aware process models. 
 	In particular, one of the most useful conformance artefacts is the alignment, that is, finding the minimal changes necessary to correct a new observation to conform to a process model.  
 	In this paper, we set our problem of timed alignment and solve two cases each corresponding to a different metric over time processes. For the first, we have an algorithm whose time complexity is linear both in the size of the observed trace and the process model, while for the second we have a quadratic time algorithm for linear process models. 
 \end{abstract}
@@ -154,7 +154,7 @@ For all other types of models, we present an encoding in simplex that solves the
 The second distance function utilises the structure of the process model to study distances between time processes, and we present a straightforward algorithm for solving the alignment in this case, whose time complexity is linear in the size of the causal process and the transition set of the model. The second setting, and the new notion of delay edits that it represents, provide insight into time processes and their relevant constraints. 
 
 \section{Preliminaries}
-We represent events as timed letters, that is of the form $(a,t)$ where $a \in \Sigma$ is the name of the action taken during an event, and $t$ denotes the time at which said action was taken. 
+We represent events as timed letters, of the form $(a,t)$ where $a \in \Sigma$ is the name of the action taken during an event, and $t$ denotes the time at which said action was taken. 
 \begin{definition}
 	An timed trace is a sequence of timed events of the form $\gamma \in (\Sigma \times \mathbb{R}^+)^*$, seen as a timed word.  
 \end{definition}
@@ -192,7 +192,7 @@ A transition $t$ is fireable from state $S = (M, I)$ after delay $\theta \in \ma
 
 Once $t$ is fired, the marking is updated to $M'$ as in the untimed case (subtracting one token from each preplace, and adding one token to each postplace), and the clock function $I$ is updated to $I'$ by increasing clock values by $\theta$ for any transition that was enabled at both $M$ and $M'$, setting clock values to 0 for any transitions newly enabled by $M'$ that were not enabled at $M$, and leaving clock values undefined for any transitions that are not currently enabled. This is denoted by $(M, I)[t\rangle(M', I')$
 
-An important feature of time Petri nets is the notion of urgency, that is, if a transition has been enabled then it cannot be allowed to simply \emph{time-out}, i.e, waiting, unfired, throughout the period of time is it capable of firing, and then being disabled just by having the Lft lapse. If $t$ is enabled at marking $M$ and has clock value $Lft(t)$, it must fire, or another transition must fire at the same instant disabling $t$.  
+An important feature of time Petri nets is the notion of urgency, that is, if a transition has been enabled then it cannot be allowed to simply wait, unfired, throughout the period of time is it capable of firing, and then being disabled just by having the Lft lapse. If $t$ is enabled at marking $M$ and has clock value $Lft(t)$, it must fire, or another transition must fire at the same instant disabling $t$.  
 
 %We need a notion of valid instances of processes the model wishes to recognise. This is why we equip our time Petri nets with a notion of a final marking. 
 A valid execution of the model begins at the initial marking, fires a sequence of transitions (representing a series of activities occuring at certain times) and at the end of the firing sequence reached a marking $M_f$, with any clock function $I$. 
@@ -283,7 +283,7 @@ In the untimed setting, this is viewed as a problem of minimizing cost over a se
 
 This is why, we first restrict our attention to the case where the untimed part of $\sigma$ does match the model, that is to say, if $\sigma = (w, \tau)$ where $w$ is the action labels and $\tau$ is the timestamp sequence. then we assume that $w$ has a valid causal process $(CN, p)$ over $N$. Clearly this degenerate case of the problem needs to be solved if the general timed alignment problem is to be solved, and we argue that this case is interesting and complex in its own right. 
 
-This ensures that we can compare the timing constraints on analogous parts of the process, and hence reason meaningfully about deviances from the model that are purely based on the timing of the process. This gives us a slightly different problem than the general setting of the alignment problem, that focuses purely on timing properties, that is, a purely timed alignment problem, as defined below : 
+This ensures that we can compare the timing constraints on analogous parts of the process, and hence reason meaningfully about deviances from the model that are purely based on the timing of the process. This gives us a slightly different problem than the general setting of the alignment problem, that focuses purely on timing properties : 
 
 \begin{definition}[The Purely Timed Alignment Problem]
 	Given a process model $N$ denoted by a Time Petri Net and a timed trace $(w, \sigma)$, and a valid causal process of the untimed part $w$, we wish to find a valid timing function $\gamma$ such that $d(\sigma, \gamma) = \underset{x \in \mathcal{L}(N)}{\min} d(\sigma, x)$ for some distance function $d$ on timing functions. 
@@ -397,7 +397,7 @@ This lemma also allows us to restate the alignment problem for $d_t$, as we see 
 \subsection{General Bounded Time Petri Nets}
 The alignment problem in the stamp-only setting can be viewed as a problem of convex optimization, minimizing the stamp only cost from a fixed observed trace $\sigma$, which by Lemma \ref{manhattan} is $cost(\tau|_i) = \sum_{j = 1}^{i} |\tau_j - \sigma_j|$ over the set of valid timestamp series $\tau$ for the model $N$. 
 What remains is to show that the space of valid runs of the model is a convex set, and this set has been studied extensively in \cite{BM82}. 
-In this paper, the concept of a firing domain is proposed, that is, at each configuration of the time Petri net, the set of valid time intervals in which a transition enabled at that configuration can fire. Using these firing domains, states are grouped into state classes, that is, sets of states with clock functions in the same firing domain, and for bounded time Petri nets there are finitely many such state classes. 
+In this paper, the concept of a firing domain is proposed, that is, at each configuration of the time Petri net, the set of valid time intervals in which a transition enabled at that configuration can fire. Using these firing domains, states are grouped into state classes,which are sets of states with clock functions in the same firing domain, and for bounded time Petri nets there are finitely many such state classes. 
 Calculating equivalence classes of the same, successively, till we find final configurations, gives a characterisation of the solution set of all valid timestamp series, and this is proved to be of the following form, which is a set of constraints defining a convex set. 
 
 Hence, we claim that using an efficient encoding of the target function using the firing domain formulation described above, the problem can be solved using the simplex algorithm, which is used to solve convex optimization problems in good time in practice, and having worst case exponential time complexity. 
@@ -498,7 +498,7 @@ Utilising the recursion, we proceed to compute $g_2$.
 	\end{figure}
 	The new domain is $[2,3]$, a simple translation of the previous one because the guard on the second transition is the point $[2,2]$. 
 	Now, we want the sum of both $|x-2|$ and $\min_{x' - x \in [2,2]}g_1(x')$. 
-	The first of these functions, that is the contribution of the last timestamp to the error, is pictured in figure 1 in green dashed lines. 
+	The first of these functions, i.e., the contribution of the last timestamp to the error, is pictured in figure 1 in green dashed lines. 
 	The second component is pictured in black dashed lines, and is simply a translation of $g_1$, as $\min_{x' - x \in [2,2]}g_1(x') = g_1 - 2$. 
 	
 	Now, let us construct $g_3$ similarly, by summing the contribution of the last timestamp, $|x - 4|$, to  $\min_{x' - x \in [2,4]}g_2(x')$. 
@@ -569,7 +569,7 @@ The algorithm precisely executes the above procedure, where the subfunction \tex
 	\end{algorithm}
 \end{figure}
 
-		\begin{theorem}\label{StampAlgoCorr} Algorithm \ref{StampAlgo} is correct, that is, given a linear causal process of a time Petri Net $N$, its result $\gamma$ has the properties :	
+		\begin{theorem}\label{StampAlgoCorr} Algorithm \ref{StampAlgo} is correct, i.e., given a linear causal process of a time Petri Net $N$, its result $\gamma$ has the properties :	
 			\begin{enumerate}	\item $\gamma \in \mathcal{L}(N)$
 				\item $\forall x \in \mathcal{L}(N)  : d_t(\gamma, \sigma)  \leq  {d_t(x, \sigma)}$
 			\end{enumerate}
