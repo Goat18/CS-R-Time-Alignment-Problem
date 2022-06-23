@@ -537,7 +537,7 @@
 	
 	
 	
-	With this context, we present the following algorithm that progressively calculates the graphs of $g_i$ each round, and claim it is both correct and efficient. 
+	With this context, we present the following algorithm that progressively calculates the graphs of $g_i$ (represented as lists of segments, each characterised by their slopes and x-projections of endpoints) each round, and claim it is both correct and efficient. 
 	The algorithm precisely executes the above procedure, where the subfunction \textsc{graphMin} takes $g_i(d)$ and outputs $$\min_{d-d' \in [a,b]} g(d') = \begin{cases}
 		g(d-a) & l + a \leq d < m + a \\
 		g(m) & m+a \leq d \leq m' + b \\
@@ -552,13 +552,10 @@
 			\begin{algorithmic}
 				\State \textbf{Input : }  $\sigma$, a list of static interval constraints for the linear model $SI$
 				\State \textbf{Output : }  $cost = \min_{x \in \mathcal{L}(N)}{d_t(x, \sigma)}$, $\gamma \in \mathcal{L}(N)$ such that $d_t(\gamma, \sigma) = cost$
-				
 				\State \textbf{Object :} $graph = \{(left, slope, right) | graph[i].left = graph[i-1].right\}$
-				
 				\Procedure{StampOnlyAlgo}{$\sigma, SI$}
 				\State Initialise System 
-				\State $a \gets \pi_1(SI[0])$
-				\State $b \gets \pi_2(SI[0])$		
+				\State $[a, b] \gets SI[i]$
 				\State $graph \gets \{(a, 0, b)\}$
 				\State \textsc{graphAddMod}($graph, \sigma[0]$)
 				\State $graphlist \gets \{graph\}$
@@ -566,8 +563,7 @@
 				\State $cost \gets |a - \sigma[0]|$
 				
 				\While{$i < |sigma|$}
-				\State $a \gets \pi_1(SI[i])$
-				\State $b \gets \pi_2(SI[i])$		
+				\State $[a, b] \gets SI[i]$
 				\State \textsc{graphMin}($graph, a, b$)
 				\State \textsc{graphAddMod}($graph, \sigma[i]$)
 				\State $graphlist.append(graph)$
@@ -787,14 +783,14 @@
 	
 	We have implemented the stamp only alignment algorithm in python, available at \url{https://github.com/NehaRino/TimedAlignments}. This algorithm is quadratic in time complexity, and runs well in practice, as seen below 
 	\centerline{
-	\begin{tabular}{|c|c|c|c|}
-		\hline
-		Trace Length & 10 & 100 & 1000\\
-		\hline
-		Running Time (seconds) & 0.001 & 0.1 & 9.8 \\ 
-		\hline
-	\end{tabular}
-}
+		\begin{tabular}{|c|c|c|c|}
+			\hline
+			Trace Length & 10 & 100 & 1000\\
+			\hline
+			Running Time (seconds) & 0.001 & 0.1 & 9.8 \\ 
+			\hline
+		\end{tabular}
+	}
 	
 	%\begin{tabular}{|c| c|}
 	%	\hline
@@ -808,7 +804,7 @@
 	
 	\section{Perspectives and Conclusion}
 	
-	In this paper, we posed the alignment problem for timed processes, devised three metrics with which to study alignments for timestamp sequences, and solved the purely timed alignment problem for the first two metrics proposed. As far as we know, this is the first step in conformance checking for time-aware process mining, and much further work can be inspired from this point. The alignment problem for the third metric $d_N$ is a first future direction. Secondly, for both metrics studied here the class of models for which the alignment problem was solved efficiently are structurally restricted (being linear causal processes for $d_t$ and extended free choice time petri nets for $d_\theta$) and it would be interesting to see how to broaden the scope of these methods to larger classes of process models. Thirdly, further investigation in the general timed alignment problem is necessary, as our proposed approach here is rather rudimentary and can certainly be improved. Lastly, there are a number of other conformance artefacts that can be set and studied in the timed setting, such as anti-alignments \cite{CBC21}, and it would be very interesting to better develop all such conformance checking methods in a manner that accounts for timed process models.
+	In this paper, we posed the alignment problem for timed processes, devised three metrics with which to study alignments for timestamp sequences, and solved the purely timed alignment problem for the first two metrics proposed. As far as we know, this is the first step in conformance checking for time-aware process mining, and much further work can be inspired from this point. The alignment problem for the third metric $d_N$ is a first future direction. Secondly, for both metrics studied here the class of models for which the alignment problem was solved efficiently are structurally restricted (being linear causal processes for $d_t$ and extended free choice time petri nets for $d_\theta$) and it would be interesting to see how to broaden the scope of these methods to larger classes of process models. Thirdly, further investigation in the general timed alignment problem is necessary, as our proposed approach here is rather rudimentary and can certainly be improved. Lastly, there are a number of other conformance artefacts that can be set and studied in the timed setting, such as anti-alignments \cite{CBC21}, and one can better develop all such conformance checking methods to account for timed process models.
 	
 	\bibliographystyle{IEEEtran}
 	\bibliography{Conformanceieee}
@@ -1062,8 +1058,7 @@
 	\end{example}
 	
 	\begin{example}\label{Linearcp}
-		On the other hand, consider the following time Petri net $N_1$ : 
-		
+		On the other hand, consider the following time Petri net $N_1$ : \\
 		\adjustbox{scale = 0.8}{\begin{tikzcd}
 				{} & {\fbox{a}} & {\fbox{e}} & \bigcirc & {\fbox{a}} & \bigcirc & {\fbox{a}} & \bigcirc \\
 				& \bigcirc & {\fbox{c}} & \bigcirc & \bigcirc & {\fbox{c}} & \bigcirc & {\fbox{b}} \\
