@@ -260,7 +260,7 @@ In the untimed setting, this is viewed as a problem of minimizing cost over a se
 
 This is why, we first restrict our attention to the case where the untimed part of $\sigma$ does match the model, that is to say, if $\sigma = (w, \tau)$ where $w$ is the action labels and $\tau$ is the timestamp sequence. then we assume that $w$ has a valid causal process $(CN, p)$ over $N$. Clearly this degenerate case of the problem needs to be solved if the general timed alignment problem is to be solved, and we argue that this case is interesting and complex in its own right. 
 
-This ensures that we can compare the timing constraints on analogous parts of the process, and hence reason meaningfully about deviances from the model that are purely based on the timing of the process. This gives us a slightly different problem than the general setting of the alignment problem, that focuses purely on timing properties : 
+This ensures that we can compare the timing constraints on analogous parts of the process, and hence reason meaningfully about deviances from the model that are purely based on the timing of the process. This gives us the following problem : 
 
 \begin{definition}[The Purely Timed Alignment Problem]
 	Given a process model $N$ denoted by a Time Petri Net and a timed trace $(w, \sigma)$, and a valid causal process of the untimed part $w$, we wish to find a valid timing function $\gamma$ such that $d(\sigma, \gamma) = \underset{x \in \mathcal{L}(N)}{\min} d(\sigma, x)$ for some distance function $d$ on timing functions. 
@@ -268,7 +268,11 @@ This ensures that we can compare the timing constraints on analogous parts of th
 
 Hence, for the first few sections of this paper, we will ignore the untimed parts of the words, i.e we assume the word $\sigma$ we wish to align comes with a valid causal process $(CN, p)$ of the model, and simply seek to find timing functions on said causal process that are both valid, and minimize distance to $\sigma$ under the metric of choice. 
 
-We shall revisit the general timed alignment problem in section \ref{align}, and show how our methods for solving the purely timed alignment problem can be adapted using existing techniques to provide approaches for solving the general timed alignment problem. 
+We shall revisit the general timed alignment problem in section \ref{align}, and show how our methods 
+%for solving the purely timed alignment problem 
+can be adapted using existing techniques to provide approaches for solving the general 
+%timed alignment 
+problem. 
 
 \subsection{Edit Moves on Timing Functions}\label{dualrep}
 Now we come to the problem of deciding how to compare two timing functions over the same causal process, and quantify how close they are to each other. 
@@ -754,6 +758,7 @@ We have implemented the stamp only alignment algorithm in python, available at \
 
 \section{Perspectives and Conclusion}
 
+In this paper, we posed the alignment problem for timed processes, devised three metrics with which to study alignments for timestamp sequences, and solved the purely timed alignment problem for the first two metrics proposed. As far as we know, this is the first step in conformance checking for time-aware process mining, and much further work can be inspired from this point. The alignment problem for the third metric $d_N$ is a first future direction. Secondly, for both metrics studied here the class of models for which the alignment problem was solved efficiently are structurally restricted (being linear causal processes for $d_t$ and extended free choice time petri nets for $d_\theta$) and it would be interesting to see how to broaden the scope of these methods to larger classes of process models. Thirdly, further investigation in the general timed alignment problem is necessary, as our proposed approach here is rather rudimentary and can certainly be improved. Lastly, there are a number of other conformance artefacts that can be set and studied in the timed setting, such as anti-alignments \cite{CBC21}, and it would be very interesting to better develop all such conformance checking methods in a manner that accounts for timed process models.
 	
 	\bibliographystyle{IEEEtran}
 	\bibliography{Conformanceieee}
