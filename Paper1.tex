@@ -12,12 +12,14 @@
 
 \usepackage[english]{babel}
 
+%% \usepackage{url}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \makeatletter
 \renewcommand{\ALG@beginalgorithmic}{\small}
 \makeatother
 
+\usepackage{todonotes}
 \usepackage{mathtools}
 \usepackage{mathdots}
 \usepackage{tikz-cd} 
@@ -73,25 +75,23 @@
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
 		T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \begin{document}
-	
 	\title{Timed Alignments
-		
-		%% \thanks{Identify applicable funding agency here. If none, delete this.}
+		\thanks{Neha Rino was funded by the International Master's Scholarships Program IDEX of Université Paris-Saclay.}
 	}
 	
 	\author{\IEEEauthorblockN{Thomas Chatain}
-		\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-			\textit{name of organization (of Aff.)}\\
-			City, Country \\
-			email address or ORCID}
+		\IEEEauthorblockA{\textit{LMF, ENS Paris-Saclay,}\\
+                  \textit{CNRS, Université Paris-Saclay, Inria} \\
+		  Gif-sur-Yvette, France\\
+		  \url{thomas.chatain@ens-paris-saclay.fr}\\
+                  ORCID 0000-0002-1470-5074}
 		\and
 		\IEEEauthorblockN{Neha Rino}
-		\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-			\textit{name of organization (of Aff.)}\\
-			City, Country \\
-			email address or ORCID}
-		
-	}
+		\IEEEauthorblockA{\textit{LMF, ENS Paris-Saclay,}\\
+                  \textit{CNRS, Université Paris-Saclay, Inria} \\
+		  Gif-sur-Yvette, France\\
+		  \url{neha.rino@ens-paris-saclay.fr}}
+	        }
 	
 	\maketitle
 	
@@ -104,7 +104,7 @@
 
 
 \begin{IEEEkeywords}
-	Conformance checking, Alignments, Timestamps, Timed Petri nets
+	Conformance checking, Alignments, Timestamps, Time Petri nets
 \end{IEEEkeywords}
 
 \section{Introduction} 
@@ -154,26 +154,27 @@ For all other types of models, we present an encoding in simplex that solves the
 The second distance function utilises the structure of the process model to study distances between time processes, and we present a straightforward algorithm for solving the alignment in this case, whose time complexity is linear in the size of the causal process and the transition set of the model. The second setting, and the new notion of delay edits that it represents, provide insight into time processes and their relevant constraints. 
 
 \section{Preliminaries}
-We represent events as timed letters, of the form $(a,t)$ where $a \in \Sigma$ is the name of the action taken during an event, and $t$ denotes the time at which said action was taken. 
+We represent events as pairs $(a,t)$ where $a \in \Sigma$ is the name of the action, and $t$ denotes the time at which said action was taken.
 \begin{definition}
-	An timed trace is a sequence of timed events of the form $\gamma \in (\Sigma \times \mathbb{R}^+)^*$, seen as a timed word.  
+  A timed trace is a sequence $\gamma \in (\Sigma \times \mathbb{R}^+)^*$ of timed events of the form, seen as a timed word.  
 \end{definition}
 
 In this paper we will often ignore the untimed parts of timed words, i.e., the projection onto $\Sigma^*$, leaving just the timestamps, a sequence belonging to $\mathbb{R}^{+*}$. 
 
 The timed process model that attempts to capture the behaviour of all observed event traces recorded from the system is represented here as a labelled time Petri net. 
 
-\begin{definition}[Time Petri Net] \label{tpn} A labelled \textit{time Petri net} is a tuple $N = (P, T, F, SI, A, \lambda, M_0, M_f)$, where $P, T$ are disjoint sets of places and transitions respectively,  $F \subseteq (P \times T) \cup (T \times P)$ is the flow relation,  $SI : T \rightarrow \mathbb{I}$ is the static interval function, where $SI(t) = (Eft(t), Lft(t))$ such that $Eft$ stands for earliest firing time, and $Lft$ for latest firing time, $\lambda : T \rightarrow A$ is the labelling function, labelling transitions with actions from the action set $A$, and  $ M_0 , M_f: P \to \mathbb{N}$ are the initial and final markings of $N$. 
+\todo{the action set should be $\Sigma$ here too, right?}
+\begin{definition}[Time Petri Net] \label{tpn} A labelled \textit{time Petri net} (or TPN) \todo{now, write TPN everywhere}is a tuple $N = (P, T, F, SI, A, \lambda, M_0, M_f)$, where $P, T$ are disjoint sets of places and transitions respectively,  $F \subseteq (P \times T) \cup (T \times P)$ is the flow relation,  $SI : T \rightarrow \mathbb{I}$ is the static interval function, where $SI(t) = (Eft(t), Lft(t))$ such that $Eft$ stands for earliest firing time, and $Lft$ for latest firing time, $\lambda : T \rightarrow A$ is the labelling function, labelling transitions with actions from the action set $A$, and  $ M_0 , M_f: P \to \mathbb{N}$ are the initial and final markings. %% of $N$. 
 \end{definition}
 
 Given a transition $t \in T$ we define the pre-set of $t$ as $\pre t = \{p \in P | (p, t) \in F\}$ and its post-set similarly is defined as $t \pre = \{p \in P | (t, p) \in F\}$, (the presets and post-sets of places are defined similarly). A transition $t$ of a time Petri net is \textit{enabled} at marking $M$ iff $\forall p \in \pre t :  M(p) > 0$. 
 The set of all enabled transitions at a marking $M$ is denoted by \textit{Enabled(M)}. 
 
-A \textit{state} of a time Petri net $N = (P, T, F, SI, M_0)$ is a pair $S = (M, I)$, where $M$ is a marking of $N$ and $I : Enabled(M) \rightarrow \mathbb{R^+}$ is called the \textit{clock function}. The initial state is $(M_0, \mathbf{0})$, where $\mathbf{0} $ is the zero function. 
+A \textit{state} of a TPN \todo{keep $\lambda$, $M_f$\dots}$N = (P, T, F, SI, M_0)$ is a pair $S = (M, I)$, where $M$ is a marking of $N$ and $I : Enabled(M) \rightarrow \mathbb{R^+}$ is called the \textit{clock function}. The initial state is $(M_0, \mathbf{0})$, where $\mathbf{0} $ is the zero function. 
 
 A transition $t$ is fireable from state $S = (M, I)$ after delay $\theta \in \mathbb{T}$ iff $t$ is enabled at $M$, and updating the clock function to increment by delay $\theta$ will keep $t$'s new clock value $I(t)  + \theta$ in the range $[Eft(t), Lft(t)]$ as determined by the static interval function. 
 
-Once $t$ is fired, the marking is updated to $M'$ as in the untimed case (subtracting one token from each preplace, and adding one token to each postplace), and the clock function $I$ is updated to $I'$ by increasing clock values by $\theta$ for any transition that was enabled at both $M$ and $M'$, setting clock values to 0 for any transitions newly enabled by $M'$ that were not enabled at $M$, and leaving clock values undefined for any transitions that are not currently enabled. This is denoted by $(M, I)[t\rangle(M', I')$
+Once $t$ is fired, the marking is updated to $M'$ as in the untimed case (subtracting one token from each preplace, and adding one token to each postplace), and the clock function $I$ is updated to $I'$ by increasing clock values by $\theta$ for any transition that was enabled at both $M$ and $M'$, setting clock values to 0 for any transitions newly enabled by $M'$ that were not enabled at $M$, and leaving clock values undefined for any transitions that are not currently enabled. This is denoted by $(M, I)[t\rangle(M', I')$.\todo{define mathematically}
 
 An important feature of time Petri nets is the notion of urgency, that is, if $t$ is enabled at marking $M$ and has clock value $Lft(t)$, it must fire, or another transition must fire at the same instant disabling $t$.  
 
@@ -181,10 +182,11 @@ An important feature of time Petri nets is the notion of urgency, that is, if $t
 A valid execution of the model begins at the initial marking, fires a sequence of transitions (representing a series of activities occuring at certain times) and at the end of the firing sequence reached a marking $M_f$, with any clock function $I$. 
 
 \begin{definition}[Language of a time Petri net]
-	A word $w = (a_0, a_1, \dots a_n) \in A*$ is in the language of the labelled time Petri net $\mathcal{L}(N)$ if there is a firable sequence of transitions $(t_0, t_1 \dots t_n) \in T^*$ such that $\lambda((t_0, t_1, \dots, t_n)) = w $ and they transform the initial marking into the final one, that is, for some clock function $I$ on $M_f$, $$(M_0, \mathbf{0}) [t_0, t_1, \dots t_n\rangle (M_f, I)$$
+	A word $w = (a_0, a_1, \dots a_n) \in A^*$ is in the language of the labelled time Petri net $\mathcal{L}(N)$ if there is a firable sequence of transitions $(t_0, t_1 \dots t_n) \in T^*$ such that $\lambda((t_0, t_1, \dots, t_n)) = w $ and they transform the initial marking into the final one, that is, for some clock function $I$ on $M_f$, $$(M_0, \mathbf{0}) [t_0, t_1, \dots t_n\rangle (M_f, I)$$
 \end{definition}
 
 \begin{example}\label{TPN}
+  \todo{put intervals below $c$ and $e$, then scale vertically}
 	Consider the following example of a time Petri net $N$: \\
 	\adjustbox{scale = 0.9}{
 	\begin{tikzcd}
