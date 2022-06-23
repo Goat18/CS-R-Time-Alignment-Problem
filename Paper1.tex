@@ -9,9 +9,8 @@
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
-\usepackage{todo}
 
-\usepackage[english]{babel}
+\usepackage{babel}
 
 \usepackage{algorithm}
 \usepackage{algpseudocode}
@@ -77,7 +76,7 @@
 	
 	\title{Timed Alignments\\
 		
-		%% \thanks{Identify applicable funding agency here. If none, delete this.}
+		\thanks{Identify applicable funding agency here. If none, delete this.}
 	}
 	
 	\author{\IEEEauthorblockN{Thomas Chatain}
@@ -151,7 +150,7 @@ This paper seeks to provide a framework by which to do the very same, and set an
 
 In this paper, we propose three different distance functions over timed words, and study the alignment problem for the first two. 
 The first is essentially Manhattan distance, and hence very standard, and has a quadratic time algorithm in the case of a structurally restricted class of models (linear causal processes).
-For all other types of models, we present an encoding in simplex that solves the problem, albeit with exponential worst-time complexity. %% and polynomial average running time. 
+For all other types of models, we present an encoding in simplex that solves the problem, albeit with exponential worst-time complexity and polynomial average running time. 
 The second distance function utilises the structure of the process model to study distances between time processes, and we present a straightforward algorithm for solving the alignment in this case, whose time complexity is linear in the size of the causal process and the transition set of the model. The second setting, and the new notion of delay edits that it represents, provide insight into time processes and their relevant constraints. 
 
 \section{Preliminaries}
@@ -164,39 +163,19 @@ In this paper we will often ignore the untimed parts of timed words, i.e., the p
 
 The timed process model that attempts to capture the behaviour of all observed event traces recorded from the system is represented here as a labelled time Petri net. 
 
-\begin{definition}[Time Petri Net] \label{tpn} A labelled \textit{time Petri net} is a tuple $N = (P, T, F, SI, \lambda, M_0, M_f)$, where 
-	\begin{enumerate}
-		%% \item $P$ is a set of places 
-		
-		%% \item $T$ is a set of transitions 
-		
-		%% \item $P \cap T = \emptyset$ 
-		
-		\item $P$ and $T$ are disjoint sets of \emph{places} and \emph{transistions}
-
-                \item $F \subseteq (P \times T) \cup (T \times P)$ is a flow relation 
-		
-		\item $SI : T \rightarrow \mathbb{I}$ is the static interval function, where $SI(t) = (Eft(t), Lft(t))$ such that $Eft$ stands for earliest firing time, and $Lft$ for latest firing time. 
-		
-		\item $\lambda : T \rightarrow A$ is the labelling function, labelling transitions with actions 
-		
-		\item $ M_0 : P \to \mathbb{N}$ is the initial marking of $N$
-		
-		\item $M_f : P \to \mathbb{N}$ is the final marking of $N$
-	\end{enumerate}
+\begin{definition}[Time Petri Net] \label{tpn} A labelled \textit{time Petri net} is a tuple $N = (P, T, F, SI, A, \lambda, M_0, M_f)$, where $P, T$ are disjoint sets of places and transitions respectively,  $F \subseteq (P \times T) \cup (T \times P)$ is the flow relation,  $SI : T \rightarrow \mathbb{I}$ is the static interval function, where $SI(t) = (Eft(t), Lft(t))$ such that $Eft$ stands for earliest firing time, and $Lft$ for latest firing time, $\lambda : T \rightarrow A$ is the labelling function, labelling transitions with actions from the action set $A$, and  $ M_0 , M_f: P \to \mathbb{N}$ are the initial and final markings of $N$. 
 \end{definition}
 
-The semantics of a time Petri net start off quite close to those of Petri nets. Given a transition $t \in T$ we define the pre-set of $t$ as $\pre t = \{p \in P | (p, t) \in F\}$ and its post-set similarly is defined as $t \pre = \{p \in P | (t, p) \in F\}$, (the presets and post-sets of places are defined similarly). A transition $t$ of a time Petri net is \textit{enabled} at marking $M$ iff $\forall p \in \pre t :  M(p) > 0$. 
+Given a transition $t \in T$ we define the pre-set of $t$ as $\pre t = \{p \in P | (p, t) \in F\}$ and its post-set similarly is defined as $t \pre = \{p \in P | (t, p) \in F\}$, (the presets and post-sets of places are defined similarly). A transition $t$ of a time Petri net is \textit{enabled} at marking $M$ iff $\forall p \in \pre t :  M(p) > 0$. 
 The set of all enabled transitions at a marking $M$ is denoted by \textit{Enabled(M)}. 
 
-This formalism begins to differ from untimed Petri nets with the notion of states and clock functions. The current marking is insufficient to define the state of the whole system as the time elapsed since a transition was enabled is crucial information to determine future behaviour. Hence, a \textit{state} of a time Petri net $N = (P, T, F, SI, M_0)$ is a pair $S = (M, I)$, where $M$ is a marking of $N$ and $I : Enabled(M) \rightarrow \mathbb{R^+}$ is called the \textit{clock function}. The initial state is $(M_0, \mathbf{0})$, where $\mathbf{0} $ is the zero function. 
+A \textit{state} of a time Petri net $N = (P, T, F, SI, M_0)$ is a pair $S = (M, I)$, where $M$ is a marking of $N$ and $I : Enabled(M) \rightarrow \mathbb{R^+}$ is called the \textit{clock function}. The initial state is $(M_0, \mathbf{0})$, where $\mathbf{0} $ is the zero function. 
 
 A transition $t$ is fireable from state $S = (M, I)$ after delay $\theta \in \mathbb{T}$ iff $t$ is enabled at $M$, and updating the clock function to increment by delay $\theta$ will keep $t$'s new clock value $I(t)  + \theta$ in the range $[Eft(t), Lft(t)]$ as determined by the static interval function. 
 
 Once $t$ is fired, the marking is updated to $M'$ as in the untimed case (subtracting one token from each preplace, and adding one token to each postplace), and the clock function $I$ is updated to $I'$ by increasing clock values by $\theta$ for any transition that was enabled at both $M$ and $M'$, setting clock values to 0 for any transitions newly enabled by $M'$ that were not enabled at $M$, and leaving clock values undefined for any transitions that are not currently enabled. This is denoted by $(M, I)[t\rangle(M', I')$
 
-An important feature of time Petri nets is the notion of urgency, that is, if a transition has been enabled then it cannot be allowed to simply wait, unfired, throughout the period of time is it capable of firing, and then being disabled just by having the Lft lapse. If $t$ is enabled at marking $M$ and has clock value $Lft(t)$, it must fire, or another transition must fire at the same instant disabling $t$.  
-\todo{shorten: $t$ must fire before $Lft(t)$, unless it is disabled by another transition.}
+An important feature of time Petri nets is the notion of urgency, that is, if $t$ is enabled at marking $M$ and has clock value $Lft(t)$, it must fire, or another transition must fire at the same instant disabling $t$.  
 
 %We need a notion of valid instances of processes the model wishes to recognise. This is why we equip our time Petri nets with a notion of a final marking. 
 A valid execution of the model begins at the initial marking, fires a sequence of transitions (representing a series of activities occuring at certain times) and at the end of the firing sequence reached a marking $M_f$, with any clock function $I$. 
@@ -245,17 +224,11 @@ Now we will want to build some vocabulary to help us talk about individual execu
 	$$\forall b \in B : |b \pre| \leq 1 \wedge | \pre b| \leq 1.$$
 \end{definition}
 
-This can be viewed as the original Petri net itself, but every time a place is revisited, it is copied afresh to ensure that the execution only ever moves forward. 
+%This can be viewed as the original Petri net itself, but every time a place is revisited, it is copied afresh to ensure that the execution only ever moves forward. 
 Hence, multiple elements of $B$ or $E$ map to the same element in $P$ or $T$ respectively, a notion that is expressed via the map $p$ defined below. 
 
 \begin{definition}[Homomorphism] \label{hom}  Let $N$ be a time Petri net with place set $P$ and transition set $T$, and ${CN = (B, E, G)}$ be a causal net. 
-	A mapping $p : B \cup E \rightarrow P \cup T$ is a \textit{homomorphism} if 
-	
-	\begin{enumerate}
-		\item $p(B) \subseteq P$
-		\item $p(E) \subseteq T$
-		\item $\forall e \in E$ the restriction of $p$ to $\pre e$ is a bijection between $\pre e$ and $\pre p(e)$ and the restriction of $p$ to $e \pre $ is a bijection between $e \pre $ and $p(e) \pre $ and the restriction of $p$ to $Min(CN)$ is a bijection between $Min(CN)$ and $M_0$. 
-	\end{enumerate}
+	A mapping $p : B \cup E \rightarrow P \cup T$ is a \textit{homomorphism} if $p(B) \subseteq P$,  $p(E) \subseteq T$ and $\forall e \in E$ the restriction of $p$ to $\pre e$ is a bijection between $\pre e$ and $\pre p(e)$ and the restriction of $p$ to $e \pre $ is a bijection between $e \pre $ and $p(e) \pre $ and the restriction of $p$ to $Min(CN)$ is a bijection between $Min(CN)$ and $M_0$. 
 \end{definition}
 
 \begin{definition}[Causal Process]\label{cp} A \textit{causal process} of a TPN is a pair $(CN, p)$ where $CN$ is a causal net and $p$ is a homomorphism from $CN$ to $TPN$. 
@@ -366,12 +339,12 @@ Now, armed with these types of moves, three natural notions of distance can be c
 
 \begin{definition}[Delay Only Distance : $d_\theta$]
 	Given any two timing functions $\tau_1, \tau_2$ over the same causal process $(CN, p)$, we define the delay-only distance $d_\theta$ as follows : 
-	$$d_t(\tau_1, \tau_2) = \min \{cost(m) | {m \in Delay^*}, {m(\tau_1) = \tau_2}\}$$
+	$$d_\theta(\tau_1, \tau_2) = \min \{cost(m) | {m \in Delay^*}, {m(\tau_1) = \tau_2}\}$$
 \end{definition}
 
 \begin{definition}[Mixed Moves Distance : $d_N$]
-	And thirdly, given any two timing functions $\tau_1, \tau_2$ over the same causal process $(CN, p)$, we define the mixed move distance $d_N$ as follows : 
-	$$d_t(\tau_1, \tau_2) = \min \{cost(m) | {m \in (Stamp\cup Delay)^*}, {m(\tau_1) = \tau_2}\}$$
+	And thirdly, given any two timing functions $\tau_1, \tau_2$ over the same causal process $(CN, p)$, we define the mixed move distance $d_N(\tau_1, \tau_2)$ as follows : 
+	$$\min \{cost(m) | {m \in (Stamp\cup Delay)^*}, {m(\tau_1) = \tau_2}\}$$
 \end{definition} 
 
 \begin{example}\label{stamptoy}
@@ -400,9 +373,9 @@ This lemma also allows us to restate the alignment problem for $d_t$, as we see 
 
 \subsection{General Bounded Time Petri Nets}
 The alignment problem in the stamp-only setting can be viewed as a problem of convex optimization, minimizing the stamp only cost from a fixed observed trace $\sigma$, which by Lemma \ref{manhattan} is $cost(\tau|_i) = \sum_{j = 1}^{i} |\tau_j - \sigma_j|$ over the set of valid timestamp series $\tau$ for the model $N$. 
-What remains is to show that the space of valid runs of the model is a convex set, and this set has been studied extensively in \cite{BM82}. 
-In this paper, the concept of a firing domain is proposed, that is, at each configuration of the time Petri net, the set of valid time intervals in which a transition enabled at that configuration can fire. Using these firing domains, states are grouped into state classes,which are sets of states with clock functions in the same firing domain, and for bounded time Petri nets there are finitely many such state classes. 
-Calculating equivalence classes of the same, successively, till we find final configurations, gives a characterisation of the solution set of all valid timestamp series, and this is proved to be of the following form, which is a set of constraints defining a convex set. 
+What remains is to show that the space of valid runs of the model is a convex set, and this set has been shown to be convex in \cite{BM82}. 
+%In this paper, the concept of a firing domain is proposed, that is, at each configuration of the time Petri net, the set of valid time intervals in which a transition enabled at that configuration can fire. Using these firing domains, states are grouped into state classes,which are sets of states with clock functions in the same firing domain, and for bounded time Petri nets there are finitely many such state classes. 
+%Calculating equivalence classes of the same, successively, till we find final configurations, gives a characterisation of the solution set of all valid timestamp series, and this is proved to be of the following form, which is a set of constraints defining a convex set. 
 
 Hence, we claim that using an efficient encoding of the target function using the firing domain formulation described above, the problem can be solved using the simplex algorithm, which is used to solve convex optimization problems in good time in practice, and having worst case exponential time complexity. 
 
