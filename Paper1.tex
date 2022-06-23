@@ -9,8 +9,9 @@
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
+\usepackage{todo}
 
-\usepackage{babel}
+\usepackage[english]{babel}
 
 \usepackage{algorithm}
 \usepackage{algpseudocode}
@@ -76,7 +77,7 @@
 	
 	\title{Timed Alignments\\
 		
-		\thanks{Identify applicable funding agency here. If none, delete this.}
+		%% \thanks{Identify applicable funding agency here. If none, delete this.}
 	}
 	
 	\author{\IEEEauthorblockN{Thomas Chatain}
@@ -150,7 +151,7 @@ This paper seeks to provide a framework by which to do the very same, and set an
 
 In this paper, we propose three different distance functions over timed words, and study the alignment problem for the first two. 
 The first is essentially Manhattan distance, and hence very standard, and has a quadratic time algorithm in the case of a structurally restricted class of models (linear causal processes).
-For all other types of models, we present an encoding in simplex that solves the problem, albeit with exponential worst-time complexity and polynomial average running time. 
+For all other types of models, we present an encoding in simplex that solves the problem, albeit with exponential worst-time complexity. %% and polynomial average running time. 
 The second distance function utilises the structure of the process model to study distances between time processes, and we present a straightforward algorithm for solving the alignment in this case, whose time complexity is linear in the size of the causal process and the transition set of the model. The second setting, and the new notion of delay edits that it represents, provide insight into time processes and their relevant constraints. 
 
 \section{Preliminaries}
@@ -165,13 +166,15 @@ The timed process model that attempts to capture the behaviour of all observed e
 
 \begin{definition}[Time Petri Net] \label{tpn} A labelled \textit{time Petri net} is a tuple $N = (P, T, F, SI, \lambda, M_0, M_f)$, where 
 	\begin{enumerate}
-		\item $P$ is a set of places 
+		%% \item $P$ is a set of places 
 		
-		\item $T$ is a set of transitions 
+		%% \item $T$ is a set of transitions 
 		
-		\item $P \cap T = \emptyset$ 
+		%% \item $P \cap T = \emptyset$ 
 		
-		\item $F \subseteq (P \times T) \cup (T \times P)$ is a flow relation 
+		\item $P$ and $T$ are disjoint sets of \emph{places} and \emph{transistions}
+
+                \item $F \subseteq (P \times T) \cup (T \times P)$ is a flow relation 
 		
 		\item $SI : T \rightarrow \mathbb{I}$ is the static interval function, where $SI(t) = (Eft(t), Lft(t))$ such that $Eft$ stands for earliest firing time, and $Lft$ for latest firing time. 
 		
@@ -193,6 +196,7 @@ A transition $t$ is fireable from state $S = (M, I)$ after delay $\theta \in \ma
 Once $t$ is fired, the marking is updated to $M'$ as in the untimed case (subtracting one token from each preplace, and adding one token to each postplace), and the clock function $I$ is updated to $I'$ by increasing clock values by $\theta$ for any transition that was enabled at both $M$ and $M'$, setting clock values to 0 for any transitions newly enabled by $M'$ that were not enabled at $M$, and leaving clock values undefined for any transitions that are not currently enabled. This is denoted by $(M, I)[t\rangle(M', I')$
 
 An important feature of time Petri nets is the notion of urgency, that is, if a transition has been enabled then it cannot be allowed to simply wait, unfired, throughout the period of time is it capable of firing, and then being disabled just by having the Lft lapse. If $t$ is enabled at marking $M$ and has clock value $Lft(t)$, it must fire, or another transition must fire at the same instant disabling $t$.  
+\todo{shorten: $t$ must fire before $Lft(t)$, unless it is disabled by another transition.}
 
 %We need a notion of valid instances of processes the model wishes to recognise. This is why we equip our time Petri nets with a notion of a final marking. 
 A valid execution of the model begins at the initial marking, fires a sequence of transitions (representing a series of activities occuring at certain times) and at the end of the firing sequence reached a marking $M_f$, with any clock function $I$. 
