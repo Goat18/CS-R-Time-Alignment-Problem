@@ -140,7 +140,7 @@ as by considering events along with their timestamps when mining processes, we c
 In addition, one may want to predict the timestamps of processes \cite{SSA11}. 
 In the process mining community, there are ways to use existing process model notation in order to denote some time constraints. BPMN 2.0 comes equipped with \emph{timer events} and can record absolute, relative, and cyclical time constraints. 
 For our purposes, we use an extension of Petri nets equipped with the ability to express the relative and cyclical time constraints that BPMN equipped with timers can. 
-What we are referring to are time Petri nets, that is, Petri nets augmented with the ability to record and check the duration it takes to fire a transition once enabled, using which one can impose certain constraints on the relationships between the timestamps of different events. 
+These are time Petri nets, that is, Petri nets augmented with the ability to record and check the duration it takes to fire a transition once enabled, using which one can impose certain constraints on the relationships between the timestamps of different events. 
 
 Time-aware process mining seeks to study both what sort of underlying processes govern system behaviour, and what sort of time constraints they can impose on when certain events can occur \cite{RMAW13} \cite{CRHA20}  \cite{AS21}. 
 The need for such a setting is clear, as specifying and checking concrete time constraints regarding the durations of events can ensure critical information about a system's behaviour. 
@@ -380,7 +380,7 @@ $$\eye \longrightarrow \underset{[0,1]}{\square} \longrightarrow \bigcirc \longr
 \end{example}
 
 
-\section{Results and Algorithm : Stamp Only Setting}
+\section{Results and Algorithm : Stamps Only}
 \begin{lemma}[Stamp only distance : $d_t$]\label{manhattan}
 	
 	
@@ -393,7 +393,7 @@ This lemma also allows us to restate the alignment problem for $d_t$, as we see 
 
 \subsection{Casting Alignment as a Linear Programming Problem}
 The alignment problem in the stamp-only setting can be viewed as a problem of convex optimization, minimizing the stamp only cost from a fixed observed trace $\sigma$, which by Lemma \ref{manhattan} is $cost(\tau|_i) = \sum_{j = 1}^{i} |\tau_j - \sigma_j|$ over the set of valid timestamp series $\tau$ for the model $N$. 
-What remains is to show that the space of valid runs of the model is a convex set, and this set has been shown to be convex in \cite{BM82}. 
+What remains is to show that the space of valid runs of the model is a convex set, as shown in \cite{BM82}. 
 %In this paper, the concept of a firing domain is proposed, that is, at each configuration of the time Petri net, the set of valid time intervals in which a transition enabled at that configuration can fire. Using these firing domains, states are grouped into state classes,which are sets of states with clock functions in the same firing domain, and for bounded time Petri nets there are finitely many such state classes. 
 %Calculating equivalence classes of the same, successively, till we find final configurations, gives a characterisation of the solution set of all valid timestamp series, and this is proved to be of the following form, which is a set of constraints defining a convex set. 
 
@@ -512,7 +512,7 @@ Utilising the recursion, we proceed to compute $g_2$.
 
 
 
-With this context, we present the following algorithm that progressively calculates the graphs of $g_i$ each round, and claim it is both correct and efficient. 
+With this context, we present the following algorithm that progressively calculates the graphs of $g_i$ (represented as lists of segments, each characterised by their slopes and x-projections of endpoints) each round, and claim it is both correct and efficient. 
 The algorithm precisely executes the above procedure, where the subfunction \textsc{graphMin} takes $g_i(d)$ and outputs $$\min_{d-d' \in [a,b]} g(d') = \begin{cases}
 	g(d-a) & l + a \leq d < m + a \\
 	g(m) & m+a \leq d \leq m' + b \\
@@ -525,43 +525,41 @@ The algorithm precisely executes the above procedure, where the subfunction \tex
 		\caption{$d_t$ Algorithm}
 		\label{StampAlgo}
 		\begin{algorithmic}
-			\State \textbf{Input : }  $\sigma$, a list of static interval constraints for the linear model $SI$
-			\State \textbf{Output : }  $cost = \min_{x \in \mathcal{L}(N)}{d_t(x, \sigma)}$, $\gamma \in \mathcal{L}(N)$ such that $d_t(\gamma, \sigma) = cost$
-			
-			\State \textbf{Object :} $graph = \{(left, slope, right) | graph[i].left = graph[i-1].right\}$
-			
-			\Procedure{StampOnlyAlgo}{$\sigma, SI$}
-			\State Initialise System 
-			\State $a \gets \pi_1(SI[0])$
-			\State $b \gets \pi_2(SI[0])$		
-			\State $graph \gets \{(a, 0, b)\}$
-			\State \textsc{graphAddMod}($graph, \sigma[0]$)
-			\State $graphlist \gets \{graph\}$
-			\State $i \gets 1$
-			\State $cost \gets |a - \sigma[0]|$
-			
-			\While{$i < |sigma|$}
-			\State $a \gets \pi_1(SI[i])$
-			\State $b \gets \pi_2(SI[i])$		
-			\State \textsc{graphMin}($graph, a, b$)
-			\State \textsc{graphAddMod}($graph, \sigma[i]$)
-			\State $graphlist.append(graph)$
-			\State $cost \gets cost + |a - \sigma[i]|$
-			\EndWhile
-			
-			\State $i \gets 0$ 
-			\State $s \gets graph[0].slope$
-			
-			\While{$graph[i].slope < 0$}
-			\State $s \gets graph[i].slope$ 
-			\State $cost \gets cost + s * (graph[i].right - graph[i].left)$
-			\State $i \gets i + 1$
-			\EndWhile
-			
-			\State $\gamma \gets \textsc{backTrack}(\sigma, graphlist, cost, SI)$
-			\State \textbf{Return : } $cost, \gamma$
-			\EndProcedure
-		\end{algorithmic}
+		\State \textbf{Input : }  $\sigma$, a list of static interval constraints for the linear model $SI$
+		\State \textbf{Output : }  $cost = \min_{x \in \mathcal{L}(N)}{d_t(x, \sigma)}$, $\gamma \in \mathcal{L}(N)$ such that $d_t(\gamma, \sigma) = cost$
+		
+		\State \textbf{Object :} $graph = \{(left, slope, right) | graph[i].left = graph[i-1].right\}$
+		
+		\Procedure{StampOnlyAlgo}{$\sigma, SI$}
+		\State Initialise System 
+		\State $[a, b] \gets SI[i]$
+		\State $graph \gets \{(a, 0, b)\}$
+		\State \textsc{graphAddMod}($graph, \sigma[0]$)
+		\State $graphlist \gets \{graph\}$
+		\State $i \gets 1$
+		\State $cost \gets |a - \sigma[0]|$
+		
+		\While{$i < |sigma|$}
+		\State $[a, b] \gets SI[i]$
+		\State \textsc{graphMin}($graph, a, b$)
+		\State \textsc{graphAddMod}($graph, \sigma[i]$)
+		\State $graphlist.append(graph)$
+		\State $cost \gets cost + |a - \sigma[i]|$
+		\EndWhile
+		
+		\State $i \gets 0$ 
+		\State $s \gets graph[0].slope$
+		
+		\While{$graph[i].slope < 0$}
+		\State $s \gets graph[i].slope$ 
+		\State $cost \gets cost + s * (graph[i].right - graph[i].left)$
+		\State $i \gets i + 1$
+		\EndWhile
+		
+		\State $\gamma \gets \textsc{backTrack}(\sigma, graphlist, cost, SI)$
+		\State \textbf{Return : } $cost, \gamma$
+		\EndProcedure
+	\end{algorithmic}
 	\end{algorithm}
 \end{figure}
 
@@ -577,8 +575,8 @@ The algorithm precisely executes the above procedure, where the subfunction \tex
 			The subfunction \textsc{backTrack} runs a binary search on each stored graph in $graphlist$ to find a trace in the language that does indeed give the minimum cost, letter by letter, and so overall takes $O(nlogn)$ time, keeping the overall time complexity  $O(n^2)$ where $n = |\sigma|$.
 		\end{remark}
 		
-\section{Results and Algorithm : Delays Only Setting}
-With delay edits which provide a new way of thinking about transformations over time-series, comes a new perspective with which we can view timing functions over causal processes. 
+\section{Results and Algorithm : Delays Only}
+Delay edits provide a new way of thinking about transformations over time-series, and inspire a new way of viewing timing functions over causal processes. 
 There is of course the standard definition, $\tau : E \to \mathbb{R}^+$ that assigns to each event a timestamp that records exactly when the event occurs. 
 
 Instead, thinking along the lines of durations between events occurring, we will often benefit from considering the following representation when speaking about delay moves, defined as to view a timed word not in terms of its absolute timestamps, but by the delays between them. 
@@ -638,8 +636,8 @@ Note that $e'$ as defined here is the latest causal predecessor of $e$
 . 
 Hence, $f_\tau$ as defined produces exactly the time durations that the guards of each transition in the model checks, ie the clock function values during the run. 
 
-As defined, we see that if a word is in the language of the model, then its $f$ function maps events to values that lie within the constraint that the event's corresponding transition demands, that is, it is perfectly aligned with the model with distance 0. 
-This condition is unfortunately not sufficient though, due to urgency concerns, but it is quite close to the exact condition necessary for a word to be in the language of a time Petri net. 
+As defined, we see that if a word is in the language of the model, then its $f$ function maps events to values that lie within the event's static interval constraint, and is perfectly aligned with the model. 
+This condition is unfortunately not sufficient due to urgency, but it is quite close to the exact condition necessary for a word to be in the language of a time Petri net. 
 
 Also note that given the underlying causal process and the resulting $f_\tau$, we can reconstruct $\tau$ quite straightforwardly as $$\forall e \in E : \tau(e) = \sum_{e' \leq_G e} f_\tau(e')$$
 
@@ -783,7 +781,7 @@ We have implemented the stamp only alignment algorithm in python, available at \
 
 \section{Perspectives and Conclusion}
 
-In this paper, we posed the alignment problem for timed processes, devised three metrics with which to study alignments for timestamp sequences, and solved the purely timed alignment problem for the first two metrics proposed. As far as we know, this is the first step in conformance checking for time-aware process mining, and much further work can be inspired from this point. The alignment problem for the third metric $d_N$ is a first future direction. Secondly, for both metrics studied here the class of models for which the alignment problem was solved efficiently are structurally restricted (being linear causal processes for $d_t$ and extended free choice time petri nets for $d_\theta$) and it would be interesting to see how to broaden the scope of these methods to larger classes of process models. Thirdly, further investigation in the general timed alignment problem is necessary, as our proposed approach here is rather rudimentary and can certainly be improved. Lastly, there are a number of other conformance artefacts that can be set and studied in the timed setting, such as anti-alignments \cite{CBC21}, and it would be very interesting to better develop all such conformance checking methods in a manner that accounts for timed process models.
+In this paper, we posed the alignment problem for timed processes, devised three metrics with which to study alignments for timestamp sequences, and solved the purely timed alignment problem for the first two metrics proposed. As far as we know, this is the first step in conformance checking for time-aware process mining, and much further work can be inspired from this point. The alignment problem for the third metric $d_N$ is a first future direction. Secondly, for both metrics studied here the class of models for which the alignment problem was solved efficiently are structurally restricted (being linear causal processes for $d_t$ and extended free choice time petri nets for $d_\theta$) and it would be interesting to see how to broaden the scope of these methods to larger classes of process models. Thirdly, further investigation in the general timed alignment problem is necessary, as our proposed approach here is rather rudimentary and can certainly be improved. Lastly, there are a number of other conformance artefacts that can be set and studied in the timed setting, such as anti-alignments \cite{CBC21}, andone can better develop all such conformance checking methods to account for timed process models.
 	
 	\bibliographystyle{IEEEtran}
 	\bibliography{Conformanceieee}
@@ -907,7 +905,7 @@ In this paper, we posed the alignment problem for timed processes, devised three
 		
 		Now subfunction \textsc{graphAddMod} is adding the point $\sigma_i$ if it is inside the domain of the function, and changing the slopes of the segments before $\sigma_i$ by subtracting one, and of those after $\sigma_i$ by adding one, which has the effect of adding the modulus component $|d - \sigma_i|$ to the previous graph. 
 		
-		Subfunction \textsc{graphMin} is even simpler, as Lemma \ref{minpwc} suggests all it does is translate the whole graph forward by $a$, and then translate the strictly increasing portion from $[m', h]$ by an addition $b-a$, adding an extra flat segment of length $b-a$ in between to keep the two portions of the function connected, and so on input $g(d), [a, b]$ it outputs $\underset{d-d' \in [a,b]}{\min}g(d')$. 
+		Subfunction \textsc{graphMin} is even simpler, as Lemma \ref{minpwc} suggests all it does is translate the whole graph forward by $a$, and then translate the strictly increasing portion from $[m', h]$ by an addition $b-a$, adding an extra flat segment of length $b-a$ in between to keep the two portions of the function connected, and so on input $g(d), [a, b]$ it outputs $\min_{d-d' \in [a,b]}{g(d')}$. 
 		
 		Subfunction \textsc{backTrack} takes the minimum cost obtained by the calculation of the $g_n$ function, finds the value of $d$, ie $\gamma_n$ for which the minimum is achieved, and subtracts the cost aligning only the last place incurs, thereby finding the minimum cost for aligning the $n-1$ length prefix. 
 		It then proceeds to do the same iteratively for each prefix, reverse-engineering a trace $\gamma$ for which the total minimum cost of aligning to $\sigma$ is achieved. 
