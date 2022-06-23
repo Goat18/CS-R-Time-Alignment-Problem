@@ -600,7 +600,7 @@ We have implemented the $d_N$ computation algorithm and the $d_N$ alignment algo
 	\hline
 \end{tabular}
 \section{Perspectives and Conclusion}
-
+In this paper, we studied the alignment problem for timed processes using the mixed moves distance $d_N$, and solved both distance computation and the purely timed alignment problem for the same. As far as we know, this (along with <paper1>) is the first step in conformance checking for time-aware process mining, and much further work can be inspired from this point. Firstly, we have only solved the alignment problem for $d_N$ over linear process models, which are rather structurally restricted and it would be interesting to see how to broaden the scope of these methods to larger classes of process models, such as branching process models or even general time Petri nets. Secondly, further investigation in the general timed alignment problem is necessary, as our proposed approach here is rather rudimentary and can certainly be improved. Lastly, there are a number of other conformance artefacts that can be set and studied in the timed setting, such as anti-alignments \cite{CBC21}, and it would be very interesting to better develop all such conformance checking methods in a manner that accounts for timed process models.
 
 \bibliographystyle{IEEEtran}
 \bibliography{Conformanceieee}
@@ -802,7 +802,7 @@ And hence we are done.
 
 
 \subsection{Computing $d_N$ and Alignments} 
-%%should theorems be restated in the appendix? 
+
 \begin{proof}
 As $(CN, p)$ is linear, we can consider the event set $E$ to be totally ordered by $G$, giving us the list $\{e_1, e_2, \dots e_n\}$ and their respective static interval constraints $\forall i \leq n : SI(p(e_i)) = [a_i, b_i]$. In this setting, clearly, $$f_{\gamma}(i)= \argmin_{x \in [a_i, b_i]} {|x - f_\sigma(i)|}$$
 
