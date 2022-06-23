@@ -245,7 +245,7 @@ Using $p$, elements of $CN$ are identified with their corresponding \emph{origin
 The alignment problem, given a trace from an event log and a process model, involves finding a valid execution of the process model that is closest to the trace under some metric.
 
 \begin{definition}[The General Alignment Problem]
-	Given a process model $N$ denoted by a Time Petri Net and a timed trace $\sigma$ we wish to find a timed word $\gamma \in \mathcal{L}(N)$ such that $d(\sigma, \gamma) = \underset{x \in \mathcal{L}(N)}{\min} d(\sigma, x)$ for some distance function $d$ on timed words. 
+	Given a process model $N$ denoted by a Time Petri Net and a timed trace $\sigma$ we wish to find a timed word $\gamma \in \mathcal{L}(N)$ such that $d(\sigma, \gamma) = \min_{x \in \mathcal{L}(N)} d(\sigma, x)$ for some distance function $d$ on timed words. 
 \end{definition}
 
 In the untimed setting, this is viewed as a problem of minimizing cost over a series of edit moves, either insertions (a model move) or deletions (a trace move). When aligning timed words, clearly there are two crucial aspects to the problem, which are, how one deals with deviations in the action labels themselves (the untimed letters), versus how one deals with deviations in just the timing properties of the word (the timestamps). The alignment problem has been extensively studied for the untimed case \cite{Adriansyah2014AligningOA} \cite{BCC21}, and so, if we simply sought to align the action labels of the word to the underlying untimed Petri net, this is a solved problem, but the timed setting is more complex. 
@@ -265,7 +265,7 @@ This is why, we first restrict our attention to the case where the untimed part 
 This ensures that we can compare the timing constraints on analogous parts of the process, and hence reason meaningfully about deviances from the model that are purely based on the timing of the process. This gives us the following problem : 
 
 \begin{definition}[The Purely Timed Alignment Problem]
-	Given a process model $N$ denoted by a Time Petri Net and a timed trace $(w, \sigma)$, and a valid causal process of the untimed part $w$, we wish to find a valid timing function $\gamma$ such that $d(\sigma, \gamma) = \underset{x \in \mathcal{L}(N)}{\min} d(\sigma, x)$ for some distance function $d$ on timing functions. 
+	Given a process model $N$ denoted by a Time Petri Net and a timed trace $(w, \sigma)$, and a valid causal process of the untimed part $w$, we wish to find a valid timing function $\gamma$ such that $d(\sigma, \gamma) = \min_{x \in \mathcal{L}(N)} d(\sigma, x)$ \todo{use this min notation rather than underset in other places}for some distance function $d$ on timing functions. 
 \end{definition}
 
 Hence, for the first few sections of this paper, we will ignore the untimed parts of the words, i.e we assume the word $\sigma$ we wish to align comes with a valid causal process $(CN, p)$ of the model, and simply seek to find timing functions on said causal process that are both valid, and minimize distance to $\sigma$ under the metric of choice. 
@@ -746,17 +746,19 @@ This leaves us once again with the question balancing the tradeoff between times
 
 \section{Implementation}
 
-We have implemented the stamp only alignment algorithm in python, available at \url{https://github.com/NehaRino/TimedAlignments}. This algorithm is quadratic in time complexity, and runs well in practice, as seen below 
+We have implemented the stamp only alignment algorithm in Python, available at \url{https://github.com/NehaRino/TimedAlignments}. This algorithm is quadratic in time complexity, and runs well in practice, as seen below.
 
-\begin{tabular}{|c| |c|}
-	\hline
-	Trace Length & Running Time (seconds)\\ 
-	\hline
-	10 & 0.001328726700012\\
-	100 & 0.102117733500017\\
-	1000 &9.899462208500154\\
-	\hline
-\end{tabular}
+\centerline{
+  \begin{tabular}{|c| |c|}
+    \hline
+    Trace Length & Running Time\\ 
+    \hline
+    10 & 0.001 s\\
+    100 & 0.102 s\\
+    1000 &9.899 s\\
+    \hline
+  \end{tabular}
+  }
 
 \section{Perspectives and Conclusion}
 
