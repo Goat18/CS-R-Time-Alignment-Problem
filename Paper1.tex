@@ -100,7 +100,7 @@
 	The subject of this paper is to study conformance checking for timed models, that is, process models that consider both the sequence of events in a process as well as the timestamps at which each event is recorded. 
 	Time-aware process mining is a growing subfield of research, and as tools that seek to discover timing related properties in processes develop, so does the need for conformance checking techniques that can tackle time constraints and provide insightful quality measures for time-aware process models. 
 	In particular, one of the most useful conformance artefacts is the alignment, that is, finding the minimal changes necessary to correct a new observation to conform to a process model.  
-	In this paper, we set our problem of timed alignment and solve two cases each corresponding to a different metric over time processes. \todo{cut here for conference version}For the first, we have an algorithm whose time complexity is linear both in the size of the observed trace and the process model, while for the second we have a quadratic time algorithm for linear process models. 
+	In this paper, we set our problem of timed alignment and solve two cases each corresponding to a different metric over time processes. %For the first, we have an algorithm whose time complexity is linear both in the size of the observed trace and the process model, while for the second we have a quadratic time algorithm for linear process models. 
 \end{abstract}
 
 
@@ -111,7 +111,7 @@
 \section{Introduction} 
 
 
-\subsection{Conformance Checking and Alignments} 
+\bigskip%\subsection{Conformance Checking and Alignments} 
 
 Process mining studies vast systems through their event logs, and seeks to extract meaningful ways to model the underlying patterns or processes that govern the behaviour of the system in order to better understand the system, or predict future behaviour \cite{A16}.
 Once such a process model is obtained, through machine learning or other related techniques, it is natural to ask how one is sure the obtained model is a reasonable approximation of the system’s behaviour at all, especially given the lack of explainability in the blackbox approach ML takes to producing solutions.
@@ -127,8 +127,8 @@ This gives us a series of edits, usually insertions or deletions, that can trans
 %For our purposes we will use the term alignment to mean the process trace of the model that aligns closest to the observation, and how to transform this optimal execution to the observed one is clear depending on the edit moves available.
 Alignments thereby help pinpoint exactly where inevitable deviations from expected behaviour occur, and the more distant the aligning word of a model is to its observed trace, the worse the model is at reflecting real system behaviour. 
 
-\subsection{Time-aware Processes}
-
+%\subsection{Time-aware Processes}
+\bigskip
 Process models can be represented using a variety of formal objects, including Petri nets. 
 They both offer a graphical means by which to represent concurrent systems, and a formal semantics for their execution, which allows one to mathematically analyse the same. 
 Assuming the event logs are a list of words over a finite alphabet (the set of possible discrete events), the problem of calculating the alignment has been extensively studied \cite{Adriansyah2014AligningOA} \cite{BCC21}. 
@@ -147,7 +147,7 @@ As time-aware process mining grows popular, new quality measures and conformance
 For this, crucially, one needs to define distance functions that can meaningfully compare and separate different time processes. 
 This paper seeks to provide a framework by which to do the very same, and set and solve the alignment problem for time-aware processes.
 
-\subsection{Three Distances, and Algorithms to Align them}
+\bigskip%\subsection{Three Distances, and Algorithms to Align them}
 
 In this paper, we propose three different distance functions over timed words, and study the alignment problem for the first two. 
 The first is essentially Manhattan distance, and hence very standard, and has a quadratic time algorithm in the case of a structurally restricted class of models (linear causal processes).
@@ -787,6 +787,8 @@ In this paper, we posed the alignment problem for timed processes, devised three
 	\bibliographystyle{IEEEtran}
 	\bibliography{Conformanceieee}
 	
+	
+	\clearpage
 	\appendix 
 	\subsection{Stamp Only Algorithm}
 	We start off with a proof of Lemma \ref{manhattan}
