@@ -301,8 +301,7 @@ What sort of functions are useful notions of transformation on a timed system?
 
 \begin{example}
 	Let us go back to example \ref{TPN}, and study the process model $N$ presented there. 
-
-	Now, say we had the following words that did not fit the model, and we wished to analyse how best to modify them to fit them back into the model. 
+Say we had the following words that did not fit the model, and we wished to analyse how best to modify them to fit them back into the model. 
 	
 	We start with $(u_1, \sigma_1) = (abdef)(1, 3, 4, 6, 6)$. 
 	One candidate for the closest valid execution would be if the timing function $\sigma_1$ were replaced by $\gamma = (1, 2, 4, 6, 6)$, and it feels reasonable to say that the cost for aligning $\sigma_1$ to this $\gamma$ is 1. 
@@ -336,9 +335,9 @@ We define a \textit{stamp move} as a move that translates the timing function on
 \end{definition}
 
 The next type of move we describe is the more novel and interesting \textit{delay move}. 
-Here, we sought to leverage the structure of the process model itself, by reflecting the causal relationships the pre-order $G$ causes. 
-If an event is $G$-reachable from another, that means the first event is strictly in the causal history of the second so changing the timestamp of such a causal predecessor has consequences for all of its causal descendents, while leaving any causally unrelated (i.e, non-$G$-reachable) events undisturbed. 
-In other words, a delay move at $e$ will preserve relative relationships between timestamps in the future, at the cost of shifting the timestamp of every causal descendent of $e$ by the same amount. 
+Here, we seek to leverage the structure of the process model itself, by reflecting the causal relationships the pre-order $G$ causes. 
+If an event is $G$-reachable from another, that means the first event is strictly in the causal history of the second so changing its timestamp should have consequences for all of its causal descendents, while leaving any causally unrelated (non-$G$-reachable) events undisturbed. 
+Hence, a delay move at $e$ will preserve relative relationships between timestamps in the future, at the cost of shifting the timestamp of every causal descendent of $e$ by the same amount. 
 \begin{definition}[Delay Move]
 	Given a timing function $\gamma : E \to \mathbb{R}^n$, we define a delay move applied to it as follows : 
 	
@@ -350,7 +349,7 @@ In other words, a delay move at $e$ will preserve relative relationships between
 	
 \end{definition}
 
-Now, armed with these types of moves, three natural notions of distance can be constructed. 
+The cost of a move is the magnitude $|x|$ in the above definitions, and the cost of a sequence of moves is the sum of the costs of the moves. Armed with these definitions, three natural notions of distance can be constructed. 
 
 \begin{definition}[Stamp Only Distance : $d_t$]
 	Given any two timing functions $\tau_1, \tau_2$ over the same causal process $(CN, p)$, we define the stamp-only distance $d_t$ as follows : 
@@ -364,10 +363,10 @@ Now, armed with these types of moves, three natural notions of distance can be c
 	$d_\theta(\tau_1, \tau_2) = \min \{cost(m) | {m \in Delay^*}, {m(\tau_1) = \tau_2}\}$
 \end{definition}
 
-\begin{definition}[Mixed Moves Distance : $d_N$]
-	And thirdly, given any two timing functions $\tau_1, \tau_2$ over the same causal process $(CN, p)$, we define the mixed move distance $d_N(\tau_1, \tau_2)$ as follows : 
+	\begin{definition}[Mixed Moves Distance : $d_N$]
+	Given any two timing functions $\tau_1, \tau_2$ over the same causal process $(CN, p)$, we define the mixed move distance $d_N$ as follows 
+	\small	$$d_N(\tau_1, \tau_2) = \min \{cost(m) | {m \in (Stamp \cup Delay)^*}, {m(\tau_1) = \tau_2}\}$$
 	
-	$\min \{cost(m) | {m \in (Stamp\cup Delay)^*}, {m(\tau_1) = \tau_2}\}$
 \end{definition} 
 
 \begin{example}\label{stamptoy}
@@ -687,8 +686,8 @@ The flow function is hence a dual representation of timing functions, much like 
 
 \begin{example}
 	Let us study the process model $N_2$ from example \ref{wordandflow} once again. 
-	Say we want to align  $w = (a, 1)(b, 2)(c, 5)(d, 6)(e, 6)(f, 8)(g,8)$ to $N_1$. We recall that we calculated its flow function to be $$a \xmapsto{}{} 1, b \xmapsto{}{} 2, c \xmapsto{}{} 4, d \xmapsto{}{} 4, e \xmapsto{}{} 4, f \xmapsto{}{} 2, g \xmapsto{}{} 2$$
-	As membership in the language only depends on the flow values, we try to pick flow components that are as close to $w$'s as possible while keeping the alignment in the language, ie $\underset{u \in \mathcal{L}(N)}{minimize} {\sum_{e \in E} |f_w(e) - f_u(e)|}$. Choosing naively to optimise each summand gives us the flow function $$a \xmapsto{}{} 1, b \xmapsto{}{} 1, c \xmapsto{}{} 3, d \xmapsto{}{} 6, e \xmapsto{}{} 8, f \xmapsto{}{} 1, g \xmapsto{}{} 3$$ From which we can reconstruct the closest word $$u = (a, 1)(b, 1)(c, 4)(d, 7)(e, 7)(f, 8)(g, 10)$$
+	Say we want to align  $w = (a, 1)(b, 2)(c, 5)(d, 6)(e, 6)(f, 8)(g,8)$ to $N_1$. We recall that we calculated its flow function to be \\$a \xmapsto{}{} 1, b \xmapsto{}{} 2, c \xmapsto{}{} 4, d \xmapsto{}{} 4, e \xmapsto{}{} 4, f \xmapsto{}{} 2, g \xmapsto{}{} 2$
+	As membership in the language only depends on the flow values, we try to pick flow components that are as close to $w$'s as possible while keeping the alignment in the language, ie $\underset{u \in \mathcal{L}(N)}{minimize} \hspace{0.5em}{\sum_{e \in E} |f_w(e) - f_u(e)|}$. Choosing naively to optimise each summand gives us the flow function \\$a \xmapsto{}{} 1, b \xmapsto{}{} 1, c \xmapsto{}{} 3, d \xmapsto{}{} 6, e \xmapsto{}{} 8, f \xmapsto{}{} 1, g \xmapsto{}{} 3$ From which we can reconstruct the closest word $u = (a, 1)(b, 1)(c, 4)(d, 7)(e, 7)(f, 8)(g, 10)$. 
 	
 	Clearly if one tries to move any component of $u$'s flow function any closer to that of $w$, the word will no longer be in the language. 
 	
@@ -751,32 +750,33 @@ repeating or deleting timestamps for any insertion or deletion moves. This yield
 This approach is quite naive, as it may have a tendency to exaggerate the importance of action label errors. For example, consider the following scenario : 
 
 \begin{example}
-	Consider the following net $N_3$ where the final marking is presumed to be the sink place: 
+	Consider the following net $N_3$ where the final marking is presumed to be the sink place: \\
 	\adjustbox{scale=0.8}{
 	\begin{tikzcd}
-		& {} && {} && {} \\
 		\eye_I & {\fbox{a}} & \bigcirc & {\fbox{a}} & \bigcirc & {\fbox{a}} &\bigcirc_f \\
 		& {\fbox{b}} & \bigcirc & {\fbox{a}} & \bigcirc & {\fbox{a}} \\
-		\arrow[from=2-1, to=2-2]
-		\arrow[curve={height=12pt}, from=2-1, to=3-2]
+		\arrow[from=1-1, to=1-2]
+		\arrow[curve={height=12pt}, from=1-1, to=2-2]
+		\arrow[from=1-2, to=1-3]
+		\arrow[from=1-3, to=1-4]
+		\arrow[from=1-4, to=1-5]
+		\arrow[from=1-5, to=1-6]
+		\arrow[from=1-6, to=1-7]
 		\arrow[from=2-2, to=2-3]
 		\arrow[from=2-3, to=2-4]
 		\arrow[from=2-4, to=2-5]
 		\arrow[from=2-5, to=2-6]
-		\arrow[from=2-6, to=2-7]
-		\arrow[from=3-2, to=3-3]
-		\arrow[from=3-3, to=3-4]
-		\arrow[from=3-4, to=3-5]
-		\arrow[from=3-5, to=3-6]
-		\arrow[curve={height=12pt}, from=3-6, to=2-7]
-		\arrow["{[0,0]}"{description, pos=0.2}, draw=white, from=2-2, to=1-2]
-		\arrow["{[0,0]}"{description, pos=0.1}, draw=white, from=2-4, to=1-4]
-		\arrow["{[0,0]}"{description, pos=0.1}, draw=white, from=2-6, to=1-6]
-		\arrow["{[100,100]}"{description, pos=0.2}, draw=white, from=3-2, to=2-2]
-		\arrow["{[100,100]}"{description, pos=0.2}, draw=white, from=3-4, to=2-4]
-		\arrow["{[100,100]}"{description, pos=0.2}, draw=white, from=3-6, to=2-6]
-	\end{tikzcd}
-}
+		\arrow[curve={height=12pt}, from=2-6, to=1-7]
+		\arrow["{[0,0]}"{description, pos=0.1}, draw=white, from=1-2, to=2-2]
+		\arrow["{[0,0]}"{description, pos=0.1}, draw=white, from=1-4, to=2-4]
+		\arrow["{[0,0]}"{description, pos=0.1}, draw=white, from=1-6, to=2-6]
+		\arrow["{[100,100]}"{description, pos=0.1}, draw=white, from=2-2, to=1-2]
+		\arrow["{[100,100]}"{description, pos=0.1}, draw=white, from=2-4, to=1-4]
+		\arrow["{[100,100]}"{description, pos=0.1}, draw=white, from=2-6, to=1-6]
+	\end{tikzcd}}
+
+\vspace{-15pt}
+
 	Now, let the observation be ${(a, 100)(a, 100)(a, 100)}$. 
 	The alignment the above approach would provide is $ (a, 0)(a, 0)(a, 0)$. 
 	But if we assign even a tenth of the cost of action edits to timestamp edits, clearly the closer word in the language was $(b, 100)(a, 100)(a, 100)$. 
