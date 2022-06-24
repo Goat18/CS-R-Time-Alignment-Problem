@@ -669,7 +669,7 @@ Note that $e'$ as defined here is the latest causal predecessor of $e$
 . 
 Hence, $f_\tau$ as defined produces exactly the time durations that the guards of each transition in the model checks, i.e. the clock function values during the run. 
 
-As defined, we see that if a word is in the language of the model, then its $f$ function maps events to values that lie within the event's static interval constraint, and is perfectly aligned with the model. 
+As defined, we see that if a word is in the language of the model, then its $f$ function maps events to values that lie within the event's static interval constraint. %% , and is perfectly aligned with the model. 
 This condition is unfortunately not sufficient due to urgency, but it is quite close to the exact condition necessary for a word to be in the language of a time Petri net. 
 
 Also note that given the underlying causal process and the resulting $f_\tau$, we can reconstruct $\tau$ quite straightforwardly as $\forall e \in E : \tau(e) = \sum_{e' \leq_G e} f_\tau(e')$.
