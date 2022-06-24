@@ -122,7 +122,7 @@ We often do not want the system to always precisely generate any and all possibl
 What is often much more useful is a process model that can, up to some small error factor, approximate any reasonable future system behaviour. 
 
 In Arya Adriansyah's seminal thesis \cite{Adriansyah2014AligningOA}, we obtain the notion of an alignment, that is, the minimal series of corrections needed to transform an observed event trace into the execution of the process model that most closely mimics it.  
-It is often seen as an execution of the synchronised product of the process model and a \emph{trace model} ie a simple model that captures exactly one event log trace. 
+It is often seen as an execution of the synchronised product of the process model and a \emph{trace model} i.e.\ a simple model that captures exactly one event log trace. 
 This gives us a series of edits, usually insertions or deletions, that can transform a process trace into the observed trace.  
 %For our purposes we will use the term alignment to mean the process trace of the model that aligns closest to the observation, and how to transform this optimal execution to the observed one is clear depending on the edit moves available.
 Alignments thereby help pinpoint exactly where inevitable deviations from expected behaviour occur, and the more distant the aligning word of a model is to its observed trace, the worse the model is at reflecting real system behaviour. 
@@ -628,7 +628,7 @@ Instead, thinking along the lines of durations between events occurring, we will
 Note that $e'$ as defined here is the latest causal predecessor of $e$
 %, i.e., it is the firing of $e'$ that enabled $e$
 . 
-Hence, $f_\tau$ as defined produces exactly the time durations that the guards of each transition in the model checks, ie the clock function values during the run. 
+Hence, $f_\tau$ as defined produces exactly the time durations that the guards of each transition in the model checks, i.e.\ the clock function values during the run. 
 
 As defined, we see that if a word is in the language of the model, then its $f$ function maps events to values that lie within the event's static interval constraint, and is perfectly aligned with the model. 
 This condition is unfortunately not sufficient due to urgency, but it is quite close to the exact condition necessary for a word to be in the language of a time Petri net. 
