@@ -628,9 +628,8 @@ Instead, thinking along the lines of durations between events occurring, we will
 \end{definition}
 
 \begin{example}\label{wordandflow}
-	Consider the following process model $N_2$:\vspace*{-0em}\\
+	Consider the following process model $N_2$:\vspace*{-1.2em}\\
 	\adjustbox{scale = 0.75}{
->>>>>>> 7caaeaf63474e338f7c36263166c7f85772eef58
 		\begin{tikzcd}	
 			& {} && {} && {} \\
 			\eye & {\fbox{a}} & \bigcirc & {\fbox{c}} & \bigcirc & {\fbox{g}} & \bigcirc \\
@@ -661,7 +660,8 @@ Instead, thinking along the lines of durations between events occurring, we will
 		\end{tikzcd}
 	}
 	
-	For this net and the word $w = (a, 1)(b, 2)(c, 5)(d, 6)(e, 6)\\(f, 8)(g,8)$ we can define its flow function as $$a \xmapsto{}{} 1, b \xmapsto{}{} 2, c \xmapsto{}{} 4, d \xmapsto{}{} 4, e \xmapsto{}{} 4, f \xmapsto{}{} 2, g \xmapsto{}{} 2$$
+	For this net and the word $w = (a, 1)(b, 2)(c, 5)(d, 6)(e, 6)\\(f, 8)(g,8)$ we can define its flow function as\\
+\centerline{$a \xmapsto{}{} 1, b \xmapsto{}{} 2, c \xmapsto{}{} 4, d \xmapsto{}{} 4, e \xmapsto{}{} 4, f \xmapsto{}{} 2, g \xmapsto{}{} 2$}
 \end{example}
 
 Note that $e'$ as defined here is the latest causal predecessor of $e$
@@ -677,10 +677,10 @@ Also note that given the underlying causal process and the resulting $f_\tau$, w
 \begin{lemma}[Delay only distance : $d_\theta$]\label{manhattan2}
 	
 	$d_\theta$ as defined previously is equivalent to the following formulation directly using the flow function:
-	$$\textstyle d_\theta(\tau_1, \tau_2) = \sum_{e \in E}|f_{\tau_1}(e) - f_{\tau_2}(e)|$$
+	$d_\theta(\tau_1, \tau_2) = \sum_{e \in E}|f_{\tau_1}(e) - f_{\tau_2}(e)|$.
 \end{lemma}	
 
-The flow function is hence a dual representation of timing functions, much like line graphs for graphs, as if a timing function traditionally labels its transition nodes with timestamps, the flow function labels edges leading up to transitions with the duration since said transition was enabled. This gives us a new way to formulate the alignment problem in terms of minimising distance from the flow vector of $\sigma$. 
+The flow function is hence a dual representation of timing functions, as if a timing function traditionally labels its transition nodes with timestamps, the flow function labels edges leading up to transitions with the duration since said transition was enabled. This gives us a new way to formulate the alignment problem in terms of minimising distance from the flow vector of $\sigma$. 
 
 
 \begin{example}
