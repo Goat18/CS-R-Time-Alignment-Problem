@@ -691,9 +691,9 @@ The flow function is hence a dual representation of timing functions, much like 
 	Clearly if one tries to move any component of $u$'s flow function any closer to that of $w$, the word will no longer be in the language. 
 	
 \end{example}
-We could reason this way because $d_\theta$ allows local edits that do not affect global membership in the language of the time Petri net, as both the time Petri net and delay edits concern themselves only with the duration of time elapsed between a transition's enabling and its firing. 
-This relationship is especially clear in extended free choice time Petri nets, where the only events that determine the fireability of an event are its causal history and events with the exact same preset which would naturally disable it by firing. 
-Hence, we present Algorithm \ref{DelayAlgo}, which minimizes the delay cost at each transition locally, while still overall ensuring membership in the language of the model. The main step in the algorithm is line 12, the rest is just to ensure the time process we obtain is a valid one. 
+We could reason this way because $d_\theta$ allows one to locally edit traces without affecting membership in the language of the TPN, as both the firing rule and delay edits concern themselves only with the duration of time elapsed between a transition's enabling and its firing. 
+This relationship is especially clear in extended free choice TPNs, where the only events that determine the fireability of an event are its causal history and events with the exact same preset which ensures the interval constraint.
+Hence, we present Algorithm \ref{DelayAlgo}, which minimizes the delay cost at each transition locally, while still overall ensuring membership in the language of the model. The main step in the algorithm is line 12, the rest just ensures validity. 
 
 \begin{theorem}\label{DelayAlgoCorr} Algorithm \ref{DelayAlgo} is correct, i.e., it outputs a valid execution
 	$\gamma \in \mathcal{L}(N)$ which minimizes the distance $d_\theta(\gamma, \sigma)$
