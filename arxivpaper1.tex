@@ -118,13 +118,13 @@
 	Process mining studies vast systems through their event logs, and seeks to extract meaningful ways to model the underlying patterns or processes that govern the behaviour of the system in order to better understand the system, or predict future behaviour \cite{A16}.
 	Once such a process model is obtained, through machine learning or other related techniques, it is natural to ask how one is sure the obtained model is a reasonable approximation of the system’s behaviour at all, especially given the lack of explainability in the blackbox approach ML takes to producing solutions.
 	This is where conformance checking comes into the picture, as it is the art of judging the performance of a process model by relating modelled and observed behaviour of a process to each other, without depending on the origin of the model \cite{CDSW18}.
-	Observed behaviour comes in the form the traces of an event log, as a sequence of events occurring during the functioning of the system, while process models are blueprints that describe what the underlying processes of any given system are supposed to look like.
+	Observed behaviour comes in the form of traces in an event log, as a sequence of events occurring during the functioning of the system, while process models are blueprints that describe what the underlying processes of any given system are supposed to look like.
 	Measures of how well a model reflects system behaviour include fitness, precision, generalisation, and simplicity.
 	We often do not want the system to always precisely generate any and all possible future system behaviour, but neither should they simply regurgitate the event log and accept no new system behaviours. 
 	What is often much more useful is a process model that can, up to some small error factor, approximate any reasonable future system behaviour. 
 	
 	In Aryan Adriansyah's seminal thesis \cite{Adriansyah2014AligningOA}, we obtain the notion of an alignment, that is, the minimal series of corrections needed to transform an observed event trace into the execution of the process model that most closely mimics it.  
-	It is often seen as an execution of the synchronised product of the process model and a \emph{trace model} ie a simple model that captures exactly one event log trace. 
+	It is often seen as an execution of the synchronised product of the process model and a trace model ie a simple model that captures exactly one event log trace. 
 	This gives us a series of edits, usually insertions or deletions, that can transform a process trace into the observed trace.  
 	%For our purposes we will use the term alignment to mean the process trace of the model that aligns closest to the observation, and how to transform this optimal execution to the observed one is clear depending on the edit moves available.
 	Alignments thereby help pinpoint exactly where inevitable deviations from expected behaviour occur, and the more distant the aligning word of a model is to its observed trace, the worse the model is at reflecting real system behaviour. 
@@ -252,7 +252,7 @@
 		%	\arrow["{[0, \infty)}"{description, pos=0.2}, "\lrcorner"{text=white, anchor=center, pos=0.125, rotate=180}, draw=none, from=2-2, to=1-1]
 		%	\arrow[shift right=2, curve={height=6pt}, from=3-2, to=3-3]
 		%\end{tikzpicture}
-		One possible execution of $N$ would be for the firing sequence $$w = (a, 1)(b, 2)(d, 3)(e, 4)(f,5)$$ The initial marking only has $a$ enabled, and firing $a$ at time $1$ updates the marking by removing the token from $a$'s preplace and filling its two post-places, thereby enabling $b, c, d, e$. Now, note by urgency that $c$ can never fire past time $2$ as then $b$ would have already fired by urgency, but in this execution this doesn't matter as $b$ fires at $2$ regardless, filling one preplace of $f$. Then $d$ fires, having been enabled for $2$ units of time, thereby resetting the enabling time of both $d$ and $e$ to zero, so that when $e$ does fire it has only been most recently enabled for $1$ unit of time. Now, finally, $f$ is enabled, and fires after $1$ unit of having been enabled. 
+		One possible execution of $N$ would be for the firing sequence $$w = (a, 1)(b, 2)(d, 3)(e, 4)(f,5)$$ The initial marking only has $a$ enabled, and firing $a$ at time $1$ updates the marking by removing the token from $a$'s preplace and filling its two post-places, thereby enabling $b, c, d, e$. Now, note by urgency that $c$ can never fire past time $2$ as then $b$ would have already fired, but in this execution this doesn't matter as $b$ fires at $2$ regardless, filling one preplace of $f$. Then $d$ fires, having been enabled for $2$ units of time, thereby resetting the enabling time of both $d$ and $e$ to zero, so that when $e$ does fire it has only been most recently enabled for $1$ unit of time. Now, finally, $f$ is enabled, and fires after $1$ unit of having been enabled. 
 	\end{example}
 	
 	Now we will want to build some vocabulary to help us talk about individual executions of timed words on time Petri nets. 
@@ -263,7 +263,7 @@
 		$$\forall b \in B : |b \pre| \leq 1 \wedge | \pre b| \leq 1.$$
 	\end{definition}
 	
-	%This can be viewed as the original Petri net itself, but every time a place is revisited, it is copied afresh to ensure that the execution only ever moves forward. 
+	This can be viewed as the original Petri net itself, but every time a place is revisited, it is copied afresh to ensure that the execution only ever moves forward. 
 	Hence, multiple elements of $B$ or $E$ map to the same element in $P$ or $T$ respectively, a notion that is expressed via the map $p$ defined below. 
 	
 	\begin{definition}[Homomorphism] \label{hom}  Let $N$ be a time Petri net with place set $P$ and transition set $T$, and ${CN = (B, E, G)}$ be a causal net. 
@@ -340,7 +340,7 @@
 		This means, the switch from the timestamp series $(5,9,12)$ to $(4, 8, 11)$ can be viewed as only a cost 1 edit
 		%, if we assume $e$ and $f$ only care about the relative durations or delays between activities
 		. 
-		This is a slightly more complex error to conceive of, but it reflects the fact that if a delay at the beginning caused the whole process to occur too late, the important thing to fix is just that initial offset, and the rest of the process will now conform to the model as needed. 
+		This is a slightly more complex error to conceive of, but it reflects the fact that if a delay at the beginning caused the whole process to run late, the important thing to fix is just that initial offset, and the rest of the process will now conform to the model as needed. 
 	\end{example}
 	
 	Based on the above example, we naturally arrive at two types of moves. 
@@ -406,11 +406,8 @@
 	
 	\section{Results and Algorithm : Stamp Only Setting}
 	\begin{lemma}[Stamp only distance : $d_t$]\label{manhattan}
-		
-		
 		$d_t$ as defined above is equivalent to the \textit{Manhattan distance} or \textit{taxicab distance} between two points of $\mathbb{R}^n$, where $|E| = n$, say $\mathbf{t} = (t_1, t_2, \dots t_n) $ and $\mathbf{s} = (s_1, s_2, \dots s_n)$, defined as $$d_t(\mathbf{t}, \mathbf{s}) = \sum_{i = 1}^{n} |t_i - s_i|$$
 	\end{lemma}
-	
 	
 	
 	This lemma also allows us to restate the alignment problem for $d_t$, as we see below. 
@@ -457,7 +454,6 @@
 	
 	
 	\begin{example}\label{stampcomp}
-		
 		
 		We take a moment to look at an example of the computation of this family of functions we proposed by considering the following $d_t$-alignment problem : 
 		
@@ -660,7 +656,7 @@
 	Hence, $f_\tau$ as defined produces exactly the time durations that the guards of each transition in the model checks, ie the clock function values during the run. 
 	
 	As defined, we see that if a word is in the language of the model, then its $f$ function maps events to values that lie within the constraint that the event's corresponding transition demands, that is, it is perfectly aligned with the model with distance 0. 
-	This condition is unfortunately not sufficient though, due to urgency concerns, but it is quite close to the exact condition necessary for a word to be in the language of a time Petri net. 
+	This condition is unfortunately not sufficient (due to urgency), but it is quite close to the exact condition necessary for a word to be in the language of a time Petri net. 
 	
 	Also note that given the underlying causal process and the resulting $f_\tau$, we can reconstruct $\tau$ quite straightforwardly as $$\forall e \in E : \tau(e) = \sum_{e' \leq_G e} f_\tau(e')$$
 	
@@ -671,7 +667,6 @@
 	\end{lemma}	
 	
 	The flow function is hence a dual representation of timing functions, much like line graphs for graphs, as if a timing function traditionally labels its transition nodes with timestamps, the flow function labels edges leading up to transitions with the duration since said transition was enabled. This gives us a new way to formulate the alignment problem in terms of minimising distance from the flow vector of $\sigma$. 
-	
 	
 	\begin{example}
 		Let us study the process model $N_2$ from example \ref{wordandflow} once again : 
@@ -684,8 +679,7 @@
 	We could reason this way because $d_\theta$ allows local edits that do not affect global membership in the language of the time Petri net, as both the time Petri net and delay edits concern themselves only with the duration of time elapsed between a transition's enabling and its firing. 
 	This relationship is especially clear in extended free choice time Petri nets, where the only events that determine the fireability of an event are its causal history and events with the exact same preset which would naturally disable it by firing. 
 	Hence, we present Algorithm \ref{DelayAlgo}, which minimizes the delay cost at each transition locally, while still overall ensuring membership in the language of the model. The main step in the algorithm is line 12, the rest is just to ensure the time process we obtain is a valid one. 
-	
-	
+
 	
 	\begin{theorem}\label{DelayAlgoCorr} Algorithm \ref{DelayAlgo} is correct on extended free choice time Petri nets, that is, its result $\gamma$ has the properties : 
 		\begin{enumerate}
@@ -1092,52 +1086,10 @@
 				\arrow["{[0,0]}"{description, pos=0.3}, draw=white, from=3-4, to=3-5]
 		\end{tikzcd}}
 		
-		%		\[\begin{tikzcd}
-			%			{}&{}&{}& {} &{}&{}\\
-			%			{} & {\fbox{a}} & \eye & {\fbox{b}} & \bigcirc & {\fbox{c}} \\
-			%			&& {} & {\fbox{f}} & {\fbox{d}} & \bigcirc & {} \\
-			%			&&&& \bigcirc & {\fbox{e}} & {}
-			%			\arrow[curve={height=-12pt}, from=2-3, to=2-2]
-			%			\arrow["{[2,3]}"{description, pos=0.1}, draw=white, from=2-6, to=1-6]
-			%			\arrow["{[0,0]}"{description, pos=0.1}, draw=white, from=3-5, to=3-7]
-			%			\arrow["{[4,9]}"{description, pos=0.3}, draw=white, from=4-6, to=4-7]
-			%			\arrow["{[0,1]}"{description, pos=0.2}, "\lrcorner"{text=white, anchor=center, pos=0.125, rotate=-135}, draw=none, from=2-2, to=2-1]
-			%			\arrow[from=3-5, to=4-5]
-			%			\arrow[from=4-6, to=4-5]
-			%			\arrow[from=2-5, to=2-6]
-			%			\arrow[from=2-6, to=3-6]
-			%			\arrow[curve={height=-12pt}, from=2-2, to=2-3]
-			%			\arrow[from=2-5, to=3-5]
-			%			\arrow[from=3-6, to=4-6]
-			%			\arrow[from=2-3, to=2-4]
-			%			\arrow[from=2-4, to=2-5]
-			%			\arrow["{[2,2]}"{description, pos=0.2}, draw=white, from=2-4, to=1-4]
-			%			\arrow[from=4-5, to=3-4]
-			%			\arrow[from=3-4, to=2-3]
-			%			\arrow["{[1,2]}"{description}, draw=white, from=3-4, to=3-3]
-			%		\end{tikzcd}\]
+
 		
 		Now, as all the branching and joining happens at places rather than transitions, its executions all have linear causal processes, such as the above causal process for the untimed word $w = aabcea$. 
-		%		\[\begin{tikzcd}
-			%			\bigcirc & {\fbox{a}} & \bigcirc & {\fbox{a}} & \bigcirc &&&&&& {} \\
-			%			{\fbox{e}} & \bigcirc & {\fbox{c}} & \bigcirc & {\fbox{b}} \\
-			%			\bigcirc & {\fbox{f}} & \bigcirc & {\fbox{a}} & \bigcirc
-			%			\arrow[from=1-2, to=1-3]
-			%			\arrow[from=1-3, to=1-4]
-			%			\arrow[from=1-4, to=1-5]
-			%			\arrow[from=2-5, to=2-4]
-			%			\arrow[from=2-4, to=2-3]
-			%			\arrow[from=2-3, to=2-2]
-			%			\arrow[from=2-2, to=2-1]
-			%			\arrow[from=2-1, to=3-1]
-			%			\arrow[from=3-1, to=3-2]
-			%			\arrow[from=3-2, to=3-3]
-			%			\arrow[from=3-3, to=3-4]
-			%			\arrow[from=3-4, to=3-5]
-			%			\arrow[from=1-1, to=1-2]
-			%			\arrow[from=1-5, to=2-5]
-			%		\end{tikzcd}\]
-		
+	
 		This causal process is unrolled from the Petri net, exactly the way runs of finite state automata are simple paths over the graph of the automaton. We throughout assume that wherever needed, such a causal process can be obtained efficiently. 
 	\end{example}
 	
