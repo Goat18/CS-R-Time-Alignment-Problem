@@ -127,7 +127,7 @@ This gives us a series of edits, usually insertions or deletions, that can trans
 Alignments thereby help pinpoint exactly where inevitable deviations from expected behaviour occur, and the more distant the aligning word of a model is to its observed trace, the worse the model is at reflecting real system behaviour. 
 
 %\subsection{Time-aware Processes}
-\bigskip
+\medskip
 Process models can be represented using a variety of formal objects, including Petri nets. 
 %% They both offer a graphical means by which to represent concurrent systems, and a formal semantics for their execution, which allows one to mathematically analyse the same. 
 Assuming the event logs are a list of words over a finite alphabet (the set of possible discrete events), the problem of calculating the alignment has been extensively studied \cite{Adriansyah2014AligningOA} \cite{BCC21}. 
@@ -145,7 +145,7 @@ As time-aware process mining grows popular, new quality measures and conformance
 For this, one needs to define distance functions that can meaningfully compare and separate different time processes. 
 This paper seeks to provide a framework by which to do the very same, and set and solve the alignment problem for time-aware processes.
 
-\bigskip%\subsection{Three Distances, and Algorithms to Align them}
+\medskip%\subsection{Three Distances, and Algorithms to Align them}
 
 In this paper, we propose three different distance functions over timed words, and study the alignment problem for the first two. 
 The first is essentially Manhattan distance, and hence very standard, and has a quadratic time algorithm in the case of a structurally restricted class of models (sequential causal processes).
@@ -418,7 +418,6 @@ Hence, we claim that using an efficient encoding of the target function using th
 \subsection{A Direct Algorithm for Sequential Models} 
 
 We are given a process model $N$, an observed trace $\sigma$, and its underlying sequential causal process $CN = (B, E, G)$ with homomorphism $p$ for the untimed run of $\sigma$ on $N$. 
-
 Suppose we tried to express the cost of aligning a prefix of $\sigma$ to some timing function $\tau$ on the truncation of the sequential causal process up to the $i$th transition, call it $cost$. 
 $$cost(\tau|_i) = \sum_{j = 1}^{i} |\tau_j - \sigma_j| = |\tau_i - \sigma_i| + cost(\tau|_{i-1})$$
 Observe that the minimum cost to align $\sigma$ depends on exactly two things, the cost of aligning the last stamp, and the minimum cost of aligning the $n-1$ length prefix of $\sigma$, such that the last and second last timestamps obey the last static interval constraint.  
@@ -630,9 +629,8 @@ Instead, thinking along the lines of durations between events occurring, we will
 \end{definition}
 
 \begin{example}\label{wordandflow}
-	
-	Consider the following process model $N_2$:\\
-	\adjustbox{scale = 0.8}{
+	Consider the following process model $N_2$:\vspace*{-0em}\\
+	\adjustbox{scale = 0.75}{
 		\begin{tikzcd}	
 			& {} && {} && {} \\
 			\eye & {\fbox{a}} & \bigcirc & {\fbox{c}} & \bigcirc & {\fbox{g}} & \bigcirc \\
@@ -674,12 +672,12 @@ Hence, $f_\tau$ as defined produces exactly the time durations that the guards o
 As defined, we see that if a word is in the language of the model, then its $f$ function maps events to values that lie within the event's static interval constraint, and is perfectly aligned with the model. 
 This condition is unfortunately not sufficient due to urgency, but it is quite close to the exact condition necessary for a word to be in the language of a time Petri net. 
 
-Also note that given the underlying causal process and the resulting $f_\tau$, we can reconstruct $\tau$ quite straightforwardly as $$\forall e \in E : \tau(e) = \sum_{e' \leq_G e} f_\tau(e')$$
+Also note that given the underlying causal process and the resulting $f_\tau$, we can reconstruct $\tau$ quite straightforwardly as $\forall e \in E : \tau(e) = \sum_{e' \leq_G e} f_\tau(e')$.
 
 \begin{lemma}[Delay only distance : $d_\theta$]\label{manhattan2}
 	
 	$d_\theta$ as defined previously is equivalent to the following formulation directly using the flow function:
-	$$d_\theta(\tau_1, \tau_2) = \sum_{e \in E}|f_{\tau_1}(e) - f_{\tau_2}(e)|$$
+	$$\textstyle d_\theta(\tau_1, \tau_2) = \sum_{e \in E}|f_{\tau_1}(e) - f_{\tau_2}(e)|$$
 \end{lemma}	
 
 The flow function is hence a dual representation of timing functions, much like line graphs for graphs, as if a timing function traditionally labels its transition nodes with timestamps, the flow function labels edges leading up to transitions with the duration since said transition was enabled. This gives us a new way to formulate the alignment problem in terms of minimising distance from the flow vector of $\sigma$. 
@@ -810,7 +808,7 @@ We have implemented the stamp only alignment algorithm in python, available at \
 
 \section{Perspectives and Conclusion}
 
-In this paper, we posed the alignment problem for timed processes, devised three metrics with which to study alignments for timestamp sequences, and solved the purely timed alignment problem for the first two metrics proposed. As far as we know, this is the first step in conformance checking for time-aware process mining, and much further work can be inspired from this point. The alignment problem for the third metric $d_N$ is a first future direction. Secondly, for both metrics studied here the class of models for which the alignment problem was solved efficiently are structurally restricted (being sequential causal processes for $d_t$ and extended free choice time petri nets for $d_\theta$) and it would be interesting to see how to broaden the scope of these methods to larger classes of process models. Thirdly, further investigation in the general timed alignment problem is necessary, as our proposed approach here is rather rudimentary and can certainly be improved. Lastly, there are a number of other conformance artefacts that can be set and studied in the timed setting, such as anti-alignments \cite{CBC21}, and one can better develop all such conformance checking methods to account for timed process models.
+In this paper, we posed the alignment problem for timed processes, devised three metrics for studying alignments for timestamp sequences, and solved the purely timed alignment problem for the first two metrics proposed. As far as we know, this is the first step in conformance checking for time-aware process mining, and much further work can be inspired from this point. The alignment problem for the third metric $d_N$ is a first future direction. Secondly, for both metrics studied here the class of models for which the alignment problem was solved efficiently are structurally restricted (being sequential causal processes for $d_t$ and extended free choice time Petri nets for $d_\theta$) and it would be interesting to see how to broaden their scope to larger classes of process models. Thirdly, further investigation in the general timed alignment problem is necessary, as our proposed approach here is rather rudimentary and can certainly be improved. Lastly, there are a number of other conformance artefacts that can be set and studied in the timed setting, such as anti-alignments \cite{CBC21}, and one can better develop all such conformance checking methods to account for timed process models.
 	
 	\bibliographystyle{IEEEtran}
 	\bibliography{Conformanceieee}
