@@ -229,9 +229,9 @@
 	\end{definition}
 	
 	The next type of move we describe is the more novel and interesting \textit{delay move}. 
-	By formulating this type of edit move, we sought to leverage the structure of the process model itself, by reflecting the causal relationships between events. 
+	By formulating this type of edit move, we seek to leverage the structure of the process model itself, by reflecting the causal relationships between events. 
 	
-	A stamp move is purely local, such that when a stamp edit occurs at $e$ its immediate successor events shift their relationship with $e$, thereby ensuring that the change in $e$'s timestamp does not derail the rest of the system. 
+	A stamp move is purely local, in that when a stamp edit occurs at $e$ its immediate successor events shift their relationship with $e$, thereby ensuring that the change in $e$'s timestamp does not derail the rest of the system. 
 	On the other hand, any delay move at $e$ will preserve relative relationships in the future, at the cost of shifting the timestamp of every causal descendent of $e$ by the same amount. 
 	
 	This brings us to the following definition : 
@@ -247,7 +247,7 @@
 		
 	\end{definition}
 	
-	Now, armed with these types of moves, three natural notions of distance can be constructed. 
+The cost of a move is the magnitude $|x|$ in the above definitions, and the cost of a sequence of moves is the sum of the costs of the moves. Armed with these definitions, three natural notions of distance can be constructed. 
 	
 	\begin{definition}[Stamp Only Distance : $d_t$]
 		Given any two timing functions $\tau_1, \tau_2$ over the same causal process $(CN, p)$, we define the stamp-only distance $d_t$ as follows : 
@@ -260,7 +260,7 @@
 	\end{definition}
 	
 	\begin{definition}[Mixed Moves Distance : $d_N$]
-		And thirdly, given any two timing functions $\tau_1, \tau_2$ over the same causal process $(CN, p)$, we define the mixed move distance $d_N$ as follows : 
+		Given any two timing functions $\tau_1, \tau_2$ over the same causal process $(CN, p)$, we define the mixed move distance $d_N$ as follows 
 		\small	$$d_N(\tau_1, \tau_2) = \min \{cost(m) | {m \in (Stamp \cup Delay)^*}, {m(\tau_1) = \tau_2}\}$$
 		
 	\end{definition} 
@@ -274,7 +274,7 @@
 		The best $d_\theta$ alignment for the above pair is cost 1.5, as it requires a 0.5 delay edit at the first place to push the 0 forward to a 0.5, and then another 1 delay at the second position to pull the rest of the trace from $(3,4)$ back to $(2,3)$. 
 		
 		Now we consider the mixed setting. 
-		Intuitively, when dealing with linear models where the ripple effect of a delay is always predictably to the right irrespective of the values of the timestamps, moves can be applied in any order, so we can assume a minimum cost move is chronological. 
+		Intuitively, when dealing with linear models where the ripple effect of a delay is always to the right irrespective of the values of the timestamps, moves can be applied in any order, so we can assume a minimum cost run is chronological. 
 		So our first move will have to incur a minimum cost of $0.5$ as we try to align $(0,3,4)$ to our process trace at the first position.
 		Now, if any part of this initial move was a delay, we would push the second component even further away from $2.5$ than it already was, and if any of the delay were negative, then the mixed move seems counterproductive at the first component as the delay and stamp moves work against each other, so let us say the first move was pure stamp. 
 		Now we move on to move two, which will again incur a minimum cost of $0.5$. 
@@ -289,7 +289,7 @@
 	\subsection{Notation and Setup}
 	Given the nonconstructive nature of the definition of $d_N$, it is not clear how one can efficiently calculate the distance between two fixed timed traces, as a minimal cost sequence of moves is not obvious. 
 	As before, we first study the problem over linear causal processes, as these make analysing the effects of moves significantly simpler. 
-	Before we propose an algorithm that does calculate minimal cost for linear timed traces, we first define a few properties that seem to characterise classes of well formed minimal cost runs, prove that $d_N$ is well defined along the way, and then proceed to prove that these properties both improve cost, and are satisfied solely by the run calculated by the algorithm we provide. 
+	Before we propose an algorithm that does calculate minimal cost for linear timed traces, we first define a few properties that seem to characterise classes of well formed minimal cost runs, and then prove that these properties both improve cost, and are satisfied solely by the run calculated by the algorithm we provide. 
 	
 	We start with some convenient notation for a common combination of the previously defined moves. 
 	
@@ -304,7 +304,7 @@
 	
 	We say a sequence of moves $m_1m_2\dots m_n = m \in Moves^*$ \textit{aligns} $\tau_1$ to $\tau_2$ if $$m(\tau_1) = m_n(\dots (m_2(m_1(\tau_1))\dots) = \tau_2$$
 	
-	With delay edits, which constitute a new way of thinking about how a time-series can be transformed, comes a new perspective with which we can view timing functions over causal processes. 
+Now, we look at a new way to represent timing functions. With delay edits, which constitute a new way of thinking about how a time-series can be transformed, comes a new perspective with which we can view timing functions over causal processes. 
 	There is of course the standard definition, $\tau : \{1, \dots n\} \to \mathbb{R}^+$ that assigns to each event a timestamp that records exactly when the event occurs. 
 	
 	Instead, thinking along the lines of delays and durations between events occuring, we will often benefit from considering the following representation when speaking about delay moves, and so we define a way by which to view a timed word not in terms of its absolute timestamps, but by the delays between relevant timestamps. 
@@ -502,6 +502,7 @@
 	\end{lemma}
 	
 	\subsection{Computing $d_N$}
+	
 	\begin{figure}[!t]
 		\removelatexerror
 		\begin{algorithm}[H]
