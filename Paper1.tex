@@ -10,7 +10,6 @@
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
 \usepackage[english]{babel}
-
 \usepackage{todonotes}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
@@ -73,8 +72,7 @@
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
 		T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \begin{document}
-	
-	\title{Timed Alignments
+	\title{Timed Alignments\\
 		\thanks{Neha Rino was funded by the International Master's Scholarships Program IDEX of Université Paris-Saclay.}
 	}
 	
@@ -122,7 +120,7 @@ We often do not want the system to always precisely generate any and all possibl
 What is often much more useful is a process model that can, up to some small error factor, approximate any reasonable future system behaviour. 
 
 In Arya Adriansyah's seminal thesis \cite{Adriansyah2014AligningOA}, we obtain the notion of an alignment, that is, the minimal series of corrections needed to transform an observed event trace into the execution of the process model that most closely mimics it.  
-It is often seen as an execution of the synchronised product of the process model and a \emph{trace model} i.e.\ a simple model that captures exactly one event log trace. 
+It is often seen as an execution of the synchronised product of the process model and a \emph{trace model} i.e. a simple model that captures exactly one event log trace. 
 This gives us a series of edits, usually insertions or deletions, that can transform a process trace into the observed trace.  
 %For our purposes we will use the term alignment to mean the process trace of the model that aligns closest to the observation, and how to transform this optimal execution to the observed one is clear depending on the edit moves available.
 Alignments thereby help pinpoint exactly where inevitable deviations from expected behaviour occur, and the more distant the aligning word of a model is to its observed trace, the worse the model is at reflecting real system behaviour. 
@@ -144,7 +142,7 @@ These are time Petri nets, that is, Petri nets augmented with the ability to rec
 Time-aware process mining seeks to study both what sort of underlying processes govern system behaviour, and what sort of time constraints they can impose on when certain events can occur \cite{RMAW13} \cite{CRHA20}  \cite{AS21}. 
 The need for such a setting is clear, as specifying and checking concrete time constraints regarding the durations of events can ensure critical information about a system's behaviour. 
 As time-aware process mining grows popular, new quality measures and conformance checking techniques must be developed that are sensitive to temporal constraints, but so far in the study of alignments as a conformance checking artefact, we notice that the process model used is never time-aware. 
-For this, crucially, one needs to define distance functions that can meaningfully compare and separate different time processes. 
+For this, one needs to define distance functions that can meaningfully compare and separate different time processes. 
 This paper seeks to provide a framework by which to do the very same, and set and solve the alignment problem for time-aware processes.
 
 \bigskip%\subsection{Three Distances, and Algorithms to Align them}
@@ -251,7 +249,7 @@ Using $p$, elements of $CN$ are identified with their corresponding \emph{origin
 \begin{definition}[Timing Function]\label{tau} A \textit{timing function} $\tau : E \rightarrow \mathbb{R}$ is a function from events of a causal process into time values. 
 \end{definition}
 
-	\section{The Alignment Problem in Timed Settings}
+	\section{The Alignment Problem in Timed Settings}\label{2}
 The alignment problem, given a trace from an event log and a process model, involves finding a valid execution of the process model that is closest to the trace under some metric.
 
 \begin{definition}[The General Alignment Problem]
@@ -282,7 +280,7 @@ This ensures that we can compare the timing constraints on analogous parts of th
 	
 \end{definition}
 
-Hence, for the first few sections of this paper, we will ignore the untimed parts of the words, i.e we assume the word $\sigma$ we wish to align comes with a valid causal process $(CN, p)$ of the model, and seek to find timing functions on said causal process that are both valid, and minimize distance to $\sigma$ under the metric of choice. 
+Hence, for sections \ref{2}, \ref{3} and \ref{4} of this paper, we will ignore the untimed parts of the words, i.e we assume the word $\sigma$ we wish to align comes with a valid causal process $(CN, p)$ of the model, and seek to find timing functions on said causal process that are both valid, and minimize distance to $\sigma$ under the metric of choice. 
 
 We shall revisit the general timed alignment problem in section \ref{align}, and show how our methods 
 %for solving the purely timed alignment problem 
@@ -290,7 +288,7 @@ can be adapted using existing techniques to provide approaches for solving the g
 %timed alignment 
 problem. 
 
-\subsection{Edit Moves on Timing Functions}\label{dualrep}
+\subsection{Edit Moves on Timing Functions}
 Now we come to the problem of deciding how to compare two timing functions over the same causal process, and quantify how close they are to each other. 
 
 Much like Levenshtein's edit distance, popularly used in the untimed case of the alignment problem, we view the definition of these distances as an exercise in cost minimisation over the set of all transformations between two words. 
@@ -321,7 +319,7 @@ What sort of functions are useful notions of transformation on a timed system?
 
 Based on the above example, we naturally arrive at two types of moves. 
 
-We define a \textit{stamp move} as a move that translates the timing function only at a point, ie, that edits a single element of the timestamp series $\tau$. 
+We define a \textit{stamp move} as a move that translates the timing function only at a point, i.e., that edits a single element of the timestamp series $\tau$. 
 
 \begin{definition}[Stamp Move]
 	Given a timing function $\gamma : E \to \mathbb{R}$, formally, we define this as : 
@@ -382,7 +380,7 @@ $$\eye \longrightarrow \underset{[0,1]}{\square} \longrightarrow \bigcirc \longr
 \end{example}
 
 
-\section{Results and Algorithm : Stamp Edits}
+\section{Results and Algorithm : Stamp Edits}\label{3}
 \begin{lemma}[Stamp only distance : $d_t$]\label{manhattan}
 	
 	
@@ -571,7 +569,7 @@ The algorithm precisely executes the above procedure, where the subfunction \tex
 			The subfunction \textsc{backTrack} runs a binary search on each stored graph in $graphlist$ to find a trace in the language that does indeed give the minimum cost, letter by letter, and so overall takes $O(nlogn)$ time, keeping the overall time complexity  $O(n^2)$ where $n = |\sigma|$.
 		\end{remark}
 		
-\section{Results and Algorithm : Delay Edits}
+\section{Results and Algorithm : Delay Edits}\label{4}
 Delay edits provide a new way of thinking about transformations over time-series, and inspire a new way of viewing timing functions over causal processes. 
 There is of course the standard definition, $\tau : E \to \mathbb{R}^+$ that assigns to each event a timestamp that records exactly when the event occurs. 
 
@@ -628,7 +626,7 @@ Instead, thinking along the lines of durations between events occurring, we will
 Note that $e'$ as defined here is the latest causal predecessor of $e$
 %, i.e., it is the firing of $e'$ that enabled $e$
 . 
-Hence, $f_\tau$ as defined produces exactly the time durations that the guards of each transition in the model checks, i.e.\ the clock function values during the run. 
+Hence, $f_\tau$ as defined produces exactly the time durations that the guards of each transition in the model checks, i.e. the clock function values during the run. 
 
 As defined, we see that if a word is in the language of the model, then its $f$ function maps events to values that lie within the event's static interval constraint, and is perfectly aligned with the model. 
 This condition is unfortunately not sufficient due to urgency, but it is quite close to the exact condition necessary for a word to be in the language of a time Petri net. 
