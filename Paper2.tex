@@ -61,7 +61,8 @@
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{remark}{Remark}
-
+\newtheorem*{lemma*}{Lemma}
+\newtheorem*{theorem*}{Theorem}
 \newtheorem{definition}{Definition}
 
 \newtheorem{example}{Example}
@@ -156,7 +157,7 @@
 		One process trace is $(draft, 5)(dispatch, 6)(sent, 11)$, which depicts drafting the message in 5 units and then dispatching it, and having it send successfully. An example of an observed trace which does not conform to the process above would be $(draft, 3)(draft, 5)(dispatch, 7)(dispatch, 7)(sent, 12)$. Clearly, there is an extraneous letter here, as the same message cannot be dispatched twice, and the timestamps for dispatch and sending come too late. One possible optimally close process trace for this observation is $(draft, 3)(draft,6)(dispatch, 7)(sent, 12)$, which deletes the extra $dispatch$, and extends the second $draft$ event by a unit, allowing the rest of the trace to thereby be in time. 
 	\end{example}
 	
-	In \cite{CR22} we posed the general timed alignment problem, which formalised the notion of aligning timed traces to timed process models.  %Time Petri nets offer both a graphical means by which to represent concurrent systems, but their semantics also allow one to express complex time constraints. 
+	In \cite{CR22} we posed the general alignment problem, which formalised the notion of aligning timed traces to timed process models.  %Time Petri nets offer both a graphical means by which to represent concurrent systems, but their semantics also allow one to express complex time constraints. 
 	
 	\begin{definition}[The General Alignment Problem]
 		Given a process model $N$ denoted by a Time Petri Net and an observed timed trace $\sigma$ we wish to find a timed word $\gamma \in \mathcal{L}(N)$ such that $d(\sigma, \gamma) = \min_{x \in \mathcal{L}(N)} d(\sigma, x)$ for some distance function $d$ on timed words. 
@@ -193,7 +194,7 @@
 	
 	\end{example}
 
-	In sections \ref{2} and \ref{3} of this paper will focus on the problem of computing the distance function $d_N$ and in section \ref{4}, we return to the problem of aligning linear process models to observed traces. We present linear time algorithms for both computing $d_N$ and solving the alignment problem in this setting, but once again only for linear timed words, and linear process models.  
+	In sections \ref{2} and \ref{3} of this paper we will focus on the problem of computing the distance function $d_N$ and in section \ref{4}, we return to the problem of aligning linear process models to observed traces. We present linear time algorithms for both computing $d_N$ and solving the alignment problem in this setting, but once again only for linear timed words, and linear process models.  
 	
 	\section{Preliminaries : Edit Moves for Timed Words}\label{2}
 	
@@ -482,20 +483,20 @@
 	A co-operative sequence of moves is said to be \textit{stable} if each of its moves is stable.
 	Note that any stable run is also cross co-operative. 
 	
+		\begin{example}
+		The earlier cost 1.7 example can be even further improved to be stable and have cost 1.5, thereby giving us the following :
+		$$f_\gamma \xmapsto{(0, -0.2, 5)} (1, 0, 1, 2, 0.8) \xmapsto{(0, -0.3, 4)} (1, 0, 1, 1.7, 0.8)$$$$ \xmapsto{(0, 0, 3)} (1, 0, 1, 1.7, 0.8) \xmapsto{(0.5, 0.5, 2)} (1, 1, 1.5, 1.7, 0.8) \xmapsto{(0, 0, 1)} \sigma $$
+		
+	\end{example}
+	
+	Once again, as the example suggests, a stable chronological run (or reverse chronological run) is unique , but moreover, we claim that stability improves the cost of the sequence of moves.  
+	
 	\begin{lemma}\label{stableunique} The stable, co-operative, reverse chronological sequence of moves aligning any two linear timed traces is unique. 
 	\end{lemma}
 	
 	\begin{proof}
 		This is clear, as given a partially aligned flow trace the choice of $s$ to make the next move stable as defined above is deterministic, and the corresponding delay moves are determined by reverse chronology and co-operation. 
 	\end{proof}
-	
-	\begin{example}
-		The earlier cost 1.7 example can be even further improved to be stable and have cost 1.5, thereby giving us the following :
-		$$f_\gamma \xmapsto{(0, -0.2, 5)} (1, 0, 1, 2, 0.8) \xmapsto{(0, -0.3, 4)} (1, 0, 1, 1.7, 0.8)$$$$ \xmapsto{(0, 0, 3)} (1, 0, 1, 1.7, 0.8) \xmapsto{(0.5, 0.5, 2)} (1, 1, 1.5, 1.7, 0.8) \xmapsto{(0, 0, 1)} \sigma $$
-		
-	\end{example}
-	
-	Once again, as the example suggests, we claim that stability improves the cost of the sequence of moves, but moreover, a stable chronological run (or reverse chronological run) is unique.  
 	
 	\begin{lemma}\label{stablebest} There is a stable minimal cost sequence of moves aligning any two linear timed traces. 
 	\end{lemma}
@@ -622,6 +623,10 @@ In this paper, we studied the alignment problem for timed processes using the mi
 We will detail the proofs of the theorems and lemmas stated above. 
 
 \subsection{Chronology}
+We start with the proof of Lemma \ref{linescommute}. 
+
+\begin{lemma*}There is a minimal cost sequence of moves aligning any two linear timed traces that is chronological/reverse chronological. 
+\end{lemma*}
 
 \begin{proof}
 We assume that there is at least one mixed move at each position, adding zero moves as needed. We first observe the following: 
@@ -653,6 +658,10 @@ As for the reverse chronological sequence, by commutativity we can simply revers
 \end{proof}
 
 \subsection{Co-operation} 
+Now we prove Lemma \ref{linescoop}
+\begin{lemma*}There is a cooperative minimal cost chronological (or reverse chronological) sequence of moves aligning any two linear timed traces. 
+\end{lemma*}
+
 \begin{proof}
 We first prove that there is a co-operative and chronological minimal cost sequence of moves aligning any two linear timed traces. 
 Given any minimal cost sequence of moves aligning $\gamma$ to $\sigma$, by Lemma \ref{linescommute} we know that there is a chronological sequence that is also minimal cost, call it $m'$. 
@@ -696,6 +705,11 @@ Now, $m_R$ is also co-operative throughout as co-operation is a property of the 
 
 \end{proof}
 
+We proceed to the proof of Lemma \ref{crosscoop}. 
+
+\begin{lemma*}	For every reverse chronological co-operative run $m'$ aligning $\gamma$ to $\sigma$, there is a reverse chronological, co-operative and cross co-operative run $m$ aligning $\gamma$ to $\sigma$ such that $$cost(m) \leq cost(m')$$
+\end{lemma*}
+
 \begin{proof}
 Say $m' = (0, d'_n, n) \dots (s'_1, d'_1, 1)$. 
 Let $i$ be an index at which the stamp move is not cross co-operative, i.e., $s_i \cdot d_{i+1} > 0$. 
@@ -735,7 +749,9 @@ Now, $|d_n| = |\sigma_{n-1} + y - \sigma_n|$ as $m^y|_{n-1}$ fully corrected up 
 
 
 Now, we can proceed with the proof of Lemma \ref{stablebest}. 
-
+\begin{lemma*}
+	There is a stable, co-operative, reverse chronological minimal cost sequence of moves aligning any two linear timed traces. 
+\end{lemma*}
 \begin{proof}
 Suppose we seek to align the linear timed trace $\gamma$ to $\sigma$, and consider a minimal cost, reverse chronological, co-operative and cross co-operative sequence of moves $m'$ that aligns $\gamma$ to $\sigma$. 
 We know $m'$ exists by Lemmas \ref{linescoop} and \ref{crosscoop}. 
@@ -814,8 +830,12 @@ And hence we are done.
 \end{proof}
 
 
-\subsection{Computing $d_N$ and Alignments} 
+\subsection{Purely Timed Alignment for Linear Process Models} 
+We can now look at the proof of Theorem \ref{MixAlign}. 
 
+\begin{theorem*}
+	Given a linear causal process $(CN, p)$ of a time Petri Net $N$ and a linear observed trace $\sigma$, the word $\gamma \in \mathcal{L}(N)$ such that $f_{\gamma}(i)= \underset{x \in [Eft(t_i), Lft(t_i)]} {\argmin}\hspace{0.5em} {|x - f_\sigma(i)|}$ also has the property $\gamma = \underset{x \in \mathcal{L}(N)}{\argmin} \hspace{0.5em}{d_N(x, \sigma)}$. 
+\end{theorem*}
 \begin{proof}
 As $(CN, p)$ is linear, we can consider the event set $E$ to be totally ordered by $G$, giving us the list $\{e_1, e_2, \dots e_n\}$ and their respective static interval constraints $\forall i \leq n : SI(p(e_i)) = [a_i, b_i]$. In this setting, clearly, $$f_{\gamma}(i)= \argmin_{x \in [a_i, b_i]} {|x - f_\sigma(i)|}$$
 
