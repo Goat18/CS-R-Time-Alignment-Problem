@@ -99,7 +99,7 @@
 	The subject of this paper is to study conformance checking for timed models, that is, process models that consider both the sequence of events in a process as well as the timestamps at which each event is recorded. 
 	Time-aware process mining is a growing subfield of research, and as tools that seek to discover timing related properties in processes develop, so does the need for conformance checking techniques that can tackle time constraints and provide insightful quality measures for time-aware process models. 
 	In particular, one of the most useful conformance artefacts is the alignment, that is, finding the minimal changes necessary to correct a new observation to conform to a process model.  
-	In this paper, we set our problem of timed alignment and solve two cases each corresponding to a different metric over time processes. %For the first, we have an algorithm whose time complexity is linear both in the size of the observed trace and the process model, while for the second we have a quadratic time algorithm for linear process models. 
+	In this paper, we set our problem of timed alignment and solve two cases each corresponding to a different metric over time processes. %For the first, we have an algorithm whose time complexity is linear both in the size of the observed trace and the process model, while for the second we have a quadratic time algorithm for sequential process models. 
 \end{abstract}
 
 
@@ -129,7 +129,7 @@ Alignments thereby help pinpoint exactly where inevitable deviations from expect
 %\subsection{Time-aware Processes}
 \bigskip
 Process models can be represented using a variety of formal objects, including Petri nets. 
-They both offer a graphical means by which to represent concurrent systems, and a formal semantics for their execution, which allows one to mathematically analyse the same. 
+%% They both offer a graphical means by which to represent concurrent systems, and a formal semantics for their execution, which allows one to mathematically analyse the same. 
 Assuming the event logs are a list of words over a finite alphabet (the set of possible discrete events), the problem of calculating the alignment has been extensively studied \cite{Adriansyah2014AligningOA} \cite{BCC21}. 
 The notion of distance used on these words used is usually either Hamming distance or Levenshtein's edit distance. 
 It is natural to want to study explicitly timed systems,
@@ -148,7 +148,7 @@ This paper seeks to provide a framework by which to do the very same, and set an
 \bigskip%\subsection{Three Distances, and Algorithms to Align them}
 
 In this paper, we propose three different distance functions over timed words, and study the alignment problem for the first two. 
-The first is essentially Manhattan distance, and hence very standard, and has a quadratic time algorithm in the case of a structurally restricted class of models (linear causal processes).
+The first is essentially Manhattan distance, and hence very standard, and has a quadratic time algorithm in the case of a structurally restricted class of models (sequential causal processes).
 For all other types of models, we present an encoding in simplex that solves the problem, albeit with exponential worst-time complexity. 
 The second distance function utilises the structure of the process model to study distances between time processes, and we present a straightforward algorithm for solving the alignment in this case, whose time complexity is linear in the size of the causal process and the transition set of the model. The second setting, and the notion of delay edits that we proposed, provide new insight into the nature of time processes and their properties.
 
@@ -175,9 +175,9 @@ A \textit{state} of a TPN $N = (P, T, F, SI, \Sigma, \lambda, M_0, M_f)$ is a pa
 A transition $t$ can fire from state $S = (M, I)$ after delay $\theta \in \mathbb{T}$
 iff $t$ is enabled at $M$, and $I(t) + \theta \in [Eft(t), Lft(t)]$ and for
 every other \(t'\) enabled at \(M\), $I(t') + \theta \leq Lft(t')$.
-This last constraint encodes the notion of urgency, that is, if $t$ is enabled
-at marking $M$ it must fire before its clock value reaches $Lft(t)$, unless
-another transition disables it.
+%% This last constraint encodes the notion of urgency, that is, if $t$ is enabled
+%% at marking $M$ it must fire before its clock value reaches $Lft(t)$, unless
+%% another transition disables it.
 This firing is denoted $(M, I)[t\rangle(M'', I')$ with the new state $(M'', I')$ defined as follows:
 $$M'' = M' \cup t \pre \textrm{
 	where } M' = M \setminus \pre t$$ $$I'(t) =
@@ -408,17 +408,19 @@ Hence, we claim that using an efficient encoding of the target function using th
 %	Where $\mathcal{C}$ is a convex set. 
 \end{theorem}
 
-\begin{remark}
+%% \begin{remark}
 	By the above theorem we see that the alignment problem for $d_t$ is easily cast as a simplex instance, and can be solved by any linear programming solver. 
-	Hence it can be solved in polynomial average running time, but this approach does have theoretically exponential worst time complexity. 
+	%% Hence it can be solved in polynomial average running time, but
+        However this approach has theoretically exponential worst time complexity. 
 	This bound is not necessarily tight, but either improving it or proving its tightness are left for future work. While the general case seems to be hard to solve efficiently, there is a subclass of process models for which the problem is significantly more tractable, and moreover, has a quadratic time solution. 
-\end{remark}
+%% \end{remark}
 
-\subsection{Summing Minimum Cost Graphs} 
+%% \subsection{Summing Minimum Cost Graphs} 
+\subsection{A Direct Algorithm for Sequential Models} 
 
-We are given a process model $N$, an observed trace $\sigma$, and its underlying linear causal process $CN = (B, E, G)$ with homomorphism $p$ for the untimed run of $\sigma$ on $N$. 
+We are given a process model $N$, an observed trace $\sigma$, and its underlying sequential causal process $CN = (B, E, G)$ with homomorphism $p$ for the untimed run of $\sigma$ on $N$. 
 
-Suppose we tried to express the cost of aligning a prefix of $\sigma$ to some timing function $\tau$ on the truncation of the linear causal process up to the $i$th transition, call it $cost$. 
+Suppose we tried to express the cost of aligning a prefix of $\sigma$ to some timing function $\tau$ on the truncation of the sequential causal process up to the $i$th transition, call it $cost$. 
 $$cost(\tau|_i) = \sum_{j = 1}^{i} |\tau_j - \sigma_j| = |\tau_i - \sigma_i| + cost(\tau|_{i-1})$$
 Observe that the minimum cost to align $\sigma$ depends on exactly two things, the cost of aligning the last stamp, and the minimum cost of aligning the $n-1$ length prefix of $\sigma$, such that the last and second last timestamps obey the last static interval constraint.  
 This suggests that the minimal cost of aligning prefixes of $\sigma$ to prefixes of the model can be recursively calculated as a function of the last timestamp in the alignment of a given prefix. 
@@ -630,8 +632,7 @@ Instead, thinking along the lines of durations between events occurring, we will
 
 \begin{example}\label{wordandflow}
 	
-	Consider the following process model $N_2$: 
-	
+	Consider the following process model $N_2$:\\
 	\adjustbox{scale = 0.8}{
 		\begin{tikzcd}	
 			& {} && {} && {} \\
@@ -663,7 +664,7 @@ Instead, thinking along the lines of durations between events occurring, we will
 		\end{tikzcd}
 	}
 	
-	For this net and the word $w = (a, 1)(b, 2)(c, 5)(d, 6)(e, 6)(f, 8)(g,8)$ we can define its flow function as $$a \xmapsto{}{} 1, b \xmapsto{}{} 2, c \xmapsto{}{} 4, d \xmapsto{}{} 4, e \xmapsto{}{} 4, f \xmapsto{}{} 2, g \xmapsto{}{} 2$$
+	For this net and the word $w = (a, 1)(b, 2)(c, 5)(d, 6)(e, 6)\\(f, 8)(g,8)$ we can define its flow function as $$a \xmapsto{}{} 1, b \xmapsto{}{} 2, c \xmapsto{}{} 4, d \xmapsto{}{} 4, e \xmapsto{}{} 4, f \xmapsto{}{} 2, g \xmapsto{}{} 2$$
 \end{example}
 
 Note that $e'$ as defined here is the latest causal predecessor of $e$
@@ -810,7 +811,7 @@ We have implemented the stamp only alignment algorithm in python, available at \
 
 \section{Perspectives and Conclusion}
 
-In this paper, we posed the alignment problem for timed processes, devised three metrics with which to study alignments for timestamp sequences, and solved the purely timed alignment problem for the first two metrics proposed. As far as we know, this is the first step in conformance checking for time-aware process mining, and much further work can be inspired from this point. The alignment problem for the third metric $d_N$ is a first future direction. Secondly, for both metrics studied here the class of models for which the alignment problem was solved efficiently are structurally restricted (being linear causal processes for $d_t$ and extended free choice time petri nets for $d_\theta$) and it would be interesting to see how to broaden the scope of these methods to larger classes of process models. Thirdly, further investigation in the general timed alignment problem is necessary, as our proposed approach here is rather rudimentary and can certainly be improved. Lastly, there are a number of other conformance artefacts that can be set and studied in the timed setting, such as anti-alignments \cite{CBC21}, and one can better develop all such conformance checking methods to account for timed process models.
+In this paper, we posed the alignment problem for timed processes, devised three metrics with which to study alignments for timestamp sequences, and solved the purely timed alignment problem for the first two metrics proposed. As far as we know, this is the first step in conformance checking for time-aware process mining, and much further work can be inspired from this point. The alignment problem for the third metric $d_N$ is a first future direction. Secondly, for both metrics studied here the class of models for which the alignment problem was solved efficiently are structurally restricted (being sequential causal processes for $d_t$ and extended free choice time petri nets for $d_\theta$) and it would be interesting to see how to broaden the scope of these methods to larger classes of process models. Thirdly, further investigation in the general timed alignment problem is necessary, as our proposed approach here is rather rudimentary and can certainly be improved. Lastly, there are a number of other conformance artefacts that can be set and studied in the timed setting, such as anti-alignments \cite{CBC21}, and one can better develop all such conformance checking methods to account for timed process models.
 	
 	\bibliographystyle{IEEEtran}
 	\bibliography{Conformanceieee}
@@ -928,8 +929,8 @@ In this paper, we posed the alignment problem for timed processes, devised three
 	\end{theorem*}
 	
 	\begin{proof}
-		We are given a process model $N$, an observed trace $\sigma$, and its underlying linear causal process $CN = (B, E, G)$ with homomorphism $p$ for the untimed run of $\sigma$ on $N$.
-		As discussed earlier, for linear process models, we define $$g_i(d) = \min_{\tau|_i \in \mathcal{L}^i(N) \wedge \tau_i = d} cost(\tau|_i)$$
+		We are given a process model $N$, an observed trace $\sigma$, and its underlying sequential causal process $CN = (B, E, G)$ with homomorphism $p$ for the untimed run of $\sigma$ on $N$.
+		As discussed earlier, for sequential process models, we define $$g_i(d) = \min_{\tau|_i \in \mathcal{L}^i(N) \wedge \tau_i = d} cost(\tau|_i)$$
 		
 		This family of functions is seen to obey the following recursion: 
 		
@@ -1069,7 +1070,7 @@ In this paper, we posed the alignment problem for timed processes, devised three
 		Hence, the algorithm is correct. 
 	\end{proof}
 	
-		\subsection{A Note on Linear Causal Processes}
+		\subsection{A Note on Sequential Causal Processes}
 	We take a moment to discuss the structurally restricted class of processes that our stamp only-algorithm works for, that is, causal processes whose graphical structure  is that of a straight line. 
 	These reflect the executions of TPNs that do not have any branching points ($e \in E : |e \pre | > 1$) and naturally as a consequence, no points of synchrony ($e \in E : |\pre e| > 1$). 
 	This essentially reflects the executions of automata, allowing for exclusive branching ($p \in P : |p \pre| > 1$) and iteration (that is, cycles in the model) only. 
@@ -1098,7 +1099,7 @@ In this paper, we posed the alignment problem for timed processes, devised three
 		\end{tikzcd}}
 	\end{example}
 	
-	\begin{example}\label{Linearcp}
+	\begin{example}\label{Sequentialcp}
 		On the other hand, consider the following TPN $N_1$ : 
 		
 		\adjustbox{scale = 0.8}{\begin{tikzcd}
@@ -1159,7 +1160,7 @@ In this paper, we posed the alignment problem for timed processes, devised three
 %			\arrow["{[1,2]}"{description}, draw=white, from=3-4, to=3-3]
 %		\end{tikzcd}\]
 		
-		Now, as all the branching and joining happens at places rather than transitions, its executions all have linear causal processes, such as the above causal process for the untimed word $w = aabcea$. 
+		Now, as all the branching and joining happens at places rather than transitions, its executions all have sequential causal processes, such as the above causal process for the untimed word $w = aabcea$. 
 %		\[\begin{tikzcd}
 %			\bigcirc & {\fbox{a}} & \bigcirc & {\fbox{a}} & \bigcirc &&&&&& {} \\
 %			{\fbox{e}} & \bigcirc & {\fbox{c}} & \bigcirc & {\fbox{b}} \\
