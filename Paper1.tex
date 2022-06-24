@@ -151,7 +151,7 @@ This paper seeks to provide a framework by which to do the very same, and set an
 
 In this paper, we propose three different distance functions over timed words, and study the alignment problem for the first two. 
 The first is essentially Manhattan distance, and hence very standard, and has a quadratic time algorithm in the case of a structurally restricted class of models (linear causal processes).
-For all other types of models, we present an encoding in simplex that solves the problem, albeit with exponential worst-time complexity and polynomial average running time. 
+For all other types of models, we present an encoding in simplex that solves the problem, albeit with exponential worst-time complexity. 
 The second distance function utilises the structure of the process model to study distances between time processes, and we present a straightforward algorithm for solving the alignment in this case, whose time complexity is linear in the size of the causal process and the transition set of the model. The second setting, and the notion of delay edits that we proposed, provide new insight into the nature of time processes and their properties.
 
 \section{Preliminaries}
@@ -163,9 +163,9 @@ We represent events as pairs $(a,t)$ where $a \in \Sigma$ is the name of the act
 
 We will often ignore the untimed parts of timed words, i.e., the projection onto $\Sigma^*$, leaving just the timestamps, a sequence belonging to $\mathbb{R}^{+*}$. 
 
-The timed process model we use here is a labelled time Petri net. 
+The timed process model we use here is a labeled time Petri net. 
 
-\begin{definition}[Labelled Time Petri Net] \label{tpn} A labelled \textit{time Petri net} (or TPN) is a tuple $N = (P, T, F, SI, \Sigma, \lambda, M_0, M_f)$, where $P, T$ are disjoint sets of places and transitions respectively,  $F \subseteq (P \times T) \cup (T \times P)$ is the flow relation,  $SI : T \rightarrow \mathbb{I}$ is the static interval function, where $SI(t) = (Eft(t), Lft(t))$ such that $Eft$ stands for earliest firing time, and $Lft$ for latest firing time, $\lambda : T \rightarrow \Sigma$ is the labelling function, labelling transitions with actions from the action set $\Sigma$, and  $ M_0 , M_f: P \to \mathbb{N}$ are the initial and final markings. % of $N$. 
+\begin{definition}[TPN] \label{tpn} A labeled \textit{time Petri net} (or TPN) is a tuple $N = (P, T, F, SI, \Sigma, \lambda, M_0, M_f)$, where $P, T$ are disjoint sets of places and transitions respectively,  $F \subseteq (P \times T) \cup (T \times P)$ is the flow relation,  $SI : T \rightarrow \mathbb{I}$ is the static interval function, where $SI(t) = (Eft(t), Lft(t))$ such that $Eft$ stands for earliest firing time, and $Lft$ for latest firing time, $\lambda : T \rightarrow \Sigma$ is the labelling function, labelling transitions with actions from the action set $\Sigma$, and  $ M_0 , M_f: P \to \mathbb{N}$ are the initial and final markings. % of $N$. 
 \end{definition}
 
 Given a transition $t \in T$ we define the pre-set of $t$ as $\pre t = \{p \in P | (p, t) \in F\}$ and its post-set similarly is defined as $t \pre = \{p \in P | (t, p) \in F\}$, (the presets and post-sets of places are defined similarly). A transition $t$ of a TPN is \textit{enabled} at marking $M$ iff $\forall p \in \pre t :  M(p) > 0$. 
@@ -173,26 +173,31 @@ The set of all enabled transitions at a marking $M$ is denoted by \textit{Enable
 
 A \textit{state} of a TPN $N = (P, T, F, SI, \Sigma, \lambda, M_0, M_f)$ is a pair $S = (M, I)$, where $M$ is a marking of $N$ and $I : Enabled(M) \rightarrow \mathbb{R^+}$ is called the \textit{clock function}. The initial state is $(M_0, \mathbf{0})$, where $\mathbf{0} $ is the zero function. 
 
-A transition $t$ is fireable from state $S = (M, I)$ after delay $\theta \in \mathbb{T}$ iff $t$ is enabled at $M$, and updating the clock function to increment by delay $\theta$ will keep $t$'s new clock value $I(t)  + \theta$ in the range $[Eft(t), Lft(t)]$ as determined by the static interval function. 
+A transition $t$ can fire from state $S = (M, I)$ after delay $\theta \in \mathbb{T}$
+iff $t$ is enabled at $M$, and $I(t) + \theta \in [Eft(t), Lft(t)]$ and for
+every other \(t'\) enabled at \(M\), $I(t') + \theta \leq Lft(t')$.
+This last constraint encodes the notion of urgency, that is, if $t$ is enabled
+at marking $M$ it must fire before its clock value reaches $Lft(t)$, unless
+another transition disables it.
+
+This firing is denoted $(M, I)[t\rangle(M'', I')$ with the new state $(M'', I')$ defined as follows:
+$$M'' = M' \cup t \pre \textrm{
+  where } M' = M \setminus \pre t$$ $$I'(t) =
+\begin{cases}
+  I(t) + \theta & \textrm{If } t \in Enabled(M'') \cap Enabled(M')\\
+  0 & \textrm{If } t \in Enabled(M'') \setminus Enabled(M')\\
+\end{cases}$$
+
 
 %Once a fireable transition $t$ is fired, the marking and clock function are both updated to reflect the firing, as defined below : %$M'$ as in the untimed case (subtracting one token from each preplace, and adding one token to each postplace), and the clock function $I$ is updated to $I'$ by increasing clock values by $\theta$ for any transition that was enabled at both $M$ and $M'$, setting clock values to 0 for any transitions newly enabled by $M'$ that were not enabled at $M$, and leaving clock values undefined for any transitions that are not currently enabled. 
 
-
-	When a transition $t$ fires after time $\theta$ from state $S = (M, I)$, the new state $S' = (M'', I')$ is given as follows : $$M'' = M' \cup t \pre \textrm{ where } M' = M \setminus \pre t$$ $$I'(t) = \begin{cases}
-		I(t) + \theta & \textrm{If } t \in Enabled(M')\\
-		0 & \textrm{If } t \in Enabled(M'') \setminus Enabled(M')\\
-		\textrm{Undefined} & \textrm{Otherwise}\\
-	\end{cases}$$
-
-This is also denoted by $(M, I)[t\rangle(M'', I')$
-
-An important feature of TPNs is the notion of urgency, that is, if $t$ is enabled at marking $M$ and has clock value $Lft(t)$, it must fire, or another transition must fire at the same instant disabling $t$.  
+%% This is also denoted by $(M, I)[t\rangle(M'', I')$
 
 %We need a notion of valid instances of processes the model wishes to recognise. This is why we equip our time Petri nets with a notion of a final marking. 
 A valid execution of the model begins at the initial marking, fires a sequence of transitions (representing a series of activities occurring at certain times) and at the end of the firing sequence reaches $M_f$, with any clock function $I$. 
 
-\begin{definition}[Language of a time Petri net]
-	A word $w = (a_0, a_1, \dots a_n) \in \Sigma^*$ is in the language of the labelled TPN$\mathcal{L}(N)$ if there is a firable sequence of transitions $(t_0, t_1 \dots t_n) \in T^*$ such that $\lambda((t_0, t_1, \dots, t_n)) = w $ and they transform the initial marking into the final one, that is, for some clock function $I$ on $M_f$, $(M_0, \mathbf{0}) [t_0, t_1, \dots t_n\rangle (M_f, I)$. 
+\begin{definition}[Language $\mathcal{L}(N)$ of a TPN]
+	A word $w = (a_0, a_1, \dots a_n) \in \Sigma^*$ is in the language of the labeled TPN $N$ if there is a firable sequence of transitions $(t_0, t_1 \dots t_n) \in T^*$ such that $\lambda((t_0, t_1, \dots, t_n)) = w $ and they transform the initial marking into the final one, that is, for some clock function $I$ on $M_f$, $(M_0, \mathbf{0}) [t_0, t_1, \dots t_n\rangle (M_f, I)$. 
 \end{definition}
 
 \begin{example}\label{TPN}
@@ -252,7 +257,7 @@ Using $p$, elements of $CN$ are identified with their corresponding \emph{origin
 \end{definition}
 
 	\section{The Alignment Problem in Timed Settings}
-The alignment problem, given a trace from an event log and a process model, involves finding a valid execution of the process model that is closest to the trace under some metric.
+The alignment problem, given a trace from an event log and a process model, involves finding a valid execution of the model that is closest to the trace under some metric.
 
 \begin{definition}[The General Alignment Problem]
 	Given a process model $N$ denoted by a TPN and a timed trace $\sigma$ we wish to find a timed word $\gamma \in \mathcal{L}(N)$ such that $d(\sigma, \gamma) = \min_{x \in \mathcal{L}(N)} d(\sigma, x)$ for some distance function $d$ on timed words. 
@@ -272,7 +277,7 @@ but the timed setting is more complex.
 \end{example}
 
 
-This is why, we first restrict our attention to the case where the untimed part of $\sigma$ does match the model, that is to say, if $\sigma = (w, \tau)$ where $w$ is the action labels and $\tau$ is the timestamp sequence. then we assume that $w$ has a valid causal process $(CN, p)$ over $N$. Clearly this degenerate case of the problem needs to be solved if the general timed alignment problem is to be solved, and we argue that this case is interesting and complex in its own right. 
+This is why, we first restrict our attention to the case where the untimed part of $\sigma$ does match the model, that is to say, if $\sigma = (w, \tau)$ where $w$ is the action labels and $\tau$ is the timestamp sequence. then we assume that $w$ has a valid causal process $(CN, p)$ over $N$. Clearly this case of the problem needs to be solved if the general timed alignment problem is to be solved, and we argue that this case is interesting and complex in its own right. 
 
 This ensures that we can compare the timing constraints on analogous parts of the process, and hence reason meaningfully about deviances from the model that are purely based on the timing of the process. This gives us the following problem : 
 
@@ -402,11 +407,10 @@ What remains is to show that the space of valid runs of the model is a convex se
 Hence, we claim that using an efficient encoding of the target function using the firing domain formulation described above, the problem can be solved using the simplex algorithm, which is used to solve convex optimization problems in good time in practice, and having worst case exponential time complexity. 
 
 \begin{theorem}\label{convexset}
-	Given a bounded TPN $N$, an observed trace $\sigma$, and its causal process $CN = (B, E, G)$, the alignment problem can be viewed as seeking the vector $(\gamma_1, \gamma_2, \dots \gamma_{|E|})$ that minimizes the quantity $\sum_{e \in E} |\gamma_e - \sigma_e|$ over the set $\gamma \in \mathcal{L}(N)$. 
-	
-	This can be cast as a linear programming problem, i.e, $$\underset{\alpha - \beta \in \mathcal{C}, \alpha, \beta \geq 0}{\mathsf{minimize}} \hspace{0.5em} \alpha + \beta  $$
-	
-	Where $\mathcal{C}$ is a convex set. 
+	Given a bounded TPN $N$, an observed trace $\sigma$, and its causal process $CN = (B, E, G)$, the alignment problem can be viewed as seeking the vector $(\gamma_1, \gamma_2, \dots \gamma_{|E|})$ that minimizes the quantity $\sum_{e \in E} |\gamma_e - \sigma_e|$ over the set $\gamma \in \mathcal{L}(N)$,
+	which can be cast as a linear programming problem.
+\todo{move to Appendix} %% i.e, $$\underset{\alpha - \beta \in \mathcal{C}, \alpha, \beta \geq 0}{\mathsf{minimize}} \hspace{0.5em} \alpha + \beta  $$
+	%% where $\mathcal{C}$ is a convex set.}
 \end{theorem}
 
 \begin{remark}
@@ -488,7 +492,7 @@ Utilising the recursion, we proceed to compute $g_2$.
 	\begin{figure}[!t]
 		\centering 
 		\includegraphics[width = 0.48\textwidth]{stampgraph.png}
-		\caption{Visual representation of a run of the algorithm on Example \ref{stampcomp}}
+		\caption{Illustration of a run of the algorithm on Example \ref{stampcomp}.}
 	\end{figure}
 	The new domain is $[2,3]$, a translation of the previous one because the guard on the second transition is the point $[2,2]$. 
 	Now, we want the sum of both $|x-2|$ and $\min_{x' - x \in [2,2]}g_1(x')$. 
@@ -559,16 +563,16 @@ The algorithm precisely executes the above procedure, where the subfunction \tex
 	\end{algorithm}
 \end{figure}
 
-		\begin{theorem}\label{StampAlgoCorr} Algorithm \ref{StampAlgo} is correct, i.e., its result $\gamma$ has the properties 
-			\begin{enumerate}	\item $\gamma \in \mathcal{L}(N)$
-				\item $\forall x \in \mathcal{L}(N)  : d_t(\gamma, \sigma)  \leq  {d_t(x, \sigma)}$
-			\end{enumerate}
-		\end{theorem}
+\begin{theorem}\label{StampAlgoCorr}
+  Algorithm \ref{StampAlgo} is correct, i.e., it outputs a valid execution
+  $\gamma \in \mathcal{L}(N)$ which minimizes the distance $d_t(\gamma, \sigma)$
+  to the trace $\sigma$.
+\end{theorem}
 		
 		\begin{remark} Note that the subfunctions \textsc{graphMin} and  \textsc{graphAddMod} both run through the list of segments of the graph once each, and hence are linear in the sizes of their inputs, and Algorithm \ref{StampAlgo} calls each of these subfunctions once for each letter of the observed trace, each time on a graph with size linear in the current prefix.  
 			So the cost calculation section of Algorithm \ref{StampAlgo} has quadratic time complexity in the size of the input. 
 			
-			The subfunction \textsc{backTrack} runs a binary search on each stored graph in $graphlist$ to find a trace in the language that does indeed give the minimum cost, letter by letter, and so overall takes $O(nlogn)$ time, keeping the overall time complexity  $O(n^2)$ where $n = |\sigma|$.
+			The subfunction \textsc{backTrack} runs a binary search on each stored graph in $graphlist$ to find a trace in the language that does indeed give the minimum cost, letter by letter, and so overall takes $O(n \log(n))$ time, keeping the overall time complexity  $O(n^2)$ where $n = |\sigma|$.
 		\end{remark}
 		
 \section{Results and Algorithm : Delay Edits}
