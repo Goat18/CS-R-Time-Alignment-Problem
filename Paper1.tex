@@ -64,7 +64,8 @@
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{remark}{Remark}
-
+\newtheorem*{lemma*}{Lemma}
+\newtheorem*{theorem*}{Theorem}
 \newtheorem{definition}{Definition}
 
 \newtheorem{example}{Example}
@@ -131,16 +132,15 @@ Process models can be represented using a variety of formal objects, including P
 They both offer a graphical means by which to represent concurrent systems, and a formal semantics for their execution, which allows one to mathematically analyse the same. 
 Assuming the event logs are a list of words over a finite alphabet (the set of possible discrete events), the problem of calculating the alignment has been extensively studied \cite{Adriansyah2014AligningOA} \cite{BCC21}. 
 The notion of distance used on these words used is usually either Hamming distance or Levenshtein's edit distance. 
-It is natural to want to study explicitly timed systems
+It is natural to want to study explicitly timed systems,
 %, that is, systems that record the timestamps that show when each event happens, 
-as by considering events along with their timestamps when mining processes, we can glean information about the minimum delay between two events, or the maximum duration the system takes to converge upon a state, or check deadlines, all of which are highly relevant in real world applications \cite{Cheikhrouhou2014TheTP} \cite{Eder1999TimeCI} \cite{inbook}. 
+as by considering events along with their timestamps when mining processes, we can glean information about the minimum delay between two events, the maximum duration the system takes to converge upon a state, or check deadlines, all of which are highly relevant in real world applications \cite{Cheikhrouhou2014TheTP} \cite{Eder1999TimeCI} \cite{inbook}. 
 In addition, one may want to predict the timestamps of processes \cite{SSA11}. 
+Time-aware process mining seeks to study both what sort of underlying processes govern system behaviour, and what sort of time constraints they can impose on when certain events can occur \cite{RMAW13} \cite{CRHA20}  \cite{AS21}. 
 In the process mining community, there are ways to use existing process model notation in order to denote time constraints. BPMN 2.0 comes equipped with \emph{timer events} and can record absolute, relative, and cyclical time constraints. 
 For our purposes, we use an extension of Petri nets equipped with the ability to express the relative and cyclical time constraints that BPMN equipped with timers can. 
 These are time Petri nets, that is, Petri nets augmented with the ability to record and check the duration it takes to fire a transition once enabled, using which one can impose certain constraints on the relationships between the timestamps of different events. 
 
-Time-aware process mining seeks to study both what sort of underlying processes govern system behaviour, and what sort of time constraints they can impose on when certain events can occur \cite{RMAW13} \cite{CRHA20}  \cite{AS21}. 
-The need for such a setting is clear, as specifying and checking concrete time constraints regarding the durations of events can ensure critical information about a system's behaviour. 
 As time-aware process mining grows popular, new quality measures and conformance checking techniques must be developed that are sensitive to temporal constraints, but so far in the study of alignments as a conformance checking artefact, we notice that the process model used is never time-aware. 
 For this, one needs to define distance functions that can meaningfully compare and separate different time processes. 
 This paper seeks to provide a framework by which to do the very same, and set and solve the alignment problem for time-aware processes.
@@ -163,7 +163,7 @@ We will often ignore the untimed parts of timed words, i.e., the projection onto
 
 The timed process model we use here is a labeled time Petri net. 
 
-\begin{definition}[TPN] \label{tpn} A labeled \textit{time Petri net} (or TPN) is a tuple $N = (P, T, F, SI, \Sigma, \lambda, M_0, M_f)$, where $P, T$ are disjoint sets of places and transitions respectively,  $F \subseteq (P \times T) \cup (T \times P)$ is the flow relation,  $SI : T \rightarrow \mathbb{I}$ is the static interval function, where $SI(t) = (Eft(t), Lft(t))$ such that $Eft$ stands for earliest firing time, and $Lft$ for latest firing time, $\lambda : T \rightarrow \Sigma$ is the labelling function, labelling transitions with actions from the action set $\Sigma$, and  $ M_0 , M_f: P \to \mathbb{N}$ are the initial and final markings. % of $N$. 
+\begin{definition}[Labelled Time Petri Net] \label{tpn} A labeled \textit{time Petri net} (or TPN) is a tuple $N = (P, T, F, SI, \Sigma, \lambda, M_0, M_f)$, where $P, T$ are disjoint sets of places and transitions respectively,  $F \subseteq (P \times T) \cup (T \times P)$ is the flow relation,  $SI : T \rightarrow \mathbb{I}$ is the static interval function, where $SI(t) = (Eft(t), Lft(t))$ such that $Eft$ stands for earliest firing time, and $Lft$ for latest firing time, $\lambda : T \rightarrow \Sigma$ is the labeling function, labeling transitions with actions from the action set $\Sigma$, and  $ M_0 , M_f: P \to \mathbb{N}$ are the initial and final markings. % of $N$. 
 \end{definition}
 
 Given a transition $t \in T$ we define the pre-set of $t$ as $\pre t = \{p \in P | (p, t) \in F\}$ and its post-set similarly is defined as $t \pre = \{p \in P | (t, p) \in F\}$, (the presets and post-sets of places are defined similarly). A transition $t$ of a TPN is \textit{enabled} at marking $M$ iff $\forall p \in \pre t :  M(p) > 0$. 
@@ -177,26 +177,23 @@ every other \(t'\) enabled at \(M\), $I(t') + \theta \leq Lft(t')$.
 This last constraint encodes the notion of urgency, that is, if $t$ is enabled
 at marking $M$ it must fire before its clock value reaches $Lft(t)$, unless
 another transition disables it.
-
 This firing is denoted $(M, I)[t\rangle(M'', I')$ with the new state $(M'', I')$ defined as follows:
 $$M'' = M' \cup t \pre \textrm{
-  where } M' = M \setminus \pre t$$ $$I'(t) =
+	where } M' = M \setminus \pre t$$ $$I'(t) =
 \begin{cases}
-  I(t) + \theta & \textrm{If } t \in Enabled(M'') \cap Enabled(M')\\
-  0 & \textrm{If } t \in Enabled(M'') \setminus Enabled(M')\\
+	I(t) + \theta & \textrm{If } t \in Enabled(M'') \cap Enabled(M')\\
+	0 & \textrm{If } t \in Enabled(M'') \setminus Enabled(M')\\
 \end{cases}$$
-
-
 %Once a fireable transition $t$ is fired, the marking and clock function are both updated to reflect the firing, as defined below : %$M'$ as in the untimed case (subtracting one token from each preplace, and adding one token to each postplace), and the clock function $I$ is updated to $I'$ by increasing clock values by $\theta$ for any transition that was enabled at both $M$ and $M'$, setting clock values to 0 for any transitions newly enabled by $M'$ that were not enabled at $M$, and leaving clock values undefined for any transitions that are not currently enabled. 
-
 %% This is also denoted by $(M, I)[t\rangle(M'', I')$
+%An important feature of TPNs is the notion of urgency, that is, if $t$ is enabled at marking $M$ and has clock value $Lft(t)$, it must fire, or another transition must fire at the same instant disabling $t$.  
 
 %We need a notion of valid instances of processes the model wishes to recognise. This is why we equip our time Petri nets with a notion of a final marking. 
-A valid execution of the model begins at the initial marking, fires a sequence of transitions %% (representing a series of activities occurring at certain times) and at the end of the firing sequence
+A valid execution of the model begins at the initial marking, fires a sequence of transitions %%(representing a series of activities occurring at certain times) and at the end of the firing sequence 
 and reaches $M_f$, with any clock function $I$. 
 
 \begin{definition}[Language $\mathcal{L}(N)$ of a TPN]
-	A word $w = (a_0, a_1, \dots a_n) \in \Sigma^*$ is in the language of the labeled TPN $N$ if there is a firable sequence of transitions $(t_0, t_1 \dots t_n) \in T^*$ such that $\lambda((t_0, t_1, \dots, t_n)) = w $ and they transform the initial marking into the final one, that is, for some clock function $I$ on $M_f$, $(M_0, \mathbf{0}) [t_0, t_1, \dots t_n\rangle (M_f, I)$. 
+	A word $w = (a_0, a_1, \dots a_n) \in \Sigma^*$ is in the language of the labeled TPN $\mathcal{L}(N)$ if there is a firable sequence of transitions $(t_0, t_1 \dots t_n) \in T^*$ such that $\lambda((t_0, t_1, \dots, t_n)) = w $ and they transform the initial marking into the final one, that is, for some clock function $I$ on $M_f$, $(M_0, \mathbf{0}) [t_0, t_1, \dots t_n\rangle (M_f, I)$. 
 \end{definition}
 
 \begin{example}\label{TPN}
@@ -406,10 +403,9 @@ What remains is to show that the space of valid runs of the model is a convex se
 Hence, we claim that using an efficient encoding of the target function using the firing domain formulation described above, the problem can be solved using the simplex algorithm, which is used to solve convex optimization problems in good time in practice, and having worst case exponential time complexity. 
 
 \begin{theorem}\label{convexset}
-	Given a bounded TPN $N$, an observed trace $\sigma$, and its causal process $CN = (B, E, G)$, the alignment problem can be viewed as seeking the vector $(\gamma_1, \gamma_2, \dots \gamma_{|E|})$ that minimizes the quantity $\sum_{e \in E} |\gamma_e - \sigma_e|$ over the set $\gamma \in \mathcal{L}(N)$,
-	which can be cast as a linear programming problem.
-\todo{move to Appendix} %% i.e, $$\underset{\alpha - \beta \in \mathcal{C}, \alpha, \beta \geq 0}{\mathsf{minimize}} \hspace{0.5em} \alpha + \beta  $$
-	%% where $\mathcal{C}$ is a convex set.}
+	Given a bounded TPN $N$, an observed trace $\sigma$, and its causal process $CN = (B, E, G)$, the alignment problem can be viewed as seeking the vector $(\gamma_1, \gamma_2, \dots \gamma_{|E|})$ that minimizes the quantity $\sum_{e \in E} |\gamma_e - \sigma_e|$ over the set $\gamma \in \mathcal{L}(N)$ which can be cast as a linear programming problem. %, i.e, $$\underset{\alpha - \beta \in \mathcal{C}, \alpha, \beta \geq 0}{\mathsf{minimize}} \hspace{0.5em} \alpha + \beta  $$
+	
+%	Where $\mathcal{C}$ is a convex set. 
 \end{theorem}
 
 \begin{remark}
@@ -437,36 +433,79 @@ If we can calculate the family of functions $\forall i \leq n : g_i$ efficiently
 	
 	We take a moment to look at an example of the computation of this family of functions we proposed by considering the following $d_t$-alignment problem : 
 	
-	We first have the process model $N$ : 
-	\\
-	\adjustbox{scale = 0.7}{
-	\begin{tikzpicture}
+	We first have the process model $N$ : \\
+%	\adjustbox{scale = 0.7}{
+%	\begin{tikzpicture}
+%		
+%		\node[place, tokens = 1] (p1) at (0,2) {}; 
+%		
+%		\node[transition, label = {below : $[0,1]$}] (t1) at (1.5,2) {}; 
+%		
+%		\node[place] (p2) at (3,2) {}; 
+%		
+%		\node[transition, label ={ below : $[2,2]$}] (t2) at (4.5,2) {}; 
+%		
+%		\node[place] (p3) at (6,2) {}; 
+%		
+%		\node[transition, label ={ below : $[2,4]$}] (t3) at (7.5,2) {}; 
+%		
+%		\node[place] (p4) at (8.5,1) {}; 
+%		
+%		\node[transition, label ={ $[0,1]$}] (t4) at (7.5,0) {}; 
+%		
+%		\node[place] (p5) at (6, 0) {}; 
+%		
+%		\node[transition, label ={ $[0,0]$}] (t5) at (4.5, 0) {}; 
+%		
+%		\node[place] (p6) at (3, 0) {}; 
+%		
+%		\node[transition, label ={ $[2,4]$}] (t6) at (1.5, 0) {}; 
+%		
+%		\node[place] (p7) at (0,0) {}; 
+%		
+%		\draw[thick] (p1) edge[post] (t1)
+%		(t1) edge[post] (p2)
+%		(p2) edge[post] (t2)
+%		(t2) edge[post] (p3)
+%		(p3) edge[post] (t3)
+%		(t3) edge[post] (p4)
+%		(p4) edge[post] (t4)
+%		(t4) edge[post] (p5)
+%		(p5) edge[post] (t5)
+%		(t5) edge[post] (p6)
+%		(p6) edge[post] (t6)
+%		(t6) edge[post] (p7);
+%		
+%	\end{tikzpicture}
+%}\\
+	\adjustbox{scale = 0.6}{
+		\begin{tikzpicture}
 		
-		\node[place, tokens = 1] (p1) at (0,2) {}; 
+		\node[place, tokens = 1] (p1) at (0,0) {}; 
 		
-		\node[transition, label = {below : $[0,1]$}] (t1) at (1.5,2) {}; 
+		\node[transition, label = { $[0,1]$}] (t1) at (1.2,0) {}; 
 		
-		\node[place] (p2) at (3,2) {}; 
+		\node[place] (p2) at (2.4,0) {}; 
 		
-		\node[transition, label ={ below : $[2,2]$}] (t2) at (4.5,2) {}; 
+		\node[transition, label ={$[2,2]$}] (t2) at (3.6,0) {}; 
 		
-		\node[place] (p3) at (6,2) {}; 
+		\node[place] (p3) at (4.8,0) {}; 
 		
-		\node[transition, label ={ below : $[2,4]$}] (t3) at (7.5,2) {}; 
+		\node[transition, label ={$[2,4]$}] (t3) at (6,0) {}; 
 		
-		\node[place] (p4) at (8.5,1) {}; 
+		\node[place] (p4) at (7.2, 0) {}; 
 		
-		\node[transition, label ={ $[0,1]$}] (t4) at (7.5,0) {}; 
+		\node[transition, label ={ $[0,1]$}] (t4) at (8.4,0) {}; 
 		
-		\node[place] (p5) at (6, 0) {}; 
+		\node[place] (p5) at (9.6, 0) {}; 
 		
-		\node[transition, label ={ $[0,0]$}] (t5) at (4.5, 0) {}; 
+		\node[transition, label ={ $[0,0]$}] (t5) at (10.8, 0) {}; 
 		
-		\node[place] (p6) at (3, 0) {}; 
+		\node[place] (p6) at (12, 0) {}; 
 		
-		\node[transition, label ={ $[2,4]$}] (t6) at (1.5, 0) {}; 
+		\node[transition, label ={ $[2,4]$}] (t6) at (13.2, 0) {}; 
 		
-		\node[place] (p7) at (0,0) {}; 
+		\node[place] (p7) at (14.4,0) {}; 
 		
 		\draw[thick] (p1) edge[post] (t1)
 		(t1) edge[post] (p2)
@@ -482,10 +521,9 @@ If we can calculate the family of functions $\forall i \leq n : g_i$ efficiently
 		(t6) edge[post] (p7);
 		
 	\end{tikzpicture}
-}\\
-	The observed trace is $\sigma = (1,2,4,6,6,8)$. 
+}
+		The observed trace is $\sigma = (1,2,4,6,6,8)$. 
 	%%
-	
 We begin to compute the family of functions $g_i$, starting with $g_1(x) = |1-x|$ in the domain $[0,1]$.
 Utilising the recursion, we proceed to compute $g_2$.  
 	\begin{figure}[!t]
@@ -563,9 +601,9 @@ The algorithm precisely executes the above procedure, where the subfunction \tex
 \end{figure}
 
 \begin{theorem}\label{StampAlgoCorr}
-  Algorithm \ref{StampAlgo} is correct, i.e., it outputs a valid execution
-  $\gamma \in \mathcal{L}(N)$ which minimizes the distance $d_t(\gamma, \sigma)$
-  to the trace $\sigma$.
+	Algorithm \ref{StampAlgo} is correct, i.e., it outputs a valid execution
+	$\gamma \in \mathcal{L}(N)$ which minimizes the distance $d_t(\gamma, \sigma)$
+	to the trace $\sigma$.
 \end{theorem}
 		
 		\begin{remark} Note that the subfunctions \textsc{graphMin} and  \textsc{graphAddMod} both run through the list of segments of the graph once each, and hence are linear in the sizes of their inputs, and Algorithm \ref{StampAlgo} calls each of these subfunctions once for each letter of the observed trace, each time on a graph with size linear in the current prefix.  
@@ -659,15 +697,10 @@ We could reason this way because $d_\theta$ allows local edits that do not affec
 This relationship is especially clear in extended free choice time Petri nets, where the only events that determine the fireability of an event are its causal history and events with the exact same preset which would naturally disable it by firing. 
 Hence, we present Algorithm \ref{DelayAlgo}, which minimizes the delay cost at each transition locally, while still overall ensuring membership in the language of the model. The main step in the algorithm is line 12, the rest is just to ensure the time process we obtain is a valid one. 
 
-
-
-\begin{theorem}\label{DelayAlgoCorr} Algorithm \ref{DelayAlgo} is correct on extended free choice time Petri nets, that is, its result $\gamma$ has the properties : 
-	\begin{enumerate}
-		\item $(CN, p, \gamma)$ is a valid time process of $N$. 
-		\item $d_\theta(\gamma, \sigma)  \leq  {d_\theta(x, \sigma)}$ for all $x$ such that $(CN, p, x)$ is a valid time process of $N$. 
-	\end{enumerate}
+\begin{theorem}\label{DelayAlgoCorr} Algorithm \ref{DelayAlgo} is correct, i.e., it outputs a valid execution
+	$\gamma \in \mathcal{L}(N)$ which minimizes the distance $d_\theta(\gamma, \sigma)$
+	to the trace $\sigma$.
 \end{theorem}
-
 
 \begin{remark} Note that Algorithm \ref{DelayAlgo} runs through the events of the causal process $E$ exactly once, and each time runs through the set of currently enabled transitions, and the total set of transitions, and hence its time complexity is linear in the size of the input $|CN|$, and the size of the transition set, i.e, $O(|E||T|)$. 
 \end{remark}
@@ -784,8 +817,13 @@ In this paper, we posed the alignment problem for timed processes, devised three
 	
 	\clearpage
 	\appendix 
-	\subsection{Stamp Only Algorithm}
+	\subsection{Stamp Only Algorithm : Linear Programming Problem}
 	We start off with a proof of Lemma \ref{manhattan}
+	\begin{lemma*}[Stamp only distance : $d_t$]
+		
+		
+		$d_t$ as defined above is equivalent to the \textit{Manhattan distance} or \textit{taxicab distance} between two points of $\mathbb{R}^n$, where $|E| = n$, say $\mathbf{t} = (t_1, t_2, \dots t_n) $ and $\mathbf{s} = (s_1, s_2, \dots s_n)$, defined as $$d_t(\mathbf{t}, \mathbf{s}) = \sum_{i = 1}^{n} |t_i - s_i|$$
+	\end{lemma*}
 	
 	\begin{proof}
 		The way we see this is as follows. 
@@ -796,6 +834,12 @@ In this paper, we posed the alignment problem for timed processes, devised three
 
 	Now, we can proceed to the proof of Theorem \ref{convexset} : 
 	
+	\begin{theorem*}
+		Given a bounded TPN $N$, an observed trace $\sigma$, and its causal process $CN = (B, E, G)$, the alignment problem can be viewed as seeking the vector $(\gamma_1, \gamma_2, \dots \gamma_{|E|})$ that minimizes the quantity $\sum_{e \in E} |\gamma_e - \sigma_e|$ over the set $\gamma \in \mathcal{L}(N)$ which can be cast as a linear programming problem, i.e, $$\underset{\alpha - \beta \in \mathcal{C}, \alpha, \beta \geq 0}{\mathsf{minimize}} \hspace{0.5em} \alpha + \beta  $$
+		
+			Where $\mathcal{C}$ is a convex set. 
+	\end{theorem*}
+
 	\begin{proof}
 		Lemma 1 (General Form Lemma) of \cite{BM82} states that the firing domains of state classes for any bounded TPN may be expressed as solution sets of systems of inequalities of the following form :  $$\begin{cases}
 			a_i \leq t(i) \leq b_i & \forall i \\ 
@@ -809,7 +853,8 @@ In this paper, we posed the alignment problem for timed processes, devised three
 		As defined above, $\alpha$ and $\beta$ are the absolute values of the nonnegative and negative components of the vector $\gamma - \sigma$, respectively, so their difference is $\gamma - \sigma$ and their sum is $|\gamma - \sigma|$. Clearly now, we have completed the transformation, and our alignment problem is equivalently cast as $$\underset{\alpha - \beta \in \mathcal{C}, \alpha, \beta \geq 0}{\mathsf{minimize}} \hspace{0.5em} \alpha + \beta  $$
 		
 	\end{proof}
-	
+
+\subsection{Stamp Only Algorithm : Summing Minimum Cost Graphs}
 	Before we prove Theorem \ref{StampAlgoCorr}, we prove a small, relevant lemma. 
 	
 	\begin{lemma}\label{minpwc}
@@ -873,7 +918,13 @@ In this paper, we posed the alignment problem for timed processes, devised three
 		\end{algorithm}
 	\end{figure}
 	
-	We may now prove Theorem \ref{StampAlgoCorr} as follows : 
+	We may now prove Theorem \ref{StampAlgoCorr}. 
+	
+	\begin{theorem*}
+		Algorithm \ref{StampAlgo} is correct, i.e., it outputs a valid execution
+		$\gamma \in \mathcal{L}(N)$ which minimizes the distance $d_t(\gamma, \sigma)$
+		to the trace $\sigma$.
+	\end{theorem*}
 	
 	\begin{proof}
 		We are given a process model $N$, an observed trace $\sigma$, and its underlying linear causal process $CN = (B, E, G)$ with homomorphism $p$ for the untimed run of $\sigma$ on $N$.
@@ -969,11 +1020,26 @@ In this paper, we posed the alignment problem for timed processes, devised three
 	\end{theorem}
 	
 	\subsection{Proof of correctness of Delay Only Algorithm}
-	We start off with a quick proof for Lemma \ref{manhattan2} : 
+	We start off with a quick proof for Lemma \ref{manhattan2}. 
+	
+	\begin{lemma*}[Delay only distance : $d_\theta$]
+		
+		$d_\theta$ as defined previously is equivalent to the following formulation directly using the flow function:
+		$$d_\theta(\tau_1, \tau_2) = \sum_{e \in E}|f_{\tau_1}(e) - f_{\tau_2}(e)|$$
+	\end{lemma*}	
 	
 	\begin{proof}
 		By noting that delay moves on a trace $\tau$ translate exactly to stamp moves on $f_\tau$, we can deduce by the same argument as Lemma \ref{manhattan} that the distance function $d_\theta$ can be seen to be identical the manhattan distance on flow functions, i.e, the above formulation. 
 	\end{proof}
+	
+	Now, we can tackle Theorem \ref{DelayAlgoCorr}. 
+	
+	\begin{theorem*} Algorithm \ref{DelayAlgo} is correct on extended free choice time Petri nets, that is, its result $\gamma$ has the properties : 
+		\begin{enumerate}
+			\item $(CN, p, \gamma)$ is a valid time process of $N$. 
+			\item $d_\theta(\gamma, \sigma)  \leq  {d_\theta(x, \sigma)}$ for all $x$ such that $(CN, p, x)$ is a valid time process of $N$. 
+		\end{enumerate}
+	\end{theorem*}
 	
 	
 	\begin{proof}
