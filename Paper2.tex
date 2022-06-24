@@ -98,7 +98,7 @@
 		The subject of this paper is to study conformance checking for timed models, that is, process models that consider both the sequence of events in a process as well as the timestamps at which each event is recorded. 
 		Time-aware process mining is a growing subfield of research, and as tools that seek to discover timing related properties in processes develop, so does the need for conformance checking techniques that can tackle time constraints and provide insightful quality measures for time-aware process models. 
 		In particular, one of the most useful conformance artefacts is the alignment, that is, finding the minimal changes necessary to correct a new observation to conform to a process model.  
-		This paper follows a previous one, where we have set our problem of timed alignment. In the present paper, we solve the case where the metrics used to compare timed processes allows mixed moves, i.e. an error on the timestamp of an event may or may not have propagated to its successors, and provide linear time algorithms for distance computation and alignment on models with linear causal processes. 
+		This paper follows a previous one, where we have set our problem of timed alignment. In the present paper, we solve the case where the metrics used to compare timed processes allows mixed moves, i.e. an error on the timestamp of an event may or may not have propagated to its successors, and provide linear time algorithms for distance computation and alignment on models with sequential causal processes. 
 	\end{abstract}
 	
 	\begin{IEEEkeywords}
@@ -163,10 +163,10 @@
 		Given a process model $N$ denoted by a Time Petri Net and an observed timed trace $\sigma$ we wish to find a timed word $\gamma \in \mathcal{L}(N)$ such that $d(\sigma, \gamma) = \min_{x \in \mathcal{L}(N)} d(\sigma, x)$ for some distance function $d$ on timed words. 
 	\end{definition}
 	
-	In this paper, we restrict ourselves to the study of the alignment problem on a simpler model for time-aware processes, ones that we define as linear process models. These essentially lose the ability to express parallel events the way time Petri nets can, but retain the ability to reason about time constraints on the durations between any two consecutive events. In addition, we focus on the mixed moves distance $d_N$ defined in \cite{CR22}, that is, a distance where edits can either stay local to a given event or propagate forward into the event's causal future. The last assumption we make is that the untimed part of the observed trace conforms to the process, i.e, the only part that requires aligning is the timestamps. This allows us to focus on the timing aspect of the problem, although once this is solved we can easily adapt existing untimed alignment methods like those described in \cite{Adriansyah2014AligningOA} or \cite{BCC21} to align words with both action labels and timestamps that need editing. This brings us to the following formal problem : 
+	In this paper, we restrict ourselves to the study of the alignment problem on a simpler model for time-aware processes, ones that we define as sequential process models. These essentially lose the ability to express parallel events the way time Petri nets can, but retain the ability to reason about time constraints on the durations between any two consecutive events. In addition, we focus on the mixed moves distance $d_N$ defined in \cite{CR22}, that is, a distance where edits can either stay local to a given event or propagate forward into the event's causal future. The last assumption we make is that the untimed part of the observed trace conforms to the process, i.e, the only part that requires aligning is the timestamps. This allows us to focus on the timing aspect of the problem, although once this is solved we can easily adapt existing untimed alignment methods like those described in \cite{Adriansyah2014AligningOA} or \cite{BCC21} to align words with both action labels and timestamps that need editing. This brings us to the following formal problem : 
 	
-	\begin{definition}[The Purely Timed Alignment Problem for Linear Process Models]
-		Given a linear process model $N$ denoted by a Time Petri Net and an observed timed trace $(w, \sigma)$, such that $w \in Untime(\mathcal{L}(N))$ we wish to find a valid timestamp sequence $\gamma$ such that $d(\sigma, \gamma) = \min_{x \in \mathcal{L}(N)} d(\sigma, x)$.
+	\begin{definition}[The Purely Timed Alignment Problem for Sequential Process Models]
+		Given a sequential process model $N$ denoted by a Time Petri Net and an observed timed trace $(w, \sigma)$, such that $w \in Untime(\mathcal{L}(N))$ we wish to find a valid timestamp sequence $\gamma$ such that $d(\sigma, \gamma) = \min_{x \in \mathcal{L}(N)} d(\sigma, x)$.
 	\end{definition}
 	
 	We informally look at an instance of the purely timed problem below : 
@@ -188,13 +188,13 @@
 			\arrow["{[0, 3]}"{description, pos=0.2}, draw=white, from=2-6, to=1-6]
 		\end{tikzcd}
 	}
-	Now, say we observed the trace $(u_1, \sigma_1) = (d, 4)(e, 6)(f, 6)$ that did not fit the model, and we wished to analyse how best to modify them to fit them back into the model. We note that the untimed part does match the model's specification, and in order to make the timestamps fit we can simply edit the timestamp of $d$ to give the following process trace $(v_1, \gamma_1) = (d, 4)(e, 6)(f, 6)$. 
+Now, say we observed the trace $(u_1, \sigma_1) = (d, 4)(e, 6)(f, 6)$ that did not fit the model, and we wished to analyse how best to modify them to fit them back into the model. We note that the untimed part does match the model's specification, and in order to make the timestamps fit we can simply edit the timestamp of $d$ to give the following process trace $(v_1, \gamma_1) = (d, 4)(e, 6)(f, 6)$. 
 	
 	%%Should stick to a uniform notion of letter,timestamp or word,timeseries?
 	
 	\end{example}
 
-	In sections \ref{2} and \ref{3} of this paper we will focus on the problem of computing the distance function $d_N$ and in section \ref{4}, we return to the problem of aligning linear process models to observed traces. We present linear time algorithms for both computing $d_N$ and solving the alignment problem in this setting, but once again only for linear timed words, and linear process models.  
+	In sections \ref{2} and \ref{3} of this paper we will focus on the problem of computing the distance function $d_N$ and in section \ref{4}, we return to the problem of aligning sequential process models to observed traces. We present linear time algorithms for both computing $d_N$ and solving the alignment problem in this setting, but once again only for linear timed words, and sequential process models.  
 	
 	\section{Preliminaries : Edit Moves for Timed Words}\label{2}
 	
@@ -288,7 +288,7 @@ The cost of a move is the magnitude $|x|$ in the above definitions, and the cost
 	\section{Computing $d_N$ on traces}\label{3}
 	\subsection{Notation and Setup}
 	Given the nonconstructive nature of the definition of $d_N$, it is not clear how one can efficiently calculate the distance between two fixed timed traces, as a minimal cost sequence of moves is not obvious. 
-	As before, we first study the problem over linear causal processes, as these make analysing the effects of moves significantly simpler. 
+	As before, we first study the problem over sequential causal processes, as these make analysing the effects of moves significantly simpler. 
 	Before we propose an algorithm that does calculate minimal cost for linear timed traces, we first define a few properties that seem to characterise classes of well formed minimal cost runs, and then prove that these properties both improve cost, and are satisfied solely by the run calculated by the algorithm we provide. 
 	
 	We start with some convenient notation for a common combination of the previously defined moves. 
@@ -556,8 +556,8 @@ This holds as by Lemma \ref{mixwordalgostable} the algorithm calculates the uniq
 
 \section{Purely Timed Alignment for Linear Models}\label{4}
 
-\begin{definition}[Linear Process Models]
-We define a linear process model $N$ of length $n$ to be a sequence of intervals $\{[a_i, b_i] | a_i \in \mathbb{R}, b_i \in \mathbb{R} \cup \{\infty\}, i \leq n\}$. 
+\begin{definition}[Sequential Process Models]
+We define a sequential process model $N$ of length $n$ to be a sequence of intervals $\{[a_i, b_i] | a_i \in \mathbb{R}, b_i \in \mathbb{R} \cup \{\infty\}, i \leq n\}$. 
 
 In addition, we define its language $\mathcal{L}(N)$ as follows : $$\{(t_1, \dots t_n) | \forall i \leq n : t_i - t_{i-1} \in [a_i, b_i]\}$$ Where $t_0 = 0$. 
 
@@ -566,7 +566,7 @@ $$\eye \longrightarrow \underset{[a_1, b_1]}{\square} \longrightarrow \bigcirc \
 \end{definition}
 
 \begin{example}\label{mixedmoveex}
-Consider the below underlying linear process model, and a new observed trace $\sigma = (3, 4, 5) \not \in \mathcal{L}(N)$. 
+Consider the below underlying sequential process model, and a new observed trace $\sigma = (3, 4, 5) \not \in \mathcal{L}(N)$. 
 $$\eye \longrightarrow \underset{[0,1]}{\square} \longrightarrow \bigcirc \longrightarrow \underset{[2,2]}{\square} \longrightarrow \bigcirc \longrightarrow \underset{[1,1]}{\square} \longrightarrow \bigcirc$$
 The best $d_t$ alignment for the example in the diagram below is $\gamma = (1,3,4)$ with minimum cost $d_t(\sigma, \gamma) = 4$. 
 
@@ -575,10 +575,10 @@ The best $d_t=\theta$ alignment for the example in the diagram below is also $\g
 And lastly, the best $d_N$ alignment for the example in the diagram below is also $\gamma = (1,3,4)$, the sequence of moves being simply one stamp and one delay move at the start, $m = stamp(-1, 1)delay(-1, 1)$, and now with minimum cost $d_N(\sigma, \gamma) = 2 < \min \{d_t(\sigma, \gamma), d_\theta(\sigma, \gamma)\}$. 
 \end{example}
 
-\begin{theorem}\label{MixAlign} Given a linear causal process $(CN, p)$ of a time Petri Net $N$ and a linear observed trace $\sigma$, the word $\gamma \in \mathcal{L}(N)$ such that $f_{\gamma}(i)= \underset{x \in [Eft(t_i), Lft(t_i)]} {\argmin}\hspace{0.5em} {|x - f_\sigma(i)|}$ also has the property $\gamma = \underset{x \in \mathcal{L}(N)}{\argmin} \hspace{0.5em}{d_N(x, \sigma)}$. 
+\begin{theorem}\label{MixAlign} Given a sequential process model $N$ of a time Petri Net $N$ and a linear observed trace $\sigma$, the word $\gamma \in \mathcal{L}(N)$ such that $f_{\gamma}(i)= \underset{x \in [Eft(t_i), Lft(t_i)]} {\argmin}\hspace{0.5em} {|x - f_\sigma(i)|}$ also has the property $\gamma = \underset{x \in \mathcal{L}(N)}{\argmin} \hspace{0.5em}{d_N(x, \sigma)}$. 
 \end{theorem}
 
-This of course means that we have a linear time algorithm for aligning linear causal processes under $d_N$, by locally choosing the best flow vector as shown in Algorithm \ref{MixAlignAlgo}. This, incidentally, is exactly the aligning word obtained by the algorithm developed for delay-only distance, $d_\theta$ in \cite{CR22}.  
+This of course means that we have a linear time algorithm for aligning sequential processes under $d_N$, by locally choosing the best flow vector as shown in Algorithm \ref{MixAlignAlgo}. This, incidentally, is exactly the aligning word obtained by the algorithm developed for delay-only distance, $d_\theta$ in \cite{CR22}.  
 
 \begin{figure}[!t]
 \removelatexerror
@@ -598,7 +598,7 @@ This of course means that we have a linear time algorithm for aligning linear ca
 \end{figure}
 \section{Implementation}
 
-We have implemented the $d_N$ computation algorithm and the $d_N$ alignment algorithm for linear process models in python, available at \url{https://github.com/NehaRino/TimedAlignments}. Both algorithms have linear time complexity, and so, they have efficient running times, as evidenced by the table below :\\
+We have implemented the $d_N$ computation algorithm and the $d_N$ alignment algorithm for sequential process models in python, available at \url{https://github.com/NehaRino/TimedAlignments}. Both algorithms have linear time complexity, and so, they have efficient running times, as evidenced by the table below :\\
 \centerline{
 \begin{tabular}{|c| c|}
 	\hline
@@ -615,7 +615,7 @@ We have implemented the $d_N$ computation algorithm and the $d_N$ alignment algo
 }
 
 \section{Perspectives and Conclusion}
-In this paper, we studied the alignment problem for timed processes using the mixed moves distance $d_N$, and solved both distance computation and the purely timed alignment problem for the same. As far as we know, this (along with \cite{CR22}) is the first step in conformance checking for time-aware process mining, and much further work can be inspired from this point. Firstly, we have only solved the alignment problem for $d_N$ over linear process models, which are rather structurally restricted and it would be interesting to see how to broaden the scope of these methods to larger classes of process models, such as branching process models or even general time Petri nets. Secondly, further investigation in the general timed alignment problem is necessary, as our proposed approach here is rather rudimentary and can certainly be improved. Lastly, there are a number of other conformance artefacts that can be set and studied in the timed setting, such as anti-alignments \cite{CBC21}, and it would be very interesting to better develop all such conformance checking methods in a manner that accounts for timed process models.
+In this paper, we studied the alignment problem for timed processes using the mixed moves distance $d_N$, and solved both distance computation and the purely timed alignment problem for the same. As far as we know, this (along with \cite{CR22}) is the first step in conformance checking for time-aware process mining, and much further work can be inspired from this point. Firstly, we have only solved the alignment problem for $d_N$ over sequential process models, which are rather structurally restricted and it would be interesting to see how to broaden the scope of these methods to larger classes of process models, such as branching process models or even general time Petri nets. Secondly, further investigation in the general timed alignment problem is necessary, as our proposed approach here is rather rudimentary and can certainly be improved. Lastly, there are a number of other conformance artefacts that can be set and studied in the timed setting, such as anti-alignments \cite{CBC21}, and it would be very interesting to better develop all such conformance checking methods in a manner that accounts for timed process models.
 
 \bibliographystyle{IEEEtran}
 \bibliography{Conformanceieee}
@@ -831,11 +831,11 @@ And hence we are done.
 \end{proof}
 
 
-\subsection{Purely Timed Alignment for Linear Process Models} 
+\subsection{Purely Timed Alignment for Sequential Process Models} 
 We can now look at the proof of Theorem \ref{MixAlign}. 
 
 \begin{theorem*}
-	Given a linear causal process $(CN, p)$ of a time Petri Net $N$ and a linear observed trace $\sigma$, the word $\gamma \in \mathcal{L}(N)$ such that $f_{\gamma}(i)= \underset{x \in [Eft(t_i), Lft(t_i)]} {\argmin}\hspace{0.5em} {|x - f_\sigma(i)|}$ also has the property $\gamma = \underset{x \in \mathcal{L}(N)}{\argmin} \hspace{0.5em}{d_N(x, \sigma)}$. 
+	Given a sequential process model $(CN, p)$ of a time Petri Net $N$ and a linear observed trace $\sigma$, the word $\gamma \in \mathcal{L}(N)$ such that $f_{\gamma}(i)= \underset{x \in [Eft(t_i), Lft(t_i)]} {\argmin}\hspace{0.5em} {|x - f_\sigma(i)|}$ also has the property $\gamma = \underset{x \in \mathcal{L}(N)}{\argmin} \hspace{0.5em}{d_N(x, \sigma)}$. 
 \end{theorem*}
 \begin{proof}
 As $(CN, p)$ is linear, we can consider the event set $E$ to be totally ordered by $G$, giving us the list $\{e_1, e_2, \dots e_n\}$ and their respective static interval constraints $\forall i \leq n : SI(p(e_i)) = [a_i, b_i]$. In this setting, clearly, $$f_{\gamma}(i)= \argmin_{x \in [a_i, b_i]} {|x - f_\sigma(i)|}$$
