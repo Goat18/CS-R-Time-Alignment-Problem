@@ -10,7 +10,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
 
-\usepackage{babel}
+\usepackage[english]{babel}
 
 \usepackage{algorithm}
 \usepackage{algpseudocode}
@@ -74,10 +74,8 @@
 		T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \begin{document}
 	
-	\title{Timed Alignments\\
-		
+	\title{Timed Alignments
 		\thanks{Neha Rino was funded by the International Master's Scholarships Program IDEX of Université Paris-Saclay.}
-		
 	}
 	
 	\author{\IEEEauthorblockN{Thomas Chatain}
@@ -153,7 +151,7 @@
 	
 	In this paper, we propose three different distance functions over timed words, and study the alignment problem for the first two. 
 	The first is essentially Manhattan distance, and hence very standard, and has a quadratic time algorithm in the case of a structurally restricted class of models (linear causal processes).
-	For all other types of models, we present an encoding in simplex that solves the problem, albeit with exponential worst-time complexity and polynomial average running time. 
+	For all other types of models, we present an encoding in simplex that solves the problem, albeit with exponential worst-time complexity. %% and polynomial average running time. 
 	The second distance function utilises the structure of the process model to study distances between time processes, and we present a straightforward algorithm for solving the alignment in this case, whose time complexity is linear in the size of the causal process and the transition set of the model. The second setting, and the new notion of delay edits that it represents, provide insight into time processes and their relevant constraints. 
 	
 	\section{Preliminaries}

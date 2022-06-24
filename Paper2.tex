@@ -10,7 +10,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
 \usepackage{hyperref}
-\usepackage{babel}
+\usepackage[english]{babel}
 
 \usepackage{algorithm}
 \usepackage{algpseudocode}
@@ -71,26 +71,23 @@
 \begin{document}
 	
 	\title{Timed Alignments with Mixed Moves
-		
 		\thanks{Neha Rino was funded by the International Master's Scholarships Program IDEX of Université Paris-Saclay.}
-	
 }
 
-\author{\IEEEauthorblockN{Thomas Chatain}
-\IEEEauthorblockA{\textit{LMF, ENS Paris-Saclay,}\\
-	\textit{CNRS, Université Paris-Saclay, Inria} \\
-	Gif-sur-Yvette, France\\
-	\url{thomas.chatain@ens-paris-saclay.fr}\\
-	ORCID 0000-0002-1470-5074}
-
-\and
+\author{
 \IEEEauthorblockN{Neha Rino}
 \IEEEauthorblockA{\textit{LMF, ENS Paris-Saclay,}\\
 	\textit{CNRS, Université Paris-Saclay, Inria} \\
 	Gif-sur-Yvette, France\\
 	\url{neha.rino@ens-paris-saclay.fr}}
+\and
+\IEEEauthorblockN{Thomas Chatain}
+\IEEEauthorblockA{\textit{LMF, ENS Paris-Saclay,}\\
+	\textit{CNRS, Université Paris-Saclay, Inria} \\
+	Gif-sur-Yvette, France\\
+	\url{thomas.chatain@ens-paris-saclay.fr}\\
+	ORCID 0000-0002-1470-5074}
 }
-
 
 	\maketitle
 	
@@ -565,7 +562,6 @@ And lastly, the best $d_N$ alignment for the example in the diagram below is als
 \end{example}
 
 \begin{theorem}\label{MixAlign} Given a linear causal process $(CN, p)$ of a time Petri Net $N$ and a linear observed trace $\sigma$, the word $\gamma \in \mathcal{L}(N)$ such that $f_{\gamma}(i)= \underset{x \in [Eft(t_i), Lft(t_i)]} {\argmin}\hspace{0.5em} {|x - f_\sigma(i)|}$
-
 also has the property $\gamma = \underset{x \in \mathcal{L}(N)}{\argmin} \hspace{0.5em}{d_N(x, \sigma)}$. 
 \end{theorem}
 
