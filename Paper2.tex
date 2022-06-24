@@ -388,7 +388,7 @@ Now, we look at a new way to represent timing functions. With delay edits, which
 	Clearly, all chronological sequences have a one to one correspondence with reverse chronological sequences with exactly the same cost, the map between the two being simply reversing the sequence of moves. 
 	In addition, in the flow function representation, the notions of chronology and reverse chronology are still somewhat preserved. 
 	A mixed move affects both the duration before and all those after the event the move is applied at, so the order in which they happen does indeed stay chronological or reverse chronological as the case may be. 
-	The only point of nuance here is that of course, a prefix of a sequence of say chronological moves is no longer has the property of having completely aligned the word up to the i-th element of the flow vector while leaving the rest unchanged, as the last edit move may have perturbed the (i+1)st element. 
+	The only point of nuance here is that of course, a prefix of a sequence of say chronological moves no longer has the property of having completely aligned the word up to the i-th element of the flow vector while leaving the rest unchanged, as the last edit move may have perturbed the (i+1)st element. 
 	
 	But the upshot is, in a reverse chronological sequence of moves, the prefix of the sequence that stops at the ith event, combined with the stamp component of the mixed move at position (i-1), completely aligns the flow function for the suffix starting at position i. 
 	Reverse chronological runs do not have an equivalent partial completion property in the timing function setting, but due to how local the moves end up being in the flow function setting, we obtain it here. 
