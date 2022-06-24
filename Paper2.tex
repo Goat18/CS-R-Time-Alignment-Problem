@@ -72,23 +72,26 @@
 	
 	\title{Timed Alignments with Mixed Moves
 		
-		\thanks{Identify applicable funding agency here. If none, delete this.}
-	}
+		\thanks{Neha Rino was funded by the International Master's Scholarships Program IDEX of Université Paris-Saclay.}
 	
-	\author{\IEEEauthorblockN{Thomas Chatain}
-		\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-			\textit{name of organization (of Aff.)}\\
-			City, France \\
-			email address or ORCID}
-		\and
-		\IEEEauthorblockN{Neha Rino}
-		\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-			\textit{name of organization (of Aff.)}\\
-			City, France \\
-			email address or ORCID}
-		
-	}
-	
+}
+
+\author{\IEEEauthorblockN{Thomas Chatain}
+\IEEEauthorblockA{\textit{LMF, ENS Paris-Saclay,}\\
+	\textit{CNRS, Université Paris-Saclay, Inria} \\
+	Gif-sur-Yvette, France\\
+	\url{thomas.chatain@ens-paris-saclay.fr}\\
+	ORCID 0000-0002-1470-5074}
+
+\and
+\IEEEauthorblockN{Neha Rino}
+\IEEEauthorblockA{\textit{LMF, ENS Paris-Saclay,}\\
+	\textit{CNRS, Université Paris-Saclay, Inria} \\
+	Gif-sur-Yvette, France\\
+	\url{neha.rino@ens-paris-saclay.fr}}
+}
+
+
 	\maketitle
 	
 	\begin{abstract}
@@ -99,7 +102,7 @@
 	\end{abstract}
 	
 	\begin{IEEEkeywords}
-		Conformance checking, Alignments, Timestamps, Timed Petri nets
+		Conformance checking, Alignments, Timestamps, Time Petri nets
 	\end{IEEEkeywords}
 	
 	\section{Introduction} 
@@ -109,12 +112,12 @@
 	Process mining studies vast systems through their event logs, and seeks to extract meaningful ways to model the underlying patterns or processes that govern the behaviour of the system in order to better understand the system, or predict future behaviour \cite{A16}.
 	Once such a process model is obtained, through machine learning or other related techniques, it is natural to ask how one is sure the obtained model is a reasonable approximation of the system’s behaviour at all, especially given the lack of explainability in the blackbox approach ML takes to producing solutions.
 	This is where conformance checking comes into the picture, as it is the art of judging the performance of a process model by relating modelled and observed behaviour of a process to each other, without depending on the origin of the model \cite{CDSW18}.
-	Observed behaviour comes in the form the traces of an event log, as a sequence of events occurring during the functioning of the system, while process models are blueprints that describe what the underlying processes of any given system are supposed to look like.
+	Observed behaviour comes in the form of traces in an event log, as a sequence of events occurring during the functioning of the system, while process models are blueprints that describe what the underlying processes of any given system are supposed to look like.
 	Measures of how well a model reflects system behaviour include fitness, precision, generalisation, and simplicity.
 	We often do not want the system to always precisely generate any and all possible future system behaviour, but neither should they simply regurgitate the event log and accept no new system behaviours. 
 	What is often much more useful is a process model that can, up to some small error factor, approximate any reasonable future system behaviour. 
 	
-	In Aryan Adriansyah's seminal thesis \cite{Adriansyah2014AligningOA}, we obtain the notion of an alignment, that is, the minimal series of corrections needed to transform an observed event trace into the execution of the process model that most closely mimics it.  
+	In Arya Adriansyah's seminal thesis \cite{Adriansyah2014AligningOA}, we obtain the notion of an alignment, that is, the minimal series of corrections needed to transform an observed event trace into the execution of the process model that most closely mimics it.  
 	It is often seen as an execution of the synchronised product of the process model and a \emph{trace model} ie a simple model that captures exactly one event log trace. 
 	This gives us a series of edits, usually insertions or deletions, that can transform a process trace into the observed trace.  
 	For our purposes we will use the term alignment to mean the process trace of the model that aligns closest to the observation, and how to transform this optimal execution to the observed one is clear depending on the edit moves available.
@@ -243,12 +246,12 @@
 	
 	\begin{definition}[Delay Only Distance : $d_\theta$]
 		Given any two timing functions $\tau_1, \tau_2$ over the same causal process $(CN, p)$, we define the delay-only distance $d_\theta$ as follows : 
-		\small	$$d_t(\tau_1, \tau_2) = \min \{cost(m) | {m \in Delay^*}, {m(\tau_1) = \tau_2}\}$$
+		\small	$$d_\theta(\tau_1, \tau_2) = \min \{cost(m) | {m \in Delay^*}, {m(\tau_1) = \tau_2}\}$$
 	\end{definition}
 	
 	\begin{definition}[Mixed Moves Distance : $d_N$]
 		And thirdly, given any two timing functions $\tau_1, \tau_2$ over the same causal process $(CN, p)$, we define the mixed move distance $d_N$ as follows : 
-		\small	$$d_t(\tau_1, \tau_2) = \min \{cost(m) | {m \in (Stamp \cup Delay)^*}, {m(\tau_1) = \tau_2}\}$$
+		\small	$$d_N(\tau_1, \tau_2) = \min \{cost(m) | {m \in (Stamp \cup Delay)^*}, {m(\tau_1) = \tau_2}\}$$
 		
 	\end{definition} 
 	
@@ -586,8 +589,9 @@ This of course means that we have a linear time algorithm for aligning linear ca
 \end{figure}
 \section{Implementation}
 
-We have implemented the $d_N$ computation algorithm and the $d_N$ alignment algorithm for linear process models in python, available at \url{https://github.com/NehaRino/TimedAlignments}. Both algorithms have linear time complexity, and so, they have efficient running times, as evidenced by the table below : 
-\begin{tabular}{|c| |c|}
+We have implemented the $d_N$ computation algorithm and the $d_N$ alignment algorithm for linear process models in python, available at \url{https://github.com/NehaRino/TimedAlignments}. Both algorithms have linear time complexity, and so, they have efficient running times, as evidenced by the table below :
+
+\begin{tabular}{|c| c|}
 	\hline
 	Trace Length & Running Time (seconds) \\ 
 	\hline
@@ -599,6 +603,8 @@ We have implemented the $d_N$ computation algorithm and the $d_N$ alignment algo
 	1000000& 3.4431409046599946\\
 	\hline
 \end{tabular}
+
+
 \section{Perspectives and Conclusion}
 In this paper, we studied the alignment problem for timed processes using the mixed moves distance $d_N$, and solved both distance computation and the purely timed alignment problem for the same. As far as we know, this (along with <paper1>) is the first step in conformance checking for time-aware process mining, and much further work can be inspired from this point. Firstly, we have only solved the alignment problem for $d_N$ over linear process models, which are rather structurally restricted and it would be interesting to see how to broaden the scope of these methods to larger classes of process models, such as branching process models or even general time Petri nets. Secondly, further investigation in the general timed alignment problem is necessary, as our proposed approach here is rather rudimentary and can certainly be improved. Lastly, there are a number of other conformance artefacts that can be set and studied in the timed setting, such as anti-alignments \cite{CBC21}, and it would be very interesting to better develop all such conformance checking methods in a manner that accounts for timed process models.
 
