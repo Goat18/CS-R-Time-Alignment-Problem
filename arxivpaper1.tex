@@ -73,8 +73,7 @@
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
 		T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \begin{document}
-	
-	\title{Timed Alignments
+	\title{Timed Alignments\\
 		\thanks{Neha Rino was funded by the International Master's Scholarships Program IDEX of Université Paris-Saclay.}
 	}
 	
@@ -151,7 +150,7 @@
 	
 	In this paper, we propose three different distance functions over timed words, and study the alignment problem for the first two. 
 	The first is essentially Manhattan distance, and hence very standard, and has a quadratic time algorithm in the case of a structurally restricted class of models (linear causal processes).
-	For all other types of models, we present an encoding in simplex that solves the problem, albeit with exponential worst-time complexity. %% and polynomial average running time. 
+	For all other types of models, we present an encoding in simplex that solves the problem, albeit with exponential worst-time complexity.
 	The second distance function utilises the structure of the process model to study distances between time processes, and we present a straightforward algorithm for solving the alignment in this case, whose time complexity is linear in the size of the causal process and the transition set of the model. The second setting, and the new notion of delay edits that it represents, provide insight into time processes and their relevant constraints. 
 	
 	\section{Preliminaries}
@@ -192,7 +191,7 @@
 	A valid execution of the model begins at the initial marking, fires a sequence of transitions (representing a series of activities occurring at certain times) and at the end of the firing sequence reaches $M_f$, with any clock function $I$. 
 	
 	\begin{definition}[Language of a time Petri net]
-		A word $w = (a_0, a_1, \dots a_n) \in \Sigma^*$ is in the language of the labelled time Petri net $\mathcal{L}(N)$ if there is a firable sequence of transitions $(t_0, t_1 \dots t_n) \in T^*$ such that $\lambda((t_0, t_1, \dots, t_n)) = w $ and they transform the initial marking into the final one, that is, for some clock function $I$ on $M_f$, $$(M_0, \mathbf{0}) [t_0, t_1, \dots t_n\rangle (M_f, I)$$
+		A word $w = (a_0, a_1, \dots a_n) \in \Sigma^*$ is in the language of the labelled time Petri net $\mathcal{L}(N)$ if there is a fireable sequence of transitions $(t_0, t_1 \dots t_n) \in T^*$ such that $\lambda((t_0, t_1, \dots, t_n)) = w $ and they transform the initial marking into the final one, that is, for some clock function $I$ on $M_f$, $$(M_0, \mathbf{0}) [t_0, t_1, \dots t_n\rangle (M_f, I)$$
 	\end{definition}
 	
 	\begin{example}\label{TPN}
@@ -348,7 +347,7 @@
 	\begin{definition}[Stamp Move]
 		Given a timing function $\gamma : E \to \mathbb{R}$, formally, we define this as : 
 		
-		$\forall x \in \mathbb{R}, e \in E : stamp(\gamma, x, e) =\gamma' $ where
+		$\forall x \in \mathbb{R}, e \in E : stamp(x, e)(\gamma) =\gamma' $ where
 		$$\forall e' \in E : \gamma'(e')  = \begin{cases}
 			\gamma(e') + x & e' = e \\
 			\gamma(e')& otherwise
@@ -364,7 +363,7 @@
 	\begin{definition}[Delay Move]
 		Given a timing function $\gamma : E \to \mathbb{R}^n$, we define a delay move applied to it as follows : 
 		
-		$\forall x \in \mathbb{R}, e \in E : delay(\gamma, x, e) = \gamma'$ where 
+		$\forall x \in \mathbb{R}, e \in E : delay(x, e)(\gamma) = \gamma'$ where 
 		$$\forall e' \in E : \gamma'(e') = \begin{cases}
 			\gamma(e') + x & e' \geq_G e \\
 			\gamma(e')& otherwise
@@ -800,7 +799,7 @@
 	
 	\bibliographystyle{IEEEtran}
 	\bibliography{Conformanceieee}
-	
+	\clearpage
 	\appendix 
 	\subsection{Stamp Only Algorithm}
 	We start off with a proof of Lemma \ref{manhattan}
