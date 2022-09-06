@@ -108,26 +108,24 @@
 \end{IEEEkeywords}
 
 \section{Introduction} 
+%\subsection{Conformance Checking and Alignments} 
 
-
-\bigskip%\subsection{Conformance Checking and Alignments} 
-
-Process mining studies vast systems through their event logs, and seeks to extract meaningful ways to model the underlying patterns or processes that govern the behaviour of the system in order to better understand the system, or predict future behaviour \cite{A16}.
-Once such a process model is obtained, through machine learning or other related techniques, it is natural to ask how one is sure the obtained model is a reasonable approximation of the system’s behaviour at all, especially given the lack of explainability in the blackbox approach ML takes to producing solutions.
-This is where conformance checking comes into the picture, as it is the art of judging the performance of a process model by relating modelled and observed behaviour of a process to each other, without depending on the origin of the model \cite{CDSW18}.
-Observed behaviour comes in the form of traces in an event log, as a sequence of events occurring during the functioning of the system, while process models are blueprints that describe what the underlying processes of any given system are supposed to look like.
+Process mining studies vast systems through their event logs, and seeks to extract meaningful ways to model the underlying patterns or processes that govern the behaviour of the system in order to better understand it, or predict it's future behaviour \cite{A16}.
+Once such a process model is obtained, through machine learning or otherwise, it is natural to ask how one is sure the obtained model is a reasonable approximation of the system’s behaviour, especially given the lack of explainability in the domain of machine learning.
+Conformance checking is the art of judging the performance of a process model by relating the modelled behaviour and the observed behaviour of a process, without depending on the origin of the model \cite{CDSW18}.
+Observed behaviour comes in the form of traces in an event log, a sequence of events that occur during the functioning of the system, while process models are blueprints that describe what the underlying process of the system is expected to look like.
 Measures of how well a model reflects system behaviour include fitness, precision, generalisation, and simplicity.
-We often do not want the system to always precisely generate any and all possible future system behaviour, but neither should they simply regurgitate the event log and accept no new system behaviours. 
-What is often much more useful is a process model that can, up to some small error factor, approximate any reasonable future system behaviour. 
+We often do not want the model to precisely generate all possible future system behaviour, but neither should it simply regurgitate the event log and accept no new system behaviours. 
+Hence, what is often sought is a process model that can, up to some small error factor, approximate any reasonable future system behaviour. 
 
-In Arya Adriansyah's seminal thesis \cite{Adriansyah2014AligningOA}, we obtain the notion of an alignment, that is, the minimal series of corrections needed to transform an observed event trace into the execution of the process model that most closely mimics it.  
+In Arya Adriansyah's seminal thesis \cite{Adriansyah2014AligningOA}, we obtain the notion of an alignment, that is, the minimal series of corrections needed to transform an observed trace into the execution of the process model that most closely mimics it.  
 It is often seen as an execution of the synchronised product of the process model and a \emph{trace model} i.e. a simple model that captures exactly one event log trace. 
-This gives us a series of edits, usually insertions or deletions, that can transform a process trace into the observed trace.  
+This gives us a series of edits, usually insertions or deletions, that transform the observed trace  into a process trace.  
 %For our purposes we will use the term alignment to mean the process trace of the model that aligns closest to the observation, and how to transform this optimal execution to the observed one is clear depending on the edit moves available.
-Alignments thereby help pinpoint exactly where inevitable deviations from expected behaviour occur, and the more distant the aligning word of a model is to its observed trace, the worse the model is at reflecting real system behaviour. 
+Alignments thereby pinpoint exactly where inevitable deviations from expected behaviour occur, and the more distant the aligning word of a model is from its observed trace, the worse the model is at reflecting real system behaviour. 
 
 %\subsection{Time-aware Processes}
-\medskip
+
 Process models can be represented using a variety of formal objects, including Petri nets. 
 %They both offer a graphical means by which to represent concurrent systems, and a formal semantics for their execution, which allows one to mathematically analyse the same. 
 Assuming the event logs are a list of words over a finite alphabet (the set of possible discrete events), the problem of calculating the alignment has been extensively studied \cite{Adriansyah2014AligningOA} \cite{BCC21}. 
@@ -136,19 +134,18 @@ It is natural to want to study explicitly timed systems,
 %, that is, systems that record the timestamps that show when each event happens, 
 as by considering events along with their timestamps when mining processes, we can glean information about the minimum delay between two events, the maximum duration the system takes to converge upon a state, or check deadlines, all of which are highly relevant in real world applications \cite{Cheikhrouhou2014TheTP} \cite{Eder1999TimeCI} \cite{inbook}. 
 In addition, one may want to predict the timestamps of processes \cite{SSA11}. 
-Time-aware process mining seeks to study both what sort of underlying processes govern system behaviour, and what sort of time constraints they can impose on when certain events can occur \cite{RMAW13} \cite{CRHA20}  \cite{AS21}. 
+Time-aware process mining seeks to study both what the underlying processes govern system behaviour are, and what time constraints they obey \cite{RMAW13} \cite{CRHA20}  \cite{AS21}. 
 In the process mining community, there are ways to use existing process model notation in order to denote time constraints. BPMN 2.0 comes equipped with \emph{timer events} and can record absolute, relative, and cyclical time constraints. 
-For our purposes, we use an extension of Petri nets equipped with the ability to express the relative and cyclical time constraints that BPMN equipped with timers can. 
-These are time Petri nets, that is, Petri nets augmented with the ability to record and check the duration it takes to fire a transition once enabled, using which one can impose certain constraints on the relationships between the timestamps of different events. 
+For our purposes, we use time Petri nets, that is, Petri nets augmented with the ability to record and check the duration it takes to fire a transition once enabled, using which one can impose certain constraints on the relationships between the timestamps of different events. 
 
 As time-aware process mining grows popular, new quality measures and conformance checking techniques must be developed that are sensitive to temporal constraints, but so far in the study of alignments as a conformance checking artefact, we notice that the process model used is never time-aware. 
 For this, one needs to define distance functions that can meaningfully compare and separate different time processes. 
 This paper seeks to provide a framework by which to do the very same, and set and solve the alignment problem for time-aware processes.
 
-\medskip%\subsection{Three Distances, and Algorithms to Align them}
+%\medskip%\subsection{Three Distances, and Algorithms to Align them}
 
-In this paper, we start in Section \ref{2} by proposing three different distance functions over timed words, and setting the alignment problem for them. 
-In Section \ref{mcg} we look at aligning under $d_t$, which is essentially Manhattan distance, give a quadratic time alignment algorithm in the case of a structurally restricted class of models (sequential causal processes).
+In this paper, we start in Section \ref{2} by formally setting the alignment problem and, proposing three different distance functions over timed words. 
+In Section \ref{mcg} we look at aligning under $d_t$, and give a quadratic time alignment algorithm in the case of a structurally restricted class of models (sequential causal processes).
 For all other types of models, in Section \ref{lpp} we present an encoding in simplex that solves the problem, albeit with exponential worst-time complexity. 
 Finally in section \ref{4} we study $d_\theta$, which utilises the structure of the process model in its calculations, and we present a straightforward algorithm for solving the alignment in this case, whose time complexity is linear in the size of the causal process and the transition set of the model. The second setting, and the notion of delay edits that we proposed, provide new insight into the nature of time processes and their properties.
 
@@ -160,7 +157,6 @@ We represent events as pairs $(a,t)$ where $a \in \Sigma$ is the name of the act
 \end{definition}
 
 We will often ignore the untimed parts of timed words, i.e., the projection onto $\Sigma^*$, leaving just the timestamps, a sequence belonging to $\mathbb{R}^{+*}$. 
-\bigskip
 The timed process model we use here is a labeled time Petri net. 
 
 \begin{definition}[Labelled Time Petri Net] \label{tpn} A labeled \textit{time Petri net} (or TPN) is a tuple $N = (P, T, F, SI, \Sigma, \lambda, M_0, M_f)$, where $P, T$ are disjoint sets of places and transitions respectively,  $F \subseteq (P \times T) \cup (T \times P)$ is the flow relation,  $SI : T \rightarrow \mathbb{I}$ is the static interval function, where $SI(t) = (Eft(t), Lft(t))$ such that $Eft$ stands for earliest firing time, and $Lft$ for latest firing time, $\lambda : T \rightarrow \Sigma$ is the labeling function, labeling transitions with actions from the action set $\Sigma$, and  $ M_0 , M_f: P \to \mathbb{N}$ are the initial and final markings. % of $N$. 
@@ -179,7 +175,7 @@ every other \(t'\) enabled at \(M\), $I(t') + \theta \leq Lft(t')$.
 %another transition disables it.
 This firing is denoted $(M, I)[t\rangle(M'', I')$ with the new state $(M'', I')$ defined as follows:
 $$M'' = M' \cup t \pre \textrm{
-	where } M' = M \setminus \pre t$$ $$I'(t) =
+	where } M' = M \setminus \pre t $$ $$I'(t) =
 \begin{cases}
 	I(t) + \theta & \textrm{If } t \in Enabled(M'') \cap Enabled(M')\\
 	0 & \textrm{If } t \in Enabled(M'') \setminus Enabled(M')\\
@@ -193,40 +189,72 @@ A valid execution of the model begins at the initial marking, fires a sequence o
 and reaches $M_f$, with any clock function $I$. 
 
 \begin{definition}[Language $\mathcal{L}(N)$ of a TPN]
-	A word $w = (a_0, a_1, \dots a_n) \in \Sigma^*$ is in the language of the labeled TPN $\mathcal{L}(N)$ if there is a firable sequence of transitions $(t_0, t_1 \dots t_n) \in T^*$ such that $\lambda((t_0, t_1, \dots, t_n)) = w $ and they transform the initial marking into the final one, that is, for some clock function $I$ on $M_f$, $(M_0, \mathbf{0}) [t_0, t_1, \dots t_n\rangle (M_f, I)$. 
+	A word $w = (a_0, a_1, \dots a_n) \in \Sigma^*$ is in the language of the labeled TPN $\mathcal{L}(N)$ if there is a firable sequence of pairs, of transitions and their timestamps, $(t_0, t_1 \dots t_n) \in (T, \mathbb{R^+})^*$ such that $(\lambda(t_0),\lambda( t_1), \dots,\lambda (t_n)) = w $ and they transform the initial marking into the final one, that is, for some clock function $I$ on $M_f$, $(M_0, \mathbf{0}) [t_0, t_1, \dots t_n\rangle (M_f, I)$. 
 \end{definition}
 
 \begin{example}\label{TPN}
-	Consider the following example of a TPN $N$: \\
-		\adjustbox{scale = 0.7}{
-			\begin{tikzcd}
-		{} & {} & \bigcirc & {\fbox{b}} & \bigcirc && {} \\
-		\eye & {\fbox{a}} && {\fbox{c}} && {\fbox{f}} & \bigcirc \\
-		{}&\fbox{d}& \bigcirc & {\fbox{e}} & \bigcirc \\
-		\arrow[curve={height=-6pt}, from=2-2, to=1-3]
-		\arrow[curve={height=6pt}, from=2-2, to=3-3]
-		\arrow[from=2-1, to=2-2]
-		\arrow[ from=3-3, to=3-2]
-		\arrow[from=3-3, to=3-4]
-		\arrow[from=3-4, to=3-5]
-		\arrow[curve={height=12pt}, from=1-3, to=2-4]
-		\arrow[from=1-3, to=1-4]
-		\arrow[from=1-4, to=1-5]
-		\arrow[curve={height=12pt}, from=2-4, to=1-5]
-		\arrow[curve={height=-6pt}, from=1-5, to=2-6]
-		\arrow[curve={height=6pt}, from=3-5, to=2-6]
-		\arrow[from=2-6, to=2-7]
-		\arrow["{[1,1]}"{description, pos=0.1}, draw=white, from=1-4, to=2-4]
-		\arrow["{[0,2]}"{description, pos=0.1}, draw=white, from=2-4, to=1-4]
-		\arrow["{[1,3]}"{description, pos=0.2}, draw=white, from=3-2, to=3-1]
-		\arrow["{[1,4]}"{description, pos=0.3}, draw=white, from=3-4, to=2-4]
-		\arrow["{[0, 3]}"{description, pos=0.2}, draw=white, from=2-6, to=1-7]
-		\arrow["{[0, \infty)}"{description, pos=0.2}, "\lrcorner"{text=white, anchor=center, pos=0.125, rotate=180}, draw=none, from=2-2, to=1-1]
-		\arrow[shift right=2, curve={height=6pt}, from=3-2, to=3-3]
-		\end{tikzcd}
+	Consider the following example (adapted from \cite{AS21}) of a TPN $N$, modelling a airline refund office : \\
+		\adjustbox{scale = 0.6}{
+%			\begin{tikzcd}
+%		{} & {} & \bigcirc & {\fbox{b}} & \bigcirc && {} \\
+%		\eye & {\fbox{a}} && {\fbox{c}} && {\fbox{f}} & \bigcirc \\
+%		{}&\fbox{d}& \bigcirc & {\fbox{e}} & \bigcirc \\
+%		\arrow[curve={height=-6pt}, from=2-2, to=1-3]
+%		\arrow[curve={height=6pt}, from=2-2, to=3-3]
+%		\arrow[from=2-1, to=2-2]
+%		\arrow[ from=3-3, to=3-2]
+% 	\arrow[from=3-3, to=3-4]
+%		\arrow[from=3-4, to=3-5]
+%		\arrow[curve={height=12pt}, from=1-3, to=2-4]
+%		\arrow[from=1-3, to=1-4]
+%		\arrow[from=1-4, to=1-5]
+%		\arrow[curve={height=12pt}, from=2-4, to=1-5]
+%		\arrow[curve={height=-6pt}, from=1-5, to=2-6]
+%		\arrow[curve={height=6pt}, from=3-5, to=2-6]
+%		\arrow[from=2-6, to=2-7]
+%		\arrow["{[1,1]}"{description, pos=0.1}, draw=white, from=1-4, to=2-4]
+%		\arrow["{[0,2]}"{description, pos=0.1}, draw=white, from=2-4, to=1-4]
+%		\arrow["{[1,3]}"{description, pos=0.2}, draw=white, from=3-2, to=3-1]
+%		\arrow["{[1,4]}"{description, pos=0.3}, draw=white, from=3-4, to=2-4]
+%		\arrow["{[0, 3]}"{description, pos=0.2}, draw=white, from=2-6, to=1-7]
+%		\arrow["{[0, 1)}"{description, pos=0.2}, "\lrcorner"{text=white, %anchor=center, pos=0.125, rotate=180}, draw=none, from=2-2, to=1-1]
+%		\arrow[shift right=2, curve={height=6pt}, from=3-2, to=3-3]
+%		\end{tikzcd}
+
+\begin{tikzcd}
+	& {} & \Huge\bigcirc & {\fbox{ec}} & \Huge\bigcirc & {} && {\fbox{pay}} \\
+	\Huge\bigcirc & {\fbox{reg}} && {\fbox{et}} && {\fbox{dec}} & \Huge\bigcirc & {} & \Huge\bigcirc \\
+	&& \Huge\bigcirc & {\fbox{{ct}}} & \Huge\bigcirc &&& {\fbox{rej}}
+	\arrow["{[0, 1]}"{description, pos=0.2}, shift left=3, draw=white, from=2-2, to=1-2]
+	\arrow[""{name=0, anchor=center, inner sep=0}, "{[2,2]}"{description, pos=0.1}, draw=white, from=2-4, to=1-4]
+	\arrow["{[2,2]}"{description, pos=0.1}, draw=white, from=3-4, to=2-4]
+	\arrow["{[2,4]}"{description, pos=0.1}, shift right=4, draw=white, from=2-6, to=1-6]
+	\arrow["{[0,1]}"{description, pos=0.1}, draw=white, from=1-8, to=2-8]
+	\arrow["{[0,0]}"{description, pos=0.1}, draw=white, from=3-8, to=2-8]
+	\arrow[from=2-1, to=2-2]
+	\arrow[curve={height=-12pt}, from=2-2, to=1-3]
+	\arrow[curve={height=12pt}, from=2-2, to=3-3]
+	\arrow[from=1-3, to=1-4]
+	\arrow[from=1-4, to=1-5]
+	\arrow[curve={height=12pt}, from=1-3, to=2-4]
+	\arrow[curve={height=12pt}, from=2-4, to=1-5]
+	\arrow[from=3-3, to=3-4]
+	\arrow[from=3-4, to=3-5]
+	\arrow[curve={height=-12pt}, from=1-5, to=2-6]
+	\arrow[curve={height=12pt}, from=3-5, to=2-6]
+	\arrow[from=2-6, to=2-7]
+	\arrow[curve={height=-12pt}, from=2-7, to=1-8]
+	\arrow[curve={height=12pt}, from=2-7, to=3-8]
+	\arrow[curve={height=12pt}, from=3-8, to=2-9]
+	\arrow[curve={height=-12pt}, from=1-8, to=2-9]
+	\arrow["{[0,2]}"{description, pos=0.2}, draw=white, from=1-4, to=0]
+\end{tikzcd}
 	}
 \\
-	The firing sequence $w = (a, 1)(b, 2)(d, 3)(e, 4)(f,5)$ is a valid execution of $N$. The initial marking only has $a$ enabled, and firing $a$ at time $1$ updates the marking by removing the token from $a$'s preplace and filling its two post-places, thereby enabling $b, c, d, e$. Now, note by urgency that $c$ can never fire past time $2$ as then $b$ would have already fired, but in this execution this doesn't matter as $b$ fires at $2$ regardless, filling one preplace of $f$. Then $d$ fires, having been enabled for $2$ units of time, thereby resetting the enabling time of both $d$ and $e$ to zero, so that when $e$ does fire it has only been most recently enabled for $1$ unit of time. Now, finally, $f$ is enabled, and fires after $1$ unit of having been enabled. 
+
+The action labels are as follows : Register request (reg), Examine thoroughly  (et), Examine casually (ec), Check ticket (ct), Decide (dec), Pay (pay), and Reject (rej). 
+
+	The firing sequence $(reg, 1) (ec, 2)(ct, 3)(dec, 7)(rej, 7)$ is a valid execution of $N$. The initial marking only has $reg$ enabled, and registering the request at time $1$ updates the marking by removing the token from $reg$'s preplace and filling its two post-places, thereby enabling $ec, et, \textrm{ and } ct$. Now $ec$ fires at $2$, satisfying the constraint, filling one preplace of $dec$. Then $ct$ fires, having been enabled for $2$ units of time. Now, finally, $dec$ is enabled, and fires after $4$ units of having been enabled, and $rej$ is fired immediately after. 
 \end{example}
 
 Now we will want to build some vocabulary to help us talk about individual executions of timed words on TPNs, that take the form of branching paths. 
@@ -234,14 +262,14 @@ Now we will want to build some vocabulary to help us talk about individual execu
 
 \begin{definition}[Causal Net] \label{cn}
 	A \textit{causal net} $CN = (B, E, G)$ is a finitary, acyclic net where 
-	$\forall b \in B : |b \pre| \leq 1 \wedge | \pre b| \leq 1$.
+	$\forall b \in B : |b \pre| \leq 1 \wedge | \pre b| \leq 1$. $B$ (conditions) and $E$ (events) are the vertices, and $G$ denotes the edges. 
 \end{definition}
 
 %This can be viewed as the original Petri net itself, but every time a place is revisited, it is copied afresh to ensure that the execution only ever moves forward. 
 Hence, multiple elements of $B$ or $E$ map to the same element in $P$ or $T$ respectively, a notion that is expressed via the map $p$ defined below. 
 
 \begin{definition}[Homomorphism] \label{hom}  Let $N$ be a TPN with place set $P$ and transition set $T$, and ${CN = (B, E, G)}$ be a causal net. 
-	A mapping $p : B \cup E \rightarrow P \cup T$ is a \textit{homomorphism} if $p(B) \subseteq P$,  $p(E) \subseteq T$ and $\forall e \in E$ the restriction of $p$ to $\pre e$ is a bijection between $\pre e$ and $\pre p(e)$ and the restriction of $p$ to $e \pre $ is a bijection between $e \pre $ and $p(e) \pre $ and the restriction of $p$ to $Min(CN)$ is a bijection between $Min(CN)$ and $M_0$. 
+	A mapping $p : B \cup E \rightarrow P \cup T$ is a \textit{homomorphism} if $p(B) \subseteq P$,  $p(E) \subseteq T$ and $\forall e \in E$ the restriction of $p$ to $\pre e$ is a bijection between $\pre e$ and $\pre p(e)$ and the restriction of $p$ to $e \pre $ is a bijection between $e \pre $ and $p(e) \pre $ and the restriction of $p$ to $Min(CN)$ is a bijection between $Min(CN)$ and $M_0$, where $Min(CN)$ is the set of vertices of $CN$ that are minimal under the $G$ pre-ordering. 
 \end{definition}
 
 \begin{definition}[Causal Process]\label{cp} A \textit{causal process} of a TPN is a pair $(CN, p)$ where $CN$ is a causal net and $p$ is a homomorphism from $CN$ to $TPN$. 
@@ -264,22 +292,17 @@ In the untimed setting, this is viewed as a problem of minimizing cost over a se
 but the timed setting is more complex. 
 
 \begin{example}
-	Consider the process model of Example \ref{TPN} and an observed trace $\sigma_1 = (a, 0)(a, 1)(b,2)(d,3)(e,3)(f,5)$. Clearly, there is an extra $a$ event that cannot have occurred as no process trace has more than one $a$, and also, the $e$ event fires too early, it should have waited at least one time unit after the firing of event $d$. 
-	
-	On the other hand, consider an observed trace of the form $\sigma_2 = (a, 1)(b,1)(d,3)(e,4)(f,5)$. Here, either we can assume the $b$ fired too early, and correct to $(b,2)$, or that was supposed to be a $c$ event as those two are parallel choices. 
-	
-	Thirdly, consider an observed trace of the form $\sigma_3 = (a, 1)(d,1)(d,2)(e,4)(f,5)$. Clearly one of the $d$'s needs to be converted to a $b$ or a $c$ event, but which $d$? The reasonable choices seem to be either correcting $(d,1)$ to $(c,1)$ or $(d,2)$ to $(b,2)$ or $(c,2)$. 
-	Timestamps are attached to the letters they belong to, so in a sense, firing event $b$ at time $2$ as compared to firing event $c$ at time $1$ are not easily comparable, as the time constraints on different events are often different. In this manner, it is not clear how meaningful it would be to define edit moves that transform timestamps that are attached to different tasks. 
+	Consider the process model of Example \ref{TPN} and an observed trace $(reg, 1) \cdot (ec, 2) \cdot (ec, 2) \cdot (ct, 3) \cdot (dec, 8) \cdot (rej, 8)$ . Clearly, one shouldn't examine casually twice so the $ec$ is extraneous, and also, the $dec$ event fires too late, it should have waited at most four time units after the firing of event $ct$. 
+	Secondly, consider an observed trace of the form $(reg, 1) \cdot (ec, 2) \cdot (ct, 3) \cdot (dec, 7) \cdot (rej, 8)$. The control flow run itself is valid, but with the timestamps, we notice that the last transition is invalid. We could either edit the $rej$ action to a $pay$ one and leave the timestamp alone, or, edit the timestamp to get $(rej, 7)$. 
+	Timestamps are attached to the letters they belong to, so in a sense, firing event $rej$ at time $7$ as compared to firing event $pay$ at time $8$ are not easily comparable, as the time constraints on different events are often different. In this manner, it is not clear how meaningful it would be to define edit moves that transform timestamps that are attached to different tasks. 
 \end{example}
 
+This is why, we first restrict our attention to the case where the untimed part of $\sigma$ does match the model, that is to say, if $\pi_1(\sigma)$ has a valid causal process $(CN, p)$ over $N$. Clearly this case of the problem needs to be solved if the general timed alignment problem is to be solved, and we argue that this case is interesting and complex in its own right. 
 
-This is why, we first restrict our attention to the case where the untimed part of $\sigma$ does match the model, that is to say, if $\sigma = (w, \tau)$ where $w$ is the action labels and $\tau$ is the timestamp sequence. then we assume that $w$ has a valid causal process $(CN, p)$ over $N$. Clearly this case of the problem needs to be solved if the general timed alignment problem is to be solved, and we argue that this case is interesting and complex in its own right. 
-
-This ensures that we can compare the timing constraints on analogous parts of the process, and hence reason meaningfully about deviances from the model that are purely based on the timing of the process. This gives us the following problem : 
+This ensures that we can compare the timing constraints on analogous parts of the process, and hence reason meaningfully about timing deviances from the model. This gives us the following problem : 
 
 \begin{definition}[The Purely Timed Alignment Problem]
-	Given a process model $N$ denoted by a TPN and a timed trace $(w, \sigma)$, and a valid causal process of the untimed part $w$, we wish to find a valid timing function $\gamma$ such that $d(\sigma, \gamma) = \min_{x \in \mathcal{L}(N)} d(\sigma, x)$for some distance function $d$ on timing functions. 
-	
+	Given a process model $N$ denoted by a TPN and a timed trace $w$, with timing function $\pi_2(w) = \sigma$ and a valid causal process of the untimed part $\pi_1(w)$, we wish to find a valid timing function $\gamma$ such that $d(\sigma, \gamma) = \min_{x \in \mathcal{L}(N)} d(\sigma, x)$for some distance function $d$ on timing functions. 
 	
 \end{definition}
 
@@ -303,20 +326,15 @@ What sort of functions are useful notions of transformation on a timed system?
 	Let us go back to example \ref{TPN}, and study the process model $N$ presented there. 
 Say we had the following words that did not fit the model, and we wished to analyse how best to modify them to fit them back into the model. 
 	
-	We start with $(u_1, \sigma_1) = (a,1)(b,3)(d,4)(e,6)(f,6)$. 
-	One candidate for the closest valid execution would be if the timing function $\sigma_1$ were replaced by $\gamma = (1, 2, 4, 6, 6)$, and it feels reasonable to say that the cost for aligning $\sigma_1$ to this $\gamma$ is 1. 
-	A way to arrive at this conclusion is by noticing that on trying to execute $\sigma$'s firing sequence only the guard for $b$ fails. If $b$ were shifted to fire at 2 instead, the whole run would execute without a hitch. This sort of local, almost typographical error can often happen in systems, and it is the simplest kind to fix.  
-	
-	We start with $(u_1, \sigma_2) = (a,1)(b,2)(d,5)(e,9)(f,12)$. 
-	The closest valid timing function would try to preserve the positions of $a$ and $b$ but the moment it tries to fire $d$, $\sigma_2$ runs late throughout. The closest we can get, intuitively, is to fire every transition in the lower branch as late as possible, giving $\gamma = (1, 2, 4, 8, 11)$. 
-	Now, when trying to compare these firing sequences, we can view it just like we did for $\sigma_1$, as $d$, $e$ and $f$ all fire later than they should, each timestamp is moved back once, giving an aligning cost of 3. 
-	There is however, another way to see this deviation. 
-	This cascading chain of errors can be fixed if $d$ is moved back to fire at 4, and all the relative relationships between $d$ and its successors are preserved. 
-	This views the tasks $e$ and $f$ as only caring about when $d$ ended, which makes sense, because they depend on $d$'s completion. 
-	This means, the switch from the timestamp series $(5,9,12)$ to $(4, 8, 11)$ can be viewed as only a cost 1 edit
+	We start with $\sigma = (reg, 1)\cdot  (ct, 2)  \cdot (ec, 2) \cdot (dec, 6) \cdot (rej, 6)$. 
+	One candidate for the closest valid execution would be $\gamma = (reg, 1)\cdot  (ct, 3)  \cdot (ec, 2) \cdot (dec, 6) \cdot (rej, 6)$, and it feels reasonable to say that the cost for aligning $\sigma$ to this $\gamma$ is 1. 
+	A way to arrive at this conclusion is by noticing that on trying to execute $\sigma$'s firing sequence only the guard for $ct$ fails. If $ct$ were shifted to fire at 3 instead, the whole run would execute without a hitch. This sort of local, almost typographical error can often happen in systems, and it is the simplest kind to fix.  
+
+	There is, however, another way to look at it. A closest valid timing function would try to preserve the positions of $reg$ and  $ec$ but the moment it tries to fire $ct$, $\sigma$ runs early. By pushing $ct$ forward, it should take longer for the decision to be made and the rejection to happen, as those events depended on the checking of the ticket being done first. 
+	This causes a cascading chain of errors where if $ct$ is moved forward to fire at 3, to preserve the relative relationships between $ct$ and its successors, we get the trace $\gamma' = (reg, 1)\cdot  (ct, 3)  \cdot (ec, 2) \cdot (dec, 7) \cdot (rej, 7)$, and in this sense, $\gamma'$ is closer to $\sigma$ as it preserves more relative gaps. As we just knocked one event a little later by 1 unit, we can view this as a cost 1 edit too.  
 	%, if we assume $e$ and $f$ only care about the relative durations or delays between activities
 	. 
-	This is a slightly more complex type of error, but it reflects the fact that if a delay at the beginning caused the whole process to run late, the important thing to fix is just that initial offset, and the rest of the process will now conform to the model as needed. 
+	This is a slightly more complex type of error, but it reflects the real life fact of cascading errors, and hence is an important type of edit to consider when diagnosing such cascading faults. 
 \end{example}
 
 Based on the above example, we naturally arrive at two types of moves. 
@@ -417,7 +435,7 @@ This bound is not necessarily tight, but either improving it or proving its tigh
 \subsection{A Direct Algorithm for Sequential Models}\label{mcg}
 
 We are given a process model $N$, an observed trace $\sigma$, and its underlying sequential causal process $CN = (B, E, G)$ with homomorphism $p$ for the untimed run of $\sigma$ on $N$. 
-Suppose we tried to express the cost of aligning a prefix of $\sigma$ to some timing function $\tau$ on the truncation of the sequential causal process up to the $i$th transition, call it $cost$. 
+We express the cost of aligning a prefix of $\sigma$ to some timing function $\tau$ on the truncation of the sequential causal process up to the $i$th transition, call it $cost$. 
 $$cost(\tau|_i) = \sum_{j = 1}^{i} |\tau_j - \sigma_j| = |\tau_i - \sigma_i| + cost(\tau|_{i-1})$$
 Observe that the minimum cost to align $\sigma$ depends on exactly two things, the cost of aligning the last stamp, and the minimum cost of aligning the $n-1$ length prefix of $\sigma$, such that the last and second last timestamps obey the last static interval constraint.  
 This suggests that the minimal cost of aligning prefixes of $\sigma$ to prefixes of the model can be recursively calculated as a function of the last timestamp in the alignment of a given prefix. 
@@ -430,9 +448,9 @@ If we can calculate the family of functions $\forall i \leq n : g_i$ efficiently
 \begin{example}\label{stampcomp}
 	
 	
-	We take a moment to look at an example of the computation of this family of functions we proposed by considering the following $d_t$-alignment problem : 
+	We take a moment to look at an example of the computation of this family of functions we proposed by considering $d_t$-alignment on a simplification of our net from \ref{TPN}, collapsing checking the ticket and the examination steps into one $check$ step : 
 	
-	We first have the process model $N$ : \\
+	We first have the process model $N'$ : \\
 %	\adjustbox{scale = 0.7}{
 %	\begin{tikzpicture}
 %		
@@ -478,56 +496,35 @@ If we can calculate the family of functions $\forall i \leq n : g_i$ efficiently
 %	\end{tikzpicture}
 %}\\
 	\adjustbox{scale = 0.6}{
-		\begin{tikzpicture}
-		
-		\node[place, tokens = 1] (p1) at (0,0) {}; 
-		
-		\node[transition, label = { $[0,1]$}] (t1) at (1.2,0) {}; 
-		
-		\node[place] (p2) at (2.4,0) {}; 
-		
-		\node[transition, label ={$[2,2]$}] (t2) at (3.6,0) {}; 
-		
-		\node[place] (p3) at (4.8,0) {}; 
-		
-		\node[transition, label ={$[2,4]$}] (t3) at (6,0) {}; 
-		
-		\node[place] (p4) at (7.2, 0) {}; 
-		
-		\node[transition, label ={ $[0,1]$}] (t4) at (8.4,0) {}; 
-		
-		\node[place] (p5) at (9.6, 0) {}; 
-		
-		\node[transition, label ={ $[0,0]$}] (t5) at (10.8, 0) {}; 
-		
-		\node[place] (p6) at (12, 0) {}; 
-		
-		\node[transition, label ={ $[2,4]$}] (t6) at (13.2, 0) {}; 
-		
-		\node[place] (p7) at (14.4,0) {}; 
-		
-		\draw[thick] (p1) edge[post] (t1)
-		(t1) edge[post] (p2)
-		(p2) edge[post] (t2)
-		(t2) edge[post] (p3)
-		(p3) edge[post] (t3)
-		(t3) edge[post] (p4)
-		(p4) edge[post] (t4)
-		(t4) edge[post] (p5)
-		(p5) edge[post] (t5)
-		(t5) edge[post] (p6)
-		(p6) edge[post] (t6)
-		(t6) edge[post] (p7);
-		
-	\end{tikzpicture}
+\begin{tikzcd}
+	& {} && {} && {} && {\fbox{pay}} \\
+	\Huge\bigcirc & {\fbox{reg}} & \Huge\bigcirc & {\fbox{check}} & \Huge\bigcirc & {\fbox{dec}} & \Huge\bigcirc & {\fbox{rej}} & \Huge\bigcirc 
+	\arrow["{[0, 1]}"{description, pos=0.2}, draw=white, from=2-2, to=1-2]
+	\arrow["{[0,1]}"{description, pos=0.2}, draw=white, from=1-8, to=2-8]
+	\arrow["{[0,0]}"{description, pos=0.2}, draw=white, from=2-8, to=1-8]
+	\arrow[from=2-1, to=2-2]
+	\arrow[from=2-2, to=2-3]
+	\arrow[from=2-3, to=2-4]
+	\arrow[from=2-4, to=2-5]
+	\arrow[from=2-5, to=2-6]
+	\arrow[from=2-6, to=2-7]
+	\arrow[curve={height=-12pt}, from=2-7, to=1-8]
+	\arrow[from=2-7, to=2-8]
+	\arrow[from=2-8, to=2-9]
+	\arrow[curve={height=-12pt}, from=1-8, to=2-9]
+	\arrow["{[2,4]}"{description, pos=0.2}, draw=white, from=2-6, to=1-6]
+	\arrow["{[2,2]}"{description, pos=0.2}, draw=white, from=2-4, to=1-4]
+\end{tikzcd}
 }
-		The observed trace is $\sigma = (1,2,4,6,6,8)$. 
+		The observed trace is $\sigma = (reg, 1)\cdot (check, 2) \cdot (dec, 4) \cdot (pay, 6)$. 
 	%%
 We begin to compute the family of functions $g_i$, starting with $g_1(x) = |1-x|$ in the domain $[0,1]$.
 Utilising the recursion, we proceed to compute $g_2$.  
 	\begin{figure}[!t]
 		\centering 
-		\includegraphics[width = 0.48\textwidth]{stampgraph.png}
+		\includegraphics[width = 0.48\textwidth]{g12.png}
+		
+		\includegraphics[width = 0.4\textwidth]{g34.png}
 		\caption{Illustration of a run of the algorithm on Example \ref{stampcomp}.}
 	\end{figure}
 	The new domain is $[2,3]$, a translation of the previous one because the guard on the second transition is the point $[2,2]$. 
@@ -538,14 +535,13 @@ Utilising the recursion, we proceed to compute $g_2$.
 	We construct $g_3$ similarly, by summing the contribution of the last timestamp, $|x - 4|$, to  $\min_{x' - x \in [2,4]}g_2(x')$. 
 	We now find an orange segment in the second component. This is used to demarcate any additional segments in  $\min_{x' - x \in [a_i, b_i]}g_{i-1}(x')$ not present in $g_{i-1}$. 
 	We see the effect of the $\min$ operation is to attach a segment with the same length as the $i$th static interval constraint, at the lowest point of $g_{i-1}$. 
-	Now we begin to see a simple way to construct these graphs visually : The next black graph is a translation of the previous blue one, with an orange line segment or the same length as the next static interval constraint inserted at the lowest point, and the next green graph is $|x-\sigma_i|$ in the new domain, and summing these two gives the next blue graph. 
-	Even summation is easier than it looks, as these are all piecewise linear graphs, so one can simply increment the slopes of all the segments of the black-orange curve by one if they're to the right of $\sigma_i$, and by minus one if they're to the left, and translate the height up as needed. 
+	We continue similarly : The next black graph is a translation of the previous blue one, with an orange line segment or the same length as the next static interval constraint inserted at the lowest point, and the next green graph is $|x-\sigma_i|$ in the new domain, and summing these two gives the next blue graph. 
+	As these are all piecewise linear graphs, summing is simply incrementing the slopes of all the segments of the black-orange curve by one if they're to the right of $\sigma_i$, and by minus one if they're to the left, and translating the height up as needed. 
 	%Clearly the orange, black and green segments of the next graph are obtained like this, and $g_4$ is their sum. 
 	
-	The procedure for constructing $g_4, g_5$ and $g_6$ are identical, and now finally we see that the minimum cost of $2$ is achieved in $g_6$ by setting the last timestamp to $8$. 
-	Now, we know the contribution of the $8$ to the error is zero, so this means we can deduce the corresponding value in $g_5$ must have been $2$ as well, achieved when the fifth timestamp was set to $6$. 
-	Now $6$ gives a contribution of $0$ again to the error, letting us look at the preimage of $2$ once again on $g_4$, and so on. 
-	We can backtrack in this manner to build an optimal alignment, such as in this case, $(0,2,5,6,6,8)$. 
+	The procedure for constructing $g_4$ is identical, and now finally we see that the minimum cost of $2$ is achieved in $g_4$ by paying at time 6. 
+	Now, we know the contribution of the $(pay,6)$ to the error is 0, so this means we can deduce the corresponding value in $g_3$ must have been 2, achieved when $dec$ fires at 5. 
+	We can backtrack in this manner to build an optimal alignment, such as in this case, $(reg,1)(check,3)(dec,5)(pay,6)$. 
 \end{example}
 
 With this context, we present the following algorithm that progressively calculates the graphs of $g_i$ (represented as lists of segments, each characterised by their slopes and x-projections of endpoints) each round, and claim it is both correct and efficient. 
@@ -628,40 +624,10 @@ Instead, thinking along the lines of durations between events occurring, we will
 \end{definition}
 
 \begin{example}\label{wordandflow}
-	Consider the following process model $N_2$:\vspace*{-1.2em}\\
-	\adjustbox{scale = 0.75}{
-		\begin{tikzcd}	
-			& {} && {} && {} \\
-			\eye & {\fbox{a}} & \bigcirc & {\fbox{c}} & \bigcirc & {\fbox{g}} & \bigcirc \\
-			\eye & {\fbox{b}} & \bigcirc & {\fbox{d}} && {} \\
-			&& \bigcirc & {\fbox{e}} & \bigcirc & {\fbox{f}} & \bigcirc
-			\arrow[from=2-1, to=2-2]
-			\arrow[from=2-2, to=2-3]
-			\arrow[from=2-3, to=2-4]
-			\arrow[from=2-4, to=2-5]
-			\arrow[from=3-1, to=3-2]
-			\arrow[from=3-2, to=3-3]
-			\arrow[from=3-3, to=3-4]
-			\arrow[curve={height=6pt}, from=3-4, to=2-5]
-			\arrow[from=2-5, to=2-6]
-			\arrow[curve={height=6pt}, from=3-2, to=4-3]
-			\arrow[from=4-3, to=4-4]
-			\arrow[from=4-4, to=4-5]
-			\arrow[from=4-5, to=4-6]
-			\arrow[from=4-6, to=4-7]
-			\arrow[from=2-6, to=2-7]
-			\arrow["{[0, 2]}"{description, pos=0.1}, "\lrcorner"{text=white, anchor=center, pos=0.125, rotate=135}, draw=none, from=2-2, to=1-2]
-			\arrow["{[3,3]}"{description, pos=0.1}, "\lrcorner"{text=white, anchor=center, pos=0.125, rotate=135}, draw=none, from=2-4, to=1-4]
-			\arrow["{[0,1]}"{description, pos=0.1}, "\lrcorner"{text=white, anchor=center, pos=0.125, rotate=135}, draw=none, from=3-2, to=2-2]
-			\arrow["{[6,8]}"{description, pos=0.1}, "\lrcorner"{text=white, anchor=center, pos=0.125, rotate=135}, draw=none, from=3-4, to=2-4]
-			\arrow["{[6,8]}"{description, pos=0.1}, "\lrcorner"{text=white, anchor=center, pos=0.125, rotate=135}, draw=none, from=4-4, to=3-4]
-			\arrow["{[0,1]}"{description, pos=0.1}, "\lrcorner"{text=white, anchor=center, pos=0.125, rotate=135}, draw=none, from=4-6, to=3-6]
-			\arrow["{[3,5]}"{description, pos=0.1}, "\lrcorner"{text=white, anchor=center, pos=0.125, rotate=135}, draw=none, from=2-6, to=1-6]
-		\end{tikzcd}
-	}
+	Consider again the model in example \ref{TPN}.
 	
-	For this net and the word $w = (a, 1)(b, 2)(c, 5)(d, 6)(e, 6)\\(f, 8)(g,8)$ we can define its flow function as\\
-\centerline{$a \xmapsto{}{} 1, b \xmapsto{}{} 2, c \xmapsto{}{} 4, d \xmapsto{}{} 4, e \xmapsto{}{} 4, f \xmapsto{}{} 2, g \xmapsto{}{} 2$}
+	Say we want to align  $w = (reg, 1)(et, 2)(ct, 5)(dec, 6)(rej, 8)$ to $N$.  
+	Consider the values the clock takes during a faulty "execution" $reg \to 1, et \to 1, ct \to 4, dec \to 1, rej \to 2$. This is the flow function. 
 \end{example}
 
 Note that $e'$ as defined here is the latest causal predecessor of $e$
@@ -684,9 +650,10 @@ The flow function is hence a dual representation of timing functions, as if a ti
 
 
 \begin{example}
-	Let us study the process model $N_2$ from example \ref{wordandflow} once again. 
-	Say we want to align  $w = (a, 1)(b, 2)(c, 5)(d, 6)(e, 6)(f, 8)(g,8)$ to $N_1$. We recall that we calculated its flow function to be \\$a \xmapsto{}{} 1, b \xmapsto{}{} 2, c \xmapsto{}{} 4, d \xmapsto{}{} 4, e \xmapsto{}{} 4, f \xmapsto{}{} 2, g \xmapsto{}{} 2$
-	As membership in the language only depends on the flow values, we try to pick flow components that are as close to $w$'s as possible while keeping the alignment in the language, ie $\underset{u \in \mathcal{L}(N)}{minimize} \hspace{0.5em}{\sum_{e \in E} |f_w(e) - f_u(e)|}$. Choosing naively to optimise each summand gives us the flow function \\$a \xmapsto{}{} 1, b \xmapsto{}{} 1, c \xmapsto{}{} 3, d \xmapsto{}{} 6, e \xmapsto{}{} 8, f \xmapsto{}{} 1, g \xmapsto{}{} 3$ From which we can reconstruct the closest word $u = (a, 1)(b, 1)(c, 4)(d, 7)(e, 7)(f, 8)(g, 10)$. 
+	Let us return to example \ref{wordandflow}. 
+	Say we now wish to align  $w$ to $N$. We recall that we calculated its flow function to be \\$reg \to 1, et \to 1, ct \to 4, dec \to 1, rej \to 2$. 
+	Pick the closest flow values in the model possible, naively. 
+	The resulting flow function is  $reg \xmapsto 1, et \xmapsto 2, ct \xmapsto 2, dec \xmapsto 2, rej \xmapsto 0$ From which we can reconstruct the closest word $u = (reg, 1)(et, 3)(ct, 3)(dec, 5)(rej, 5)$.
 	
 	Clearly if one tries to move any component of $u$'s flow function any closer to that of $w$, the word will no longer be in the language. 
 	
@@ -741,9 +708,8 @@ Hence, we present Algorithm \ref{DelayAlgo}, which minimizes the delay cost at e
 \end{figure}
 	\section{The General Timed Alignment Problem} \label{align}
 
-Now that we have provided methods to tackle the purely timed alignment problem for two metrics, we return to the general timed alignment problem. 
-One approach for solving the general timed alignment problem would be to begin by completely ignoring the timed aspect, and aligning only the untimed part of the word $w$ and the process model $N$ (now reduced to the underlying untimed Petri net) using the $\mathbb{A}^*$ algorithm\cite{Adriansyah2014AligningOA}. This will produce %a word in the language of the untimed model, that is, 
-a word $w'$ with a valid causal process. This new untimed word $w'$ can then be given a timing function based on that of $w$, %preserving timestamps wherever possible and 
+Now that we have provided methods to tackle the purely timed alignment problem for two metrics, we return to the general timed alignment problem. As our examples throughout have described, the purely timed alignment problem does not so much ignore the action labels as assume that they do  not need editing. 
+As a result, one approach for solving the general timed alignment problem would be to begin by completely ignoring the timed aspect, and aligning only the untimed part of the word $w$ and the process model $N$ (now reduced to the underlying untimed Petri net) using the $\mathbb{A}^*$ algorithm\cite{Adriansyah2014AligningOA}, which can be used to get a valid control flow, that is, a valid causal process. This, for us, is an untimed word $w'$ which can then be given a timing function based on that of $w$, %preserving timestamps wherever possible and 
 repeating or deleting timestamps for any insertion or deletion moves. This yields a valid causal process and a potentially invalid timing function over it, which is then cast as a purely timed alignment problem. 
 
 This approach is quite naive, as it may have a tendency to exaggerate the importance of action label errors. For example, consider the following scenario : 
@@ -809,7 +775,7 @@ We have implemented the stamp only alignment algorithm in python, available at \
 \section{Perspectives and Conclusion}
 
 In this paper, we posed the alignment problem for timed processes, devised three metrics for studying alignments for timestamp sequences, and solved the purely timed alignment problem for the first two metrics proposed. As far as we know, this is the first step in conformance checking for time-aware process mining, and much further work can be inspired from this point. The alignment problem for the third metric $d_N$ is a first future direction. Secondly, for both metrics studied here the class of models for which the alignment problem was solved efficiently are structurally restricted (being sequential causal processes for $d_t$ and extended free choice time Petri nets for $d_\theta$) and it would be interesting to see how to broaden their scope to larger classes of process models. Thirdly, further investigation in the general timed alignment problem is necessary, as our proposed approach here is rather rudimentary and can certainly be improved. Lastly, there are a number of other conformance artefacts that can be set and studied in the timed setting, such as anti-alignments \cite{CBC21}, and one can better develop all such conformance checking methods to account for timed process models.
-	
+	%%mention g-algo specifically?
 	\bibliographystyle{IEEEtran}
 	\bibliography{Conformanceieee}
 	
