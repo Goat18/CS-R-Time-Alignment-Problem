@@ -149,6 +149,8 @@ In Section \ref{mcg} we look at aligning under $d_t$, and give a quadratic time 
 For all other types of models, in Section \ref{lpp} we present an encoding as a linear programming problem, albeit with slower worst-case time complexity. 
 Finally in section \ref{4} we study $d_\theta$, which utilises the structure of the process model in its calculations, and we present a straightforward algorithm for solving the alignment in this case, whose time complexity is linear in the size of the causal process and the transition set of the model. The second setting, and the notion of delay edits that we proposed, provide new insight into the nature of time processes and their properties.
 
+The proofs of the lemmas and theorems are available in~\cite{CR22}.
+
 \section{Preliminaries}
 We represent events as pairs $(a,t)$ where $a \in \Sigma$ is the name of the action, and $t$ denotes the time at which said action was taken.
 
@@ -159,7 +161,7 @@ We represent events as pairs $(a,t)$ where $a \in \Sigma$ is the name of the act
 We will often ignore the untimed parts of timed words, i.e., the projection onto $\Sigma^*$, leaving just the timestamps, a sequence belonging to $\mathbb{R}^{+*}$. 
 The timed process model we use here is a labeled time Petri net. 
 
-\begin{definition}[Labelled Time Petri Net] \label{tpn} A labeled \textit{time Petri net} (or TPN) is a tuple $N = (P, T, F, SI, \Sigma, \lambda, M_0, M_f)$, where $P, T$ are disjoint sets of places and transitions respectively,  $F \subseteq (P \times T) \cup (T \times P)$ is the flow relation,  $SI : T \rightarrow \mathbb{I}$ is the static interval function, where $SI(t) = (Eft(t), Lft(t))$ such that $Eft$ stands for earliest firing time, and $Lft$ for latest firing time, $\lambda : T \rightarrow \Sigma$ is the labeling function, labeling transitions with actions from the action set $\Sigma$, and  $ M_0 , M_f: P \to \mathbb{N}$ are the initial and final markings. % of $N$. 
+\begin{definition}[Labelled Time Petri Net] \label{tpn} A labeled \textit{time Petri net} (or TPN) is a tuple $N = (P, T, F, SI, \Sigma, \lambda, M_0, M_f)$, where $P, T$ are disjoint sets of places and transitions respectively,  $F \subseteq (P \times T) \cup (T \times P)$ is the flow relation,  $SI : T \rightarrow \mathbb{Q}^+ \times (\mathbb{Q}^+ \cup \{\infty\})$ is the static interval function, where $SI(t) = (Eft(t), Lft(t))$ such that $Eft$ stands for earliest firing time, and $Lft$ for latest firing time, $\lambda : T \rightarrow \Sigma$ is the labeling function, labeling transitions with actions from the action set $\Sigma$, and  $ M_0 , M_f: P \to \mathbb{N}$ are the initial and final markings. % of $N$. 
 \end{definition}
 
 Given a transition $t \in T$ we define the pre-set of $t$ as $\pre t = \{p \in P | (p, t) \in F\}$ and its post-set similarly is defined as $t \pre = \{p \in P | (t, p) \in F\}$, (the presets and post-sets of places are defined similarly). A transition $t$ of a TPN is \textit{enabled} at marking $M$ iff $\forall p \in \pre t :  M(p) > 0$. 
@@ -167,7 +169,7 @@ The set of all enabled transitions at a marking $M$ is denoted by \textit{Enable
 
 A \textit{state} of a TPN $N = (P, T, F, SI, \Sigma, \lambda, M_0, M_f)$ is a pair $S = (M, I)$, where $M$ is a marking of $N$ and $I : Enabled(M) \rightarrow \mathbb{R^+}$ is called the \textit{clock function}. The initial state is $(M_0, \mathbf{0})$, where $\mathbf{0} $ is the zero function. 
 
-A transition $t$ can fire from state $S = (M, I)$ after delay $\theta \in \mathbb{T}$
+A transition $t$ can fire from state $S = (M, I)$ after delay $\theta \in \mathbb{R}^+$
 iff $t$ is enabled at $M$, and $I(t) + \theta \in [Eft(t), Lft(t)]$ and for
 every other \(t'\) enabled at \(M\), $I(t') + \theta \leq Lft(t')$.
 %This last constraint encodes the notion of urgency, that is, if $t$ is enabled
@@ -193,7 +195,7 @@ and reaches $M_f$, with any clock function $I$.
 \end{definition}
 
 \begin{example}\label{TPN}
-	Consider the following example (adapted from \cite{AS21}) of a TPN $N$, modelling a airline refund office : \\
+	Consider the following example (adapted from \cite{AS21}) of a TPN $N$, modelling an airline refund office: \\
 		\adjustbox{scale = 0.6}{
 %			\begin{tikzcd}
 %		{} & {} & \bigcirc & {\fbox{b}} & \bigcirc && {} \\
@@ -262,7 +264,7 @@ Now we will want to build some vocabulary to help us talk about individual execu
 
 \begin{definition}[Causal Net] \label{cn}
 	A \textit{causal net} $CN = (B, E, G)$ is a finitary, acyclic net where 
-	$\forall b \in B : |b \pre| \leq 1 \wedge | \pre b| \leq 1$. $B$ (conditions) and $E$ (events) are the vertices, and $G$ denotes the edges. 
+	$\forall b \in B : |b \pre| \leq 1 \wedge | \pre b| \leq 1$. \linebreak $B$ (conditions) and $E$ (events) are the vertices, and $G$ denotes the edges. 
 \end{definition}
 
 %This can be viewed as the original Petri net itself, but every time a place is revisited, it is copied afresh to ensure that the execution only ever moves forward. 
@@ -626,9 +628,8 @@ Instead, thinking along the lines of durations between events occurring, we will
 
 \begin{example}\label{wordandflow}
 	Consider again the model in example \ref{TPN}.
-	
 	Say we want to align  $w = (reg, 1)(et, 2)(ct, 5)(dec, 6)(rej, 8)$ to $N$.  
-	Consider the values the clock takes during a faulty "execution" $reg \to 1, et \to 1, ct \to 4, dec \to 1, rej \to 2$. This is the flow function. 
+	Consider the values the clock takes during a faulty ``execution'' $reg \to 1, et \to 1, ct \to 4, dec \to 1, rej \to 2$. This is the flow function. 
 \end{example}
 
 Note that $e'$ as defined here is the latest causal predecessor of $e$
@@ -779,7 +780,7 @@ In this paper, we posed the alignment problem for timed processes, devised three
 	%%mention g-algo specifically?
 	\bibliographystyle{IEEEtran}
 	\bibliography{Conformanceieee}
-	
+\end{document}
 	
 	\clearpage
 	\appendix 

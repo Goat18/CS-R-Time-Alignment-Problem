@@ -164,7 +164,7 @@
 	
 	The timed process model we use here is a labelled time Petri net. 
 	
-	\begin{definition}[Labelled Time Petri Net] \label{tpn} A labelled \textit{time Petri net} (or TPN) is a tuple $N = (P, T, F, SI, \Sigma, \lambda, M_0, M_f)$, where $P, T$ are disjoint sets of places and transitions respectively,  $F \subseteq (P \times T) \cup (T \times P)$ is the flow relation,  $SI : T \rightarrow \mathbb{I}$ is the static interval function, where $SI(t) = (Eft(t), Lft(t))$ such that $Eft$ stands for earliest firing time, and $Lft$ for latest firing time, $\lambda : T \rightarrow \Sigma$ is the labelling function, labelling transitions with actions from the action set $\Sigma$, and  $ M_0 , M_f: P \to \mathbb{N}$ are the initial and final markings. % of $N$. 
+	\begin{definition}[Labelled Time Petri Net] \label{tpn} A labelled \textit{time Petri net} (or TPN) is a tuple $N = (P, T, F, SI, \Sigma, \lambda, M_0, M_f)$, where $P, T$ are disjoint sets of places and transitions respectively,  $F \subseteq (P \times T) \cup (T \times P)$ is the flow relation,  $SI : T \rightarrow \mathbb{Q} \times (\mathbb{Q} \cup \{\infty\})$ is the static interval function, where $SI(t) = (Eft(t), Lft(t))$ such that $Eft$ stands for earliest firing time, and $Lft$ for latest firing time, $\lambda : T \rightarrow \Sigma$ is the labelling function, labelling transitions with actions from the action set $\Sigma$, and  $ M_0 , M_f: P \to \mathbb{N}$ are the initial and final markings. % of $N$. 
 	\end{definition}
 	
 	Given a transition $t \in T$ we define the pre-set of $t$ as $\pre t = \{p \in P | (p, t) \in F\}$ and its post-set similarly is defined as $t \pre = \{p \in P | (t, p) \in F\}$, (the presets and post-sets of places are defined similarly). A transition $t$ of a time Petri net is \textit{enabled} at marking $M$ iff $\forall p \in \pre t :  M(p) > 0$. 
@@ -172,7 +172,7 @@
 	
 	A \textit{state} of a TPN $N = (P, T, F, SI, \Sigma, \lambda, M_0, M_f)$ is a pair $S = (M, I)$, where $M$ is a marking of $N$ and $I : Enabled(M) \rightarrow \mathbb{R^+}$ is called the \textit{clock function}. The initial state is $(M_0, \mathbf{0})$, where $\mathbf{0} $ is the zero function. 
 	
-	A transition $t$ is fireable from state $S = (M, I)$ after delay $\theta \in \mathbb{T}$ iff $t$ is enabled at $M$, and updating the clock function to increment by delay $\theta$ will keep $t$'s new clock value $I(t)  + \theta$ in the range $[Eft(t), Lft(t)]$ as determined by the static interval function. 
+	A transition $t$ is fireable from state $S = (M, I)$ after delay $\theta \in \mathbb{R}^+$ iff $t$ is enabled at $M$, and updating the clock function to increment by delay $\theta$ will keep $t$'s new clock value $I(t)  + \theta$ in the range $[Eft(t), Lft(t)]$ as determined by the static interval function. 
 	
 	Once a fireable transition $t$ is fired, the marking and clock function are both updated to reflect the firing, as defined below : %$M'$ as in the untimed case (subtracting one token from each preplace, and adding one token to each postplace), and the clock function $I$ is updated to $I'$ by increasing clock values by $\theta$ for any transition that was enabled at both $M$ and $M'$, setting clock values to 0 for any transitions newly enabled by $M'$ that were not enabled at $M$, and leaving clock values undefined for any transitions that are not currently enabled. 
 	
