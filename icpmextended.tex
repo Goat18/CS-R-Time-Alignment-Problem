@@ -718,6 +718,37 @@ Hence, for time-aware conformance checking, one requires a notion of distance ov
 		\end{remark}
 		\todo[inline]{Should the example that shows $d_t$-alignment is not straightforward go here?}
 		
+		\begin{example}\label{dthard}
+		In the simpler case of sequential causal processes it might not seem obvious why aligning under $d_t$ should require such global analysis and quadratic time to perform. While we do not present a proof of hardness here, a modification of our running example might show how aligning under $d_t$ is unlikely to be doable by some sort of greedy or locally optimising algorithm. Consider a third net, $N''$ that has the same actions as $N'$ but the constraints on them are different. 
+					
+			\adjustbox{scale = 0.6}{
+				\begin{tikzcd}
+					& {} && {} && {} &&{} \\
+					\Huge\bigcirc & {\fbox{reg}} & \Huge\bigcirc & {\fbox{check}} & \Huge\bigcirc & {\fbox{dec}} & \Huge\bigcirc & {\fbox{pay}} & \Huge\bigcirc 
+					\arrow["{[0, 50]}"{description, pos=0.2}, draw=white, from=2-2, to=1-2]
+					\arrow["{[0,50]}"{description, pos=0.2}, draw=white, from=2-8, to=1-8]
+					\arrow[from=2-1, to=2-2]
+					\arrow[from=2-2, to=2-3]
+					\arrow[from=2-3, to=2-4]
+					\arrow[from=2-4, to=2-5]
+					\arrow[from=2-5, to=2-6]
+					\arrow[from=2-6, to=2-7]
+					\arrow[from=2-7, to=2-8]
+					\arrow[from=2-8, to=2-9]
+					\arrow["{[0,0]}"{description, pos=0.2}, draw=white, from=2-6, to=1-6]
+					\arrow["{[0,0]}"{description, pos=0.2}, draw=white, from=2-4, to=1-4]
+				\end{tikzcd}
+			}
+			
+			Let the observed trace be $\sigma = (reg, 0)(check, 0)(dec, 100)(pay,100)$. 
+			Naively starting from the beginning, one might be tempted to construct the aligning trace $\gamma_{loc} = (reg, 0) (check, 0)(dec, 0)(pay, 0)$, but, the obvious best choices at the start of the trace incur heavy costs towards the second half, giving a total distance of $d_t(\sigma, \gamma_{loc}) = 200$. 
+			
+			A better choice would in fact be  $\gamma_{glob} = (reg, 50) (check, 100)(dec, 100)(pay, 100)$, as despite being very counter-intuitive at the start, it aligns better for the latter half of the trace, giving a total distance of $d_t(\sigma, \gamma_{glob}) = 150$. 
+			
+			A similar, two-sided version of this example could be constructed such that simply running the greedy check backwards on the trace will not help either, as the troublesome part of the execution is somewhere in the middle, and judging whether increasing costs initially can be made up for somewhere along the way is not easy. 
+
+		\end{example}
+		
 		\section{Results and Algorithm : Delay Edits}\label{4}
 		
 		\subsection{Flows}
