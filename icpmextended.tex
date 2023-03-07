@@ -740,7 +740,7 @@ Hence, for time-aware conformance checking, one requires a notion of distance ov
 				\end{tikzcd}
 			}
 			
-			Let the observed trace be $\sigma = (reg, 0)(check, 0)(dec, 100)(pay,100)$. 
+			Let $\sigma = (reg, 0)(check, 0)(dec, 100)(pay,100)$ be an observed trace.
 			Naively starting from the beginning, one might be tempted to construct the aligning trace $\gamma_{loc} = (reg, 0) (check, 0)(dec, 0)(pay, 0)$, but, the obvious best choices at the start of the trace incur heavy costs towards the second half, giving a total distance of $d_t(\sigma, \gamma_{loc}) = 200$. 
 			
 			A better choice would in fact be  $\gamma_{glob} = (reg, 50) (check, 100)(dec, 100)(pay, 100)$, as despite being very counter-intuitive at the start, it aligns better for the latter half of the trace, giving a total distance of $d_t(\sigma, \gamma_{glob}) = 150$. 
@@ -769,7 +769,7 @@ Hence, for time-aware conformance checking, one requires a notion of distance ov
 		\end{definition}
 		
 		\begin{example}\label{wordandflow}
-			Consider again the model in example \ref{TPN}.
+			Consider again the model $N$ in example \ref{TPN}.
 			Say we want to align  $w = (reg, 1)(et, 2)(ct, 5)(dec, 6)(rej, 8)$ to $N$.  
 			Consider the values the clock takes during a faulty ``execution'' $reg \to 1, et \to 1, ct \to 4, dec \to 1, rej \to 2$. This is the flow function. 
 		\end{example}
@@ -800,12 +800,52 @@ Hence, for time-aware conformance checking, one requires a notion of distance ov
 		\begin{example}
 			Let us return to example \ref{wordandflow}. 
 			Say we now wish to align  $w$ to $N$. We recall that we calculated its flow function to be $reg \to 1, et \to 1, ct \to 4, dec \to 1, rej \to 2$. 
-			Pick the closest flow values in the model possible, naively. 
+			Pick the closest flow values in the model possible, naively, as illustrated bin Figure~{fig:DelayAlgo}.
 			The resulting flow function is  $reg \to 1, et \to 2, ct \to 2, dec \to 2, rej \to 0$ From which we can reconstruct the closest word $u = (reg, 1)(et, 3)(ct, 3)(dec, 5)(rej, 5)$.
 			
 			Clearly if one tries to move any component of $u$'s flow function any closer to that of $w$, the word will no longer be in the language. 
 			
 		\end{example}
+                \todo[inline]{Thomas: I have added an illustration for this example, taken from my slides.}
+                \begin{figure}
+\adjustbox{scale=0.6}{
+\begin{tikzcd}
+	& {} & \Huge\bigcirc & {\fbox{ec}} & \Huge\bigcirc & {} && {\fbox{pay}} \\
+	\Huge\bigcirc & {\fbox{reg}} && {\fbox{et}} && {\fbox{dec}} & \Huge\bigcirc & {} & \Huge\bigcirc \\
+	&& \Huge\bigcirc & {\fbox{{ct}}} & \Huge\bigcirc &&& {\fbox{rej}}
+	\arrow["{1 \rightarrow 1}"{description, pos=0.2}, shift left=3, draw=white, from=2-2, to=1-2]
+	\arrow[""{name=0, anchor=center, inner sep=0}, "{1 \rightarrow 2}"{description, pos=0.1}, draw=white, from=2-4, to=1-4]
+	\arrow["{4 \rightarrow 2}"{description, pos=0.1}, draw=white, from=3-4, to=2-4]
+	\arrow["{1 \rightarrow 2}"{description, pos=0.1}, shift right=4, draw=white, from=2-6, to=1-6]
+%	\arrow["{[0,1]}"{description, pos=0.1}, draw=white, from=1-8, to=2-8]
+	\arrow["{2 \rightarrow 0}"{description, pos=0.1}, draw=white, from=3-8, to=2-8]
+	\arrow[from=2-1, to=2-2]
+	\arrow[curve={height=-12pt}, from=2-2, to=1-3]
+	\arrow[curve={height=12pt}, from=2-2, to=3-3]
+	\arrow[from=1-3, to=1-4]
+	\arrow[from=1-4, to=1-5]
+	\arrow[curve={height=12pt}, from=1-3, to=2-4]
+	\arrow[curve={height=12pt}, from=2-4, to=1-5]
+	\arrow[from=3-3, to=3-4]
+	\arrow[from=3-4, to=3-5]
+	\arrow[curve={height=-12pt}, from=1-5, to=2-6]
+	\arrow[curve={height=12pt}, from=3-5, to=2-6]
+	\arrow[from=2-6, to=2-7]
+	\arrow[curve={height=-12pt}, from=2-7, to=1-8]
+	\arrow[curve={height=12pt}, from=2-7, to=3-8]
+	\arrow[curve={height=12pt}, from=3-8, to=2-9]
+	\arrow[curve={height=-12pt}, from=1-8, to=2-9]
+%	\arrow["{[0,2]}"{description, pos=0.2}, draw=white, from=1-4, to=0]
+\end{tikzcd}
+	}
+\caption{Illustration of Algorithm~\ref{DelayAlgo} for aligning $\sigma = (reg, 1)(et, 2)(ct, 5)(dec, 6)(rej, 8)$ to the model $N$ in example \ref{TPN}.
+  Every label $a \rightarrow b$ on an action shows the delay \(a\) for the
+  faulty ``execution'' guided by \(\sigma\), and the best corrected value \(b\)
+  satisfying the time constraints in the model. From these corrected values we reconstruct the
+  alignment $\gamma = (reg, 1)(et, 3)(ct, 3)(dec, 5)(rej, 5)$.
+}
+                  \label{fig:DelayAlgo}
+                \end{figure}
 		We could reason this way because $d_\theta$ allows one to locally edit traces without affecting membership in the language of the TPN, as both the firing rule and delay edits concern themselves only with the duration of time elapsed between a transition's enabling and its firing. 
 		This relationship is especially clear in the following class of time Petri nets : 
 		
@@ -981,23 +1021,26 @@ Note that for extended free choice time petri nets, in order to check for the va
 					\arrow["{[0,0]}"{description, pos=0.1}, draw=white, from=1-4, to=2-4]
 					\arrow["{[0,0]}"{description, pos=0.1}, draw=white, from=1-6, to=2-6]
 					\arrow["{[100,100]}"{description, pos=0.1}, draw=white, from=2-2, to=1-2]
-					\arrow["{[100,100]}"{description, pos=0.1}, draw=white, from=2-4, to=1-4]
-					\arrow["{[100,100]}"{description, pos=0.1}, draw=white, from=2-6, to=1-6]
+					\arrow["{[0,0]}"{description, pos=0.1}, draw=white, from=2-4, to=1-4]
+					\arrow["{[0,0]}"{description, pos=0.1}, draw=white, from=2-6, to=1-6]
 			\end{tikzcd}}
-			
-			\vspace{-15pt}
+			\todo[inline]{Thomas: I left the \([100, 100]\) only on \(b\)
+                          (it was originally on all the actions of the bottom
+                          line). Right?}
 			
 			Now, let the observation be ${(a, 100)(a, 100)(a, 100)}$. 
-			The alignment the above approach would provide is $ (a, 0)(a, 0)(a, 0)$. 
+			The alignment the above approach would provide is $(a, 0)(a, 0)(a, 0)$. 
 			But if we assign even a tenth of the cost of action edits to timestamp edits, clearly the closer word in the language was $(b, 100)(a, 100)(a, 100)$. 
 		\end{example}
-		\todo[inline]{How do we define a distance including action labels, without running into the problem highlighted in example 2?}
-		
+		\todo[inline]{How do we define a distance including action labels, without running into the problem highlighted in example 2?\\
+                  Thomas: It does not solve the problem in Example 2. Depending
+                  on the cost we assign to action edits, one or the other
+                  alignment will be preferred. This is quite fair, I think. There is not even much to say about it.}
 		The issue here is the tradeoff between timestamp edits and action label edits. A better approach would assign one cost $c_A$ to action edits and another $c_T$ to time edits, and seek to minimise their sum. A potential fix to our previous idea would be to essentially retain the above approach, but instead of just doing it for the best untimed alignment, take a selection of good untimed alignments (up to some allowable threshold), and try to align timestamps for each untimed candidate, and then minimise the total cost over this set. This alleviates some of the bias towards preserving action labels by allowing for small action deviations in case the timestamp alignment proves particularly cost efficient, but this is still a naive approach to the wider problem, and we hope to find better solutions in the future. 
 		
 		\section{Implementation}
 		
-		We have implemented the stamp only alignment algorithm in python, available at \url{https://github.com/NehaRino/TimedAlignments}. This algorithm is quadratic in time complexity, and runs well in practice, as seen below 
+		We have implemented the stamp only alignment algorithm in Python, available at \url{https://github.com/NehaRino/TimedAlignments}. This algorithm is quadratic in time complexity, and runs well in practice, as seen below 
 		\centerline{
 			\begin{tabular}{|c|c|c|c|}
 				\hline
