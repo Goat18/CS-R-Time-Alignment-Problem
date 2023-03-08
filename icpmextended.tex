@@ -141,7 +141,7 @@ Hence, for time-aware conformance checking, one requires a notion of distance ov
 
 	%\medskip%\subsection{Three Distances, and Algorithms to Align them}
 	
-	In this paper, we start in Section \ref{2} by formally setting the alignment problem and, proposing three different distance functions over sequences of timestamps. 
+	In this paper, we start in Section \ref{sec:alignmentpb} by formally setting the alignment problem and, proposing three different distance functions over sequences of timestamps. 
 	In Section \ref{mcg} we look at aligning under one of these distance functions, $d_t$, and give a quadratic time alignment algorithm in the case of a structurally restricted class of models (sequential causal processes).
 	For all other types of models, in Section \ref{lpp} we present an encoding as a linear programming problem, albeit with slower worst-case time complexity. 
 	Finally in section \ref{4} we study another distance function, $d_\theta$, which utilises the structure of the process model in its calculations, and we present a straightforward algorithm for solving the alignment in this case, whose time complexity is linear in the size of the causal process and the transition set of the model. 
@@ -259,7 +259,59 @@ Hence, for time-aware conformance checking, one requires a notion of distance ov
 	\begin{definition}[Timing Function]\label{tau} A \textit{timing function} $\tau : E \rightarrow \mathbb{R}$ is a function from events of a causal process into time values. 
 	\end{definition}
 	
-	\section{The Alignment Problem in Timed Settings}\label{2}
+	\todo[inline]{Should this section be here?\\
+          Thomas: I am not sure yet, but let's try here. I need it for Lemma~\ref{lemma:distances} at end of Section~\ref{sec:alignmentpb}.}
+	\subsection{A Note on Sequential Causal Processes}
+	We take a moment to discuss the structurally restricted class of processes that our stamp only-algorithm works for, that is, causal processes whose graphical structure  is that of a straight line. 
+	These reflect the executions of TPNs that do not have any branching points ($e \in E : |e \pre | > 1$) and naturally as a consequence, no points of synchronisation ($e \in E : |\pre e| > 1$). 
+	This essentially reflects the executions of automata, allowing for exclusive branching ($p \in P : |p \pre| > 1$) and iteration (that is, cycles in the model) only. 
+	It loses the ability to capture properties of a concurrent nature, as the run never splits into more than one token. 
+	On the other hand, the $G$ preorder becomes total, so studying the language of this restricted class and the alignment problem over it becomes substantially simpler, and so we restrict our attention to this class for the next section. 
+	
+	\begin{example}\label{Branchingcp}
+		Going back to the net $N$ in example \ref{TPN}, and the firing sequence we analysed then $$w = (reg, 1)(ec, 2)(ct, 3)(dec, 7)(rej,7)$$ 
+		
+		We now construct the causal process of this execution, and see that it is indeed branching, as the very first transition, $reg$, itself has two post-places, which violates the no branching condition $e \in E : |e \pre | \leq  1$. 
+		\adjustbox{scale = 0.8}{
+			\begin{tikzcd}
+				\bigcirc & {\fbox{reg}} & \bigcirc & {\fbox{ec}} & \bigcirc & {\fbox{rej}} & \bigcirc \\
+				&& {\fbox{ct}} & \bigcirc & {\fbox{dec}} & \bigcirc
+				\arrow[from=1-1, to=1-2]
+				\arrow[from=1-2, to=1-3]
+				\arrow[from=1-3, to=2-3]
+				\arrow[from=2-3, to=2-4]
+				\arrow[from=1-3, to=1-4]
+				\arrow[from=1-4, to=1-5]
+				\arrow[from=1-5, to=1-6]
+				\arrow[from=2-4, to=2-5]
+				\arrow[from=2-5, to=2-6]
+				\arrow[from=2-6, to=1-6]
+				\arrow[from=1-6, to=1-7]
+		\end{tikzcd}}
+		
+	\end{example}
+	
+	\begin{example}\label{Sequentialcp}
+		On the other hand, when we look at the model $N'$ from example \ref{stamptoy} we see that  all the branching and joining happens at places rather than transitions, so its executions all have sequential causal processes, such as below causal process for the untimed word $w = reg \cdot check \cdot dec \cdot pay$. \\
+					
+			\adjustbox{scale = 0.6}{
+				\begin{tikzcd}
+					\Huge\bigcirc & {\fbox{reg}} & \Huge\bigcirc & {\fbox{check}} & \Huge\bigcirc & {\fbox{dec}} & \Huge\bigcirc & {\fbox{pay}} & \Huge\bigcirc 
+					\arrow[from=1-1, to=1-2]
+					\arrow[from=1-2, to=1-3]
+					\arrow[from=1-3, to=1-4]
+					\arrow[from=1-4, to=1-5]
+					\arrow[from=1-5, to=1-6]
+					\arrow[from=1-6, to=1-7]
+					\arrow[from=1-7, to=1-8]
+					\arrow[from=1-8, to=1-9]		
+				\end{tikzcd}
+			}
+			\\
+		This causal process is unrolled from the Petri net, exactly the way runs of finite state automata are simple paths over the graph of the automaton. We throughout assume that wherever needed, such a causal process can be obtained via breadth-first search. 
+	\end{example}
+
+	\section{The Alignment Problem in Timed Settings}\label{sec:alignmentpb}
 	The alignment problem, given a trace from an event log and a process model, involves finding a valid execution of the model that is closest to the trace under some metric.
 	
 	\begin{definition}[The General Alignment Problem]
@@ -285,7 +337,7 @@ Hence, for time-aware conformance checking, one requires a notion of distance ov
 		
 	\end{definition}
 	
-	In sections \ref{2}, \ref{3} and \ref{4} of this paper, we will ignore the action labels of the words, i.e we assume the word $\sigma$ we wish to align comes with a valid causal process $(CN, p)$ of the model, and seek to find timing functions on said causal process that are both valid, and minimize distance to $\sigma$ under the metric of choice. 
+	In sections \ref{sec:alignmentpb}, \ref{3} and \ref{4} of this paper, we will ignore the action labels of the words, i.e we assume the word $\sigma$ we wish to align comes with a valid causal process $(CN, p)$ of the model, and seek to find timing functions on said causal process that are both valid, and minimize distance to $\sigma$ under the metric of choice. 
 	
 	We shall revisit the general timed alignment problem in section \ref{align}, and show how our methods 
 	%for solving the purely timed alignment problem 
@@ -353,6 +405,12 @@ Hence, for time-aware conformance checking, one requires a notion of distance ov
 		
 		$d_t(\tau_1, \tau_2) = \min \{cost(m) | {m \in Stamp^*}, {m(\tau_1) = \tau_2}\}$
 	\end{definition}
+
+        \todo[inline]{Thomas: I introduced these notations which are used in the examples. Check that there is no mistake.}
+        For sequential causal processes (Def.~\ref{Sequentialcp}), we abuse
+        notations and write \(stamp(x, i)\) for \(stamp(\gamma, x, e_i)\), and
+        \(delay(x, i)\) for \(delay(\gamma, x, e_i)\), where \(e_i\) denotes the
+        \(i\)\textsuperscript{th} event in the sequence induced by the process.
 	
 	\begin{definition}[Delay Only Distance : $d_\theta$]
 		Given any two timing functions $\tau_1, \tau_2$ over the same causal process $(CN, p)$, we define the delay-only distance $d_\theta$ as follows : 
@@ -394,11 +452,37 @@ Hence, for time-aware conformance checking, one requires a notion of distance ov
 		
 		The best $d_t$ alignment for the example in the diagram below is $\gamma = (1,3,7, 8)$ with minimum cost $d_t(\sigma, \gamma) = 5$. 
 		
-		The best $d_t=\theta$ alignment for the example in the diagram below is also $\gamma = (1,3,7, 8)$, but this time with minimum cost $d_\theta(\sigma, \gamma) = 3$, evidenced by the move sequence $(delay(-2, 1)delay(+1, 2))$. 
+		The best $d_t=\theta$ alignment for the example in the diagram below is also $\gamma = (1,3,7, 8)$, but this time with minimum cost $d_\theta(\sigma, \gamma) = 3$, evidenced by the move sequence $(delay(-2, 1)delay(+1, 2))$.
+                %% \todo{explain abuse of notation: in the definition, \(delay\) and \(stamp\) have 3 parameters}
 		
 		And lastly, the best $d_N$ alignment for the example in the diagram below is also $\gamma = (1,3,7,8)$, the sequence of moves being one stamp and one delay move at the start, $m = stamp(-1, 1)delay(-1, 1)$, and now with minimum cost $d_N(\sigma, \gamma) = 2 < \min \{d_t(\sigma, \gamma), d_\theta(\sigma, \gamma)\}$. 
 	\end{example}
 	
+        \todo[inline]{Thomas: I added here the three following simple
+          properties, taken from sl. 22 of Thomas' slides at IRIF. WDYT?}
+        \begin{lemma}
+          \label{lemma:distances}
+          Given any two timing functions $\tau_1, \tau_2$ over the same causal
+          process $(CN, p)$, the following inequalities hold:
+	  \begin{itemize}
+          \item $d_N(\tau_1, \tau_2) \leq d_t(\tau_1, \tau_2)$
+          \item $d_N(\tau_1, \tau_2) \leq d_\theta(\tau_1, \tau_2)$
+          \item If $(CN, p)$ is a sequential causal process, then $d_\theta(\tau_1, \tau_2) \leq 2 d_t(\tau_1, \tau_2)$
+          \end{itemize}
+        \end{lemma}
+        \begin{proof}
+          The first two inequalities hold by construction of the three distances \(d_t\) \(d_\theta\) and \(d_N\).
+
+          \todo[inline]{Thomas: Neha, you should check that my notations are consistent with the rest of the paper.}
+          For the last one, observe that every sequence of stamp moves in a sequential process can be
+          transformed into a sequence of delay moves as follows: each stamp move
+          \(stamp(x, i)\) can be replaced by a delay move at \(delay(x, i\) immediately
+          followed by another delay move \(delay(-x, i+1\) which compensates the
+          effect of the first one on the events after \(i\). The total cost of
+          these two delay moves is twice the cost of the original stamp move. (If
+          the \(i\)\textsuperscript{th} event is the last one, then there is nothing to
+          compensate.)
+        \end{proof}
 	
 	\section{Results and Algorithm : Stamp Edits}\label{3}
 	\begin{lemma}[Stamp only distance : $d_t$]\label{manhattan}
@@ -453,56 +537,6 @@ Hence, for time-aware conformance checking, one requires a notion of distance ov
 		
 		This bound is not necessarily tight, but either improving it or proving its tightness are left for future work. While the general case seems to be hard to solve efficiently, there is a subclass of process models for which the problem seems more tractable, and moreover, has a quadratic time solution. 
 		
-		\todo[inline]{Should this section be here?}
-			\subsection{A Note on Sequential Causal Processes}
-	We take a moment to discuss the structurally restricted class of processes that our stamp only-algorithm works for, that is, causal processes whose graphical structure  is that of a straight line. 
-	These reflect the executions of TPNs that do not have any branching points ($e \in E : |e \pre | > 1$) and naturally as a consequence, no points of synchronisation ($e \in E : |\pre e| > 1$). 
-	This essentially reflects the executions of automata, allowing for exclusive branching ($p \in P : |p \pre| > 1$) and iteration (that is, cycles in the model) only. 
-	It loses the ability to capture properties of a concurrent nature, as the run never splits into more than one token. 
-	On the other hand, the $G$ preorder becomes total, so studying the language of this restricted class and the alignment problem over it becomes substantially simpler, and so we restrict our attention to this class for the next section. 
-	
-	\begin{example}\label{Branchingcp}
-		Going back to the net $N$ in example \ref{TPN}, and the firing sequence we analysed then $$w = (reg, 1)(ec, 2)(ct, 3)(dec, 7)(rej,7)$$ 
-		
-		We now construct the causal process of this execution, and see that it is indeed branching, as the very first transition, $reg$, itself has two post-places, which violates the no branching condition $e \in E : |e \pre | \leq  1$. 
-		\adjustbox{scale = 0.8}{
-			\begin{tikzcd}
-				\bigcirc & {\fbox{reg}} & \bigcirc & {\fbox{ec}} & \bigcirc & {\fbox{rej}} & \bigcirc \\
-				&& {\fbox{ct}} & \bigcirc & {\fbox{dec}} & \bigcirc
-				\arrow[from=1-1, to=1-2]
-				\arrow[from=1-2, to=1-3]
-				\arrow[from=1-3, to=2-3]
-				\arrow[from=2-3, to=2-4]
-				\arrow[from=1-3, to=1-4]
-				\arrow[from=1-4, to=1-5]
-				\arrow[from=1-5, to=1-6]
-				\arrow[from=2-4, to=2-5]
-				\arrow[from=2-5, to=2-6]
-				\arrow[from=2-6, to=1-6]
-				\arrow[from=1-6, to=1-7]
-		\end{tikzcd}}
-		
-	\end{example}
-	
-	\begin{example}\label{Sequentialcp}
-		On the other hand, when we look at the model $N'$ from example \ref{stamptoy} we see that  all the branching and joining happens at places rather than transitions, so its executions all have sequential causal processes, such as below causal process for the untimed word $w = reg \cdot check \cdot dec \cdot pay$. \\
-					
-			\adjustbox{scale = 0.6}{
-				\begin{tikzcd}
-					\Huge\bigcirc & {\fbox{reg}} & \Huge\bigcirc & {\fbox{check}} & \Huge\bigcirc & {\fbox{dec}} & \Huge\bigcirc & {\fbox{pay}} & \Huge\bigcirc 
-					\arrow[from=1-1, to=1-2]
-					\arrow[from=1-2, to=1-3]
-					\arrow[from=1-3, to=1-4]
-					\arrow[from=1-4, to=1-5]
-					\arrow[from=1-5, to=1-6]
-					\arrow[from=1-6, to=1-7]
-					\arrow[from=1-7, to=1-8]
-					\arrow[from=1-8, to=1-9]		
-				\end{tikzcd}
-			}
-			\\
-		This causal process is unrolled from the Petri net, exactly the way runs of finite state automata are simple paths over the graph of the automaton. We throughout assume that wherever needed, such a causal process can be obtained via breadth-first search. 
-	\end{example}
 
 		\subsection{A Direct Algorithm for Sequential Models}\label{mcg}
 		\subsubsection{The $g_i$ functions}
