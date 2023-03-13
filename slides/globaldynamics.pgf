@@ -1,0 +1,55 @@
+
+\begin{scope}[every node/.style={xshift=0.75cm}]
+\node[initial point] (p0) {};
+\node[point,above right of=p0] (p1) {};
+\node[point,below right of=p0] (p2) {};
+\node[point,below right of=p1] (p3) {};
+\node[point,above right of=p1] (p4) {};
+\node[point,below right of=p3] (p5) {};
+
+\node[point,above right of=p5] (p6) {};
+\node[point,below right of=p5] (p7) {};
+\node[point,below right of=p6] (p8) {};
+\node[point,right of=p6] (a0) {};
+\node[point,below right of=p8] (a1_0) {};
+\node[point,above right of=a1_0] (a1_1) {};
+
+\node[point,above right of=p4] (p10) {};
+\node[point,below right of=p4] (p11) {};
+\node[point,below right of=p10] (p12) {};
+\node[point,right of=p12] (a2_0) {};
+\node[point,above right of=a2_0] (a2_1) {};
+\node[point,below right of=a2_1] (a2_2) {};
+\node[point,below right of=a2_0] (a2_3) {};
+\end{scope}
+
+\uncover<2>{
+\begin{scope}[on background layer]
+\draw[attractor] 
+	(a0.south west)+(-0.1,-0.1) rectangle ++(0.2,0.3);
+\draw[attractor]
+	(a1_0.south west)+(-0.1,-0.1) rectangle ($(a1_1.north east)+(0.1,0.1)$);
+\draw[attractor]
+	let \p1 = (a2_0.west), \p2=(a2_1.north), \p3=(a2_2.east), \p4=(a2_3.south)
+	in
+	($(\x1,\y2)+(-0.1,0.1)$) rectangle ($(\x3,\y4)+(0.1,-0.1)$);
+\end{scope}}
+
+\path[->,>=latex']
+	(p0) edge (p1) edge (p2)
+	(p2) edge (p3) (p3) edge (p1)
+	(p1) edge (p4) edge (p2)
+	(p3) edge (p5)
+	(p5) edge (p6) (p6) edge (p8) (p8) edge (p7) (p7) edge (p5)
+	(p6) edge (a0)
+	(p8) edge (a1_0)
+	(a1_0) edge[bend left] (a1_1)
+	(a1_1) edge[bend left] (a1_0)
+	(p4) edge (p10) edge (p11)
+	(p10) edge (p12) (p11) edge (p12)
+	(p12) edge (a2_0)
+	(a2_0) edge (a2_1) (a2_1) edge (a2_2) (a2_2) edge (a2_3) (a2_3) edge (a2_0)
+;
+
+
+

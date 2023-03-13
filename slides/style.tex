@@ -1,0 +1,67 @@
+% Pour plusieurs pages par feuille dans les handout
+% \usepackage{pgfpages}
+% \pgfpagesuselayout{4 on 1}[a4paper,border shrink=3mm, landscape]
+\usetheme{Antibes}                        % Beamer theme v 3.0
+\usecolortheme{dolphin}                   % Beamer color theme
+
+% -------------------------------------------------------------------------
+% Style
+
+% nice colors %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\definecolor{niceblue}{HTML}{4747ba}
+\definecolor{blue}{HTML}{4747ba} %!!!!!! section courante en haut
+\definecolor{nicegreen}{HTML}{6C9034}
+\definecolor{nicered}{HTML}{b02323}
+% blocks (example blocks and simple blocks) %%%%%%%%%%%%%%%%%%%%
+\setbeamertemplate{blocks}[rounded]
+
+%% \setbeamercolor{block title example}{fg=white,bg=nicegreen}
+%% %\setbeamercolor{block body example}{fg=black,bg=nicegreen!10!white}
+%% %change tout seul avec le style du titre
+
+%% \setbeamercolor{block title}{fg=blue,bg=niceblue!20!white}%fg=white,bg=niceblue}
+%% \setbeamercolor{block body}{fg=black,bg=niceblue!20!white}
+%% \setbeamerfont{block title}{size=\small,series=\bfseries}
+
+\setbeamercolor{block title alerted}{fg=white,bg=red!20!white}
+\setbeamercolor{block body alerted}{fg=black,bg=white}
+
+%% % \setbeamercovered{transparent} % texte caché devient visible (grisé)
+
+\setbeamercolor{alerted text}{fg=nicered}
+\setbeamercolor{example text}{fg=nicegreen!95!black}
+
+%\beamertemplateballitem
+%\beamertemplatenumberedballsectiontoc
+\usenavigationsymbolstemplate{}           % To remove navigation symbols
+
+\setbeamertemplate{sections/subsections in toc}[default]
+\setbeamertemplate{itemize items}[default]
+\setbeamercolor{itemize item}{fg=niceblue!55!white}
+\setbeamercolor{itemize subsubitem}{fg=lightgray}
+
+% entête et pied des slides %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\useoutertheme{infolines} %principalement pour pouvoir utiliser toute la largeur
+                          % des slides car l'entête est redéfinie ensuite
+\setbeamercolor{section in head/foot}{fg=niceblue,bg=white}
+
+\setbeamertemplate{footline}{             % pied des slides
+  \begin{beamercolorbox}[wd=\paperwidth,ht=2.25ex,dp=1ex,right]{}
+    \insertframenumber/\inserttotalframenumber\ \
+  \end{beamercolorbox}
+}
+\setbeamertemplate{headline}{             % entête des slides
+  \begin{beamercolorbox}[wd=\paperwidth,ht=2.25ex,dp=1ex,left]{}%
+    \insertsectionnavigationhorizontal{\paperwidth}{}{}
+  \end{beamercolorbox}
+  \vspace{-0.1cm}
+}
+
+%\setbeamercolor{button}{bg=nicered!20!white,fg=black}
+%\setbeamercolor{button border}{fg=nicered!20!white}
+%\setbeamerfont{button}{size=\normalsize}
+
+\renewcommand{\emph}[1]{{\usebeamercolor[fg]{title}{#1}}} % niceblue
+\newcommand{\green}[1]{{\usebeamercolor[fg]{example text}{#1}}}  % dark nicegreen
+\renewcommand{\cite}[1]{{\color{brown}{[#1]}}}
+
