@@ -140,7 +140,7 @@
 Hence, for time-aware conformance checking, one requires a notion of distance over timed words, enabling us to measure how close two timed process traces are. 
 Distances over timed words have been explored before, such as in \cite{ABD18} and \cite{CJM14}, both of which have in common the notion of capturing the maximal difference between the timestamps attached to the same action label. 
 There is also earlier work \cite{GHJ97} that explores similar notions of absolute and relative errors but on traces whose event interdependencies are not linked to any model. 
-\todo[inline]{Neha : I added another reference to a work on timed distances here}
+%% \todo[inline]{Neha : I added another reference to a work on timed distances here}
 In this paper we provide distinct distance functions that can reflect information about multiple timestamp discrepancies between timed words, and using them, we pose and solve the alignment problem for time-aware processes.
 
 	%\medskip%\subsection{Three Distances, and Algorithms to Align them}
@@ -160,8 +160,8 @@ In this paper we provide distinct distance functions that can reflect informatio
 	\end{definition}
 	
 	We will often ignore the action labels of timed words, i.e., deleting the projection $\pi_1$ onto $\Sigma^*$, leaving just the timestamps, the projection $\pi_2$ onto $\mathbb{R}^{+*}$. 
-	Especially when the underlying process model is linear, we denote the time component of a timed trace as a linear sequence of non-decreasing timestamps, so $(a,1)(b,2)(c,3)$ corresponds to the timestamp series $(1,2,3)$. 
-	\todo[inline]{Neha : Inserted a reference to timestamp series notation}
+	Especially when the underlying process model is sequential, we denote the time component of a timed trace as a sequence of non-decreasing timestamps, so $(a,1)(b,2)(c,3)$ corresponds to the timestamp series $(1,2,3)$. 
+	%% \todo[inline]{Neha : Inserted a reference to timestamp series notation}
 
 	The timed process model we use here is a labeled time Petri net. 
 	
@@ -266,7 +266,7 @@ In this paper we provide distinct distance functions that can reflect informatio
 	\begin{definition}[Timing Function]\label{tau} A \textit{timing function} $\tau : E \rightarrow \mathbb{R}$ is a function from events of a causal process into time values. 
 	\end{definition}
 
-	When the underlying causal process is linear, we can represent timing functions as a nondecreasing timestamp series, by projecting onto the timestamp component of any timed trace. 
+	When the underlying causal process is sequential, we can represent timing functions as a nondecreasing timestamp series, by projecting onto the timestamp component of any timed trace. 
 
 	
 %	\todo[inline]{Should this section be here?\\
@@ -440,7 +440,6 @@ In this paper we provide distinct distance functions that can reflect informatio
 		Consider a simplification of our net from \ref{TPN}, collapsing checking the ticket and the examination steps into one $check$ step : 
 			
 			We first have the process model $N'$ : \\
-			
 			\adjustbox{scale = 0.6}{
 				\begin{tikzcd}
 					& {} && {} && {} &&{} \\
@@ -474,7 +473,8 @@ In this paper we provide distinct distance functions that can reflect informatio
 	
         \todo[inline]{Thomas: I added here the three following simple
           properties, taken from sl. 22 of Thomas' slides at IRIF. WDYT?\\
-		  Neha : I think they're very nice! Maybe we can explicitly keep the property the preceding example proves too here? I've added it in the third spot, but I'm not sure it needs repeating, do feel free to delete it if you'd like}
+		  Neha : I think they're very nice! Maybe we can explicitly keep the property the preceding example proves too here? I've added it in the third spot, but I'm not sure it needs repeating, do feel free to delete it if you'd like.\\
+                  Thomas: There is a problem with the quantifier: all the inequalities are below a forall. The one you added would need an exists. So I delete it.}
         \begin{lemma}
           \label{lemma:distances}
           Given any two timing functions $\tau_1, \tau_2$ over the same causal
@@ -482,13 +482,13 @@ In this paper we provide distinct distance functions that can reflect informatio
 	  \begin{itemize}
           \item $d_N(\tau_1, \tau_2) \leq d_t(\tau_1, \tau_2)$
           \item $d_N(\tau_1, \tau_2) \leq d_\theta(\tau_1, \tau_2)$
-          \item $d_N(\tau_1, \tau_2) \neq \min{(  d_t(\tau_1, \tau_2), d_\theta(\tau_1, \tau_2))}$
+          %% \item $d_N(\tau_1, \tau_2) \neq \min{(  d_t(\tau_1, \tau_2), d_\theta(\tau_1, \tau_2))}$
           \item If $(CN, p)$ is a sequential causal process, then $d_\theta(\tau_1, \tau_2) \leq 2 d_t(\tau_1, \tau_2)$
           \end{itemize}
         \end{lemma}
         \begin{proof}
           The first two inequalities hold by construction of the three distances \(d_t\) \(d_\theta\) and \(d_N\).
-		  The third is proven by the existence of example \ref{stamptoy}. 
+	  %% The third is proven by the existence of example \ref{stamptoy}. 
 
           %\todo[inline]{Thomas: Neha, you should check that my notations are consistent with the rest of the paper.}
           For the last one, observe that every sequence of stamp moves in a sequential process can be
@@ -545,7 +545,7 @@ In this paper we provide distinct distance functions that can reflect informatio
 		
 		As $\gamma \in \mathcal{L}(N)$  this means it obeys the set of inequalities corresponding to the state class containing the final marking. Now, the above constraint is convex, so $\gamma$ varies over a convex set. As $\sigma$ is a constant vector, translation by it will keep the space convex, so $\gamma - \sigma \in \mathcal{C}$ for some convex set $\mathcal{C}$. 
 		
-		Now, we wish to minimize $|\gamma - \sigma|$, but it would be better to view this objective as a linear function. To this end we use a trick from \cite{BV2014} and use the following variable translation : $$\alpha, \beta \geq 0 : \alpha - \beta = \gamma - \sigma$$
+		Now, we wish to minimize $|\gamma - \sigma|$, but it would be better to view this objective as a linear \todo{affine?} function. To this end we use a trick from \cite{BV2014} and use the following variable translation : $$\alpha, \beta \geq 0 : \alpha - \beta = \gamma - \sigma$$
 		
 		As defined above, $\alpha$ and $\beta$ are minimal when they are absolute values of the nonnegative and negative components of the vector $\gamma - \sigma$, respectively, i.e. when their sum is $|\gamma - \sigma|$. Our alignment problem can now be equivalently cast as $$\underset{\alpha - \beta \in \mathcal{C}, \alpha, \beta \geq 0}{\mathsf{minimize}} \hspace{0.5em} \alpha + \beta  $$
 		\end{proof}
@@ -600,7 +600,8 @@ In this paper we provide distinct distance functions that can reflect informatio
 			Overall, we see that the effect of the $\min$ operation is to attach a segment with the same length as the $i$th static interval constraint, at the lowest point of $g_{i-1}$. 
 			
 			We continue similarly : The next black graph is a translation of the previous blue one, with an orange line segment or the same length as the next static interval constraint inserted at the lowest point, and the next green graph is $|x-\sigma_i|$ in the new domain, and summing these two gives the next blue graph. 
-			As these are all piecewise linear graphs, summing is simply incrementing the slopes of all the segments of the black-orange curve by one if they're to the right of $\sigma_i$, and by minus one if they're to the left, and translating the height up as needed. 
+                        \todo[inline]{Thomas: I changed linear to affine in the next paragraphs}
+			As these are all piecewise affine graphs, summing is simply incrementing the slopes of all the segments of the black-orange curve by one if they're to the right of $\sigma_i$, and by minus one if they're to the left, and translating the height up as needed. 
 			%Clearly the orange, black and green segments of the next graph are obtained like this, and $g_4$ is their sum. 
 			
 			The procedure for constructing $g_4$ is identical, and now finally we see that the minimum cost of $2$ is achieved in $g_4$ by paying at time 6. 
@@ -673,7 +674,7 @@ In this paper we provide distinct distance functions that can reflect informatio
 	Before we prove Theorem \ref{StampAlgoCorr}, we prove a small, relevant lemma. 
 	
 	\begin{lemma}\label{minpwc}
-		For any convex piecewise linear function $g$, the following function $g'$ is also convex and piecewise linear. 
+		For any convex piecewise affine function $g$, the following function $g'$ is also convex and piecewise affine. 
 		$$g'(d) = \min_{d-d' \in [a,b]} g(d')$$
 		
 	\end{lemma}
@@ -691,13 +692,13 @@ In this paper we provide distinct distance functions that can reflect informatio
 		Lastly, let  $x \in [m' + b, h + b] $ and $x - y \in [a, b]$ and $y \in [l,h]$. 
 		This implies $y \in [x-b, x-a] \cap [l, h] = [m', h]$, so for each $x \in [m+a, m' + b]$ the domain of $y$ is in a region where $g$ is strictly increasing, so we have $$\forall x \in [m + a, m'+ b] : \min_{x - y \in [a,b]} g(y) = g(x+b) $$
 		
-		So we see that for any convex piece-wise linear function $g$, $$\min_{d-d' \in [a,b]} g(d') = \begin{cases}
+		So we see that for any convex piece-wise affine function $g$, $$\min_{d-d' \in [a,b]} g(d') = \begin{cases}
 			g(d-a) & l + a \leq d < m + a \\
 			g(m) & m+a \leq d \leq m' + b \\
 			g(d+b) & m' + b < d \leq h + b   \\
 		\end{cases}$$
 		
-		Hence $g'$ is also convex and piecewise linear, and has at most one more linear segment than $g$. 
+		Hence $g'$ is also convex and piecewise affine, and has at most one more affine segment than $g$. 
 	\end{proof}
 	
 
@@ -715,13 +716,13 @@ In this paper we provide distinct distance functions that can reflect informatio
 		
 		Hence to prove the correctness of Theorem \ref{StampAlgoCorr} we only need show that the auxiliary subfunctions called do indeed do their job correctly, as the main function just implements the recursion. 
 		
-		To this end, we first notice that the family of functions $g_i(d)$ are convex and piecewise linear. 
+		To this end, we first notice that the family of functions $g_i(d)$ are convex and piecewise affine. 
 		This can be seen through induction : 
 		
 		Firstly $g_1(d) = |d - \sigma_1|$ so the base case is covered. 
 		
-		Now suppose $g_{i-1}$ is known to be convex and piecewise linear for some $i \geq 2$. 
-		By Lemma \ref{minpwc} we see that $\min_{d-d' \in [a_i,b_i]} g_{i-1}(d')$  is also convex and piecewise linear, and so is $|d - \sigma_i|$ and both these properties are preserved by addition, so $g_i(d)$ must also be convex and piecewise linear. 
+		Now suppose $g_{i-1}$ is known to be convex and piecewise affine for some $i \geq 2$. 
+		By Lemma \ref{minpwc} we see that $\min_{d-d' \in [a_i,b_i]} g_{i-1}(d')$  is also convex and piecewise affine, and so is $|d - \sigma_i|$ and both these properties are preserved by addition, so $g_i(d)$ must also be convex and piecewise affine. 
 		
 		Now that we have this result, our representation of the graph as a sequence of line segments, each represented as a triple (left x endpoint, slope, right x endpoint) is justified. 
 		The y value of any graph $g_i$ can be back calculated because we know the value of the cost of the leftmost endpoint, it represents the word obtained by firing every transition at the earliest possible time. 
@@ -804,7 +805,7 @@ In this paper we provide distinct distance functions that can reflect informatio
 			%A similar, two-sided version of this example could be constructed such that simply running the greedy check backwards on the trace will not help either, as the troublesome part of the execution is somewhere in the middle, and judging whether increasing costs initially can be made up for somewhere along the way is not easy. 
 
 		\end{example}
-		\todo[inline]{I realise there was quite an important error in the example I kept here! I have fixed it now}
+		%% \todo[inline]{I realise there was quite an important error in the example I kept here! I have fixed it now}
 		\begin{example}\label{altdthard}
 			In the simpler case of sequential causal processes it might not seem obvious why aligning under $d_t$ should require such global analysis and quadratic time to perform. 
 			While we do not present a proof of hardness here, a modification of our running example might show how aligning under $d_t$ is unlikely to be doable by some sort of greedy or locally optimising algorithm. 
