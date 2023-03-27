@@ -457,7 +457,7 @@ In this paper we provide distinct distance functions that can reflect informatio
 					\arrow["{[2,4]}"{description, pos=0.2}, draw=white, from=2-6, to=1-6]
 					\arrow["{[2,2]}"{description, pos=0.2}, draw=white, from=2-4, to=1-4]
 				\end{tikzcd}
-			}
+			}\\
 
                        % \todo[inline]{make sure that the notation for timing functions (without action names) is well introduced.}
 		Now for this $N$, let the observed trace's timing function ${\sigma = (3, 4, 8, 9) \not \in \mathcal{L}(N)}$. 
@@ -471,10 +471,10 @@ In this paper we provide distinct distance functions that can reflect informatio
 		And lastly, the best $d_N$ alignment for the example in the diagram below is also $\gamma = (1,3,7,8)$, the sequence of moves being one stamp and one delay move at the start, $m = stamp(-1, 1)delay(-1, 1)$, and now with minimum cost $d_N(\sigma, \gamma) = 2 < \min \{d_t(\sigma, \gamma), d_\theta(\sigma, \gamma)\}$. 
 	\end{example}
 	
-        \todo[inline]{Thomas: I added here the three following simple
-          properties, taken from sl. 22 of Thomas' slides at IRIF. WDYT?\\
-		  Neha : I think they're very nice! Maybe we can explicitly keep the property the preceding example proves too here? I've added it in the third spot, but I'm not sure it needs repeating, do feel free to delete it if you'd like.\\
-                  Thomas: There is a problem with the quantifier: all the inequalities are below a forall. The one you added would need an exists. So I delete it.}
+      %  \todo[inline]{Thomas: I added here the three following simple
+      %    properties, taken from sl. 22 of Thomas' slides at IRIF. WDYT?\\
+	%	  Neha : I think they're very nice! Maybe we can explicitly keep the property the preceding example proves too here? I've added it in the third spot, but I'm not sure it needs repeating, do feel free to delete it if you'd like.\\
+      %            Thomas: There is a problem with the quantifier: all the inequalities are below a forall. The one you added would need an exists. So I delete it.}
         \begin{lemma}
           \label{lemma:distances}
           Given any two timing functions $\tau_1, \tau_2$ over the same causal
@@ -545,7 +545,9 @@ In this paper we provide distinct distance functions that can reflect informatio
 		
 		As $\gamma \in \mathcal{L}(N)$  this means it obeys the set of inequalities corresponding to the state class containing the final marking. Now, the above constraint is convex, so $\gamma$ varies over a convex set. As $\sigma$ is a constant vector, translation by it will keep the space convex, so $\gamma - \sigma \in \mathcal{C}$ for some convex set $\mathcal{C}$. 
 		
-		Now, we wish to minimize $|\gamma - \sigma|$, but it would be better to view this objective as a linear \todo{affine?} function. To this end we use a trick from \cite{BV2014} and use the following variable translation : $$\alpha, \beta \geq 0 : \alpha - \beta = \gamma - \sigma$$
+		Now, we wish to minimize $|\gamma - \sigma|$, but it would be better to view this objective as an affine 
+		%\todo{affine?} 
+		function. To this end we use a trick from \cite{BV2014} and use the following variable translation : $$\alpha, \beta \geq 0 : \alpha - \beta = \gamma - \sigma$$
 		
 		As defined above, $\alpha$ and $\beta$ are minimal when they are absolute values of the nonnegative and negative components of the vector $\gamma - \sigma$, respectively, i.e. when their sum is $|\gamma - \sigma|$. Our alignment problem can now be equivalently cast as $$\underset{\alpha - \beta \in \mathcal{C}, \alpha, \beta \geq 0}{\mathsf{minimize}} \hspace{0.5em} \alpha + \beta  $$
 		\end{proof}
@@ -600,7 +602,7 @@ In this paper we provide distinct distance functions that can reflect informatio
 			Overall, we see that the effect of the $\min$ operation is to attach a segment with the same length as the $i$th static interval constraint, at the lowest point of $g_{i-1}$. 
 			
 			We continue similarly : The next black graph is a translation of the previous blue one, with an orange line segment or the same length as the next static interval constraint inserted at the lowest point, and the next green graph is $|x-\sigma_i|$ in the new domain, and summing these two gives the next blue graph. 
-                        \todo[inline]{Thomas: I changed linear to affine in the next paragraphs}
+                       % \todo[inline]{Thomas: I changed linear to affine in the next paragraphs}
 			As these are all piecewise affine graphs, summing is simply incrementing the slopes of all the segments of the black-orange curve by one if they're to the right of $\sigma_i$, and by minus one if they're to the left, and translating the height up as needed. 
 			%Clearly the orange, black and green segments of the next graph are obtained like this, and $g_4$ is their sum. 
 			
@@ -735,77 +737,48 @@ In this paper we provide distinct distance functions that can reflect informatio
 		It then proceeds to do the same iteratively for each prefix, reverse-engineering a trace $\gamma$ for which the total minimum cost of aligning to $\sigma$ is achieved. 
 		
 	\end{proof}
-	We include here pseudocode for the \textsc{backTrack} subfunction : 
 	
-	\begin{figure}[!t]
-		\removelatexerror
-		\begin{algorithm}[H]
-			\caption{Backtrack to find the best word}
-			\label{AuxFunc3}
-			\begin{algorithmic}
-				\State \textbf{Input : }  $\sigma$, $graphlist$, $cost$, $SI$
-				\State \textbf{Output : }  $\gamma \in \mathcal{L}(N)$ such that $d_t(\gamma, \sigma) = cost$
-				
-				\For{$i = 0, i < |graphlist|$}
-				\State Find $ylist[i]$, the $y$ values of $graphlist[i]$
-				\EndFor
-				
-				\State $i \gets |sigma|-1$
-				\While{$i \geq 0$}
-				\State $[a, b] = SI[i+1]$ 
-				\State Truncate $ylist[i]$ and $graphlist[i]$ so $ \gamma_{i+1} - x \in [a, b]$. 
-				\State $k \gets $ \textsc{binarySearch}($ylist[i], cost$)
-				\State $xsegment \gets graphlist[i][k]$
-				
-				\State $\gamma_i \gets xsegment^{-1}(cost)$
-				
-				\State $cost \gets cost - |\gamma_i - \sigma_i|$
-				\State $i \gets i-1$
-				\EndWhile
-				
-			\end{algorithmic}
-		\end{algorithm}
-	\end{figure}
-	
-		
+
 		\begin{remark} Note that the subfunctions \textsc{graphMin} and  \textsc{graphAddMod} both run through the list of segments of the graph once each, and hence are linear in the sizes of their inputs, and Algorithm \ref{StampAlgo} calls each of these subfunctions once for each letter of the observed trace, each time on a graph with size linear in the current prefix.  
 			So the cost calculation section of Algorithm \ref{StampAlgo} has quadratic time complexity in the size of the input. 
 			
 			The subfunction \textsc{backTrack} runs a binary search on each stored graph in $graphlist$ to find a trace in the language that does indeed give the minimum cost, letter by letter, and so overall takes $O(n \log(n))$ time, keeping the overall time complexity  $O(n^2)$ where $n = |\sigma|$.
 		\end{remark}
-		%\todo[inline]{Should the example that shows $d_t$-alignment is not straightforward go here?}
-		
-		\begin{example}\label{dthard}
-		In the simpler case of sequential causal processes it might not seem obvious why aligning under $d_t$ should require such global analysis and quadratic time to perform. While we do not present a proof of hardness here, a modification of our running example might show how aligning under $d_t$ is unlikely to be doable by some sort of greedy or locally optimising algorithm. Consider a third net, $N''$ that has the same actions as $N'$ but the constraints on them are different. 
-					
-			\adjustbox{scale = 0.6}{
-				\begin{tikzcd}
-					& {} && {} && {} &&{} \\
-					\Huge\bigcirc & {\fbox{reg}} & \Huge\bigcirc & {\fbox{check}} & \Huge\bigcirc & {\fbox{dec}} & \Huge\bigcirc & {\fbox{pay}} & \Huge\bigcirc 
-					\arrow["{[0, 5]}"{description, pos=0.2}, draw=white, from=2-2, to=1-2]
-					\arrow["{[0,0]}"{description, pos=0.2}, draw=white, from=2-8, to=1-8]
-					\arrow[from=2-1, to=2-2]
-					\arrow[from=2-2, to=2-3]
-					\arrow[from=2-3, to=2-4]
-					\arrow[from=2-4, to=2-5]
-					\arrow[from=2-5, to=2-6]
-					\arrow[from=2-6, to=2-7]
-					\arrow[from=2-7, to=2-8]
-					\arrow[from=2-8, to=2-9]
-					\arrow["{[0,0]}"{description, pos=0.2}, draw=white, from=2-6, to=1-6]
-					\arrow["{[0,5]}"{description, pos=0.2}, draw=white, from=2-4, to=1-4]
-				\end{tikzcd}
-			}
-			
-			Let the observed trace be $\sigma = (reg, 0)(check, 0)(dec, 10)(pay,10)$.
-			Naively starting from the beginning, one might be tempted to construct the aligning trace $\gamma_{loc} = (reg, 0) (check, 0)(dec, 0)(pay, 0)$, but, the obvious best choices at the start of the trace incur heavy costs towards the second half, giving a total cost of $d_t(\sigma, \gamma_{loc}) = 20$. 
-			
-			A better choice would in fact be  $\gamma_{glob} = (reg, 5) (check, 10)(dec, 10)(pay, 10)$, as despite being very counter-intuitive at the start, it aligns better for the latter half of the trace, giving a lower total cost of $d_t(\sigma, \gamma_{glob}) = 15$. 
-			
-			%A similar, two-sided version of this example could be constructed such that simply running the greedy check backwards on the trace will not help either, as the troublesome part of the execution is somewhere in the middle, and judging whether increasing costs initially can be made up for somewhere along the way is not easy. 
 
-		\end{example}
-		%% \todo[inline]{I realise there was quite an important error in the example I kept here! I have fixed it now}
+
+
+		\begin{figure}[!t]
+			\removelatexerror
+			\begin{algorithm}[H]
+				\caption{Backtrack to find the best word}
+				\label{AuxFunc3}
+				\begin{algorithmic}
+					\State \textbf{Input : }  $\sigma$, $graphlist$, $cost$, $SI$
+					\State \textbf{Output : }  $\gamma \in \mathcal{L}(N)$ such that $d_t(\gamma, \sigma) = cost$
+					
+					\For{$i = 0, i < |graphlist|$}
+					\State Find $ylist[i]$, the $y$ values of $graphlist[i]$
+					\EndFor
+					
+					\State $i \gets |sigma|-1$
+					\While{$i \geq 0$}
+					\State $[a, b] = SI[i+1]$ 
+					\State Truncate $ylist[i]$ and $graphlist[i]$ so $ \gamma_{i+1} - x \in [a, b]$. 
+					\State $k \gets $ \textsc{binarySearch}($ylist[i], cost$)
+					\State $xsegment \gets graphlist[i][k]$
+					
+					\State $\gamma_i \gets xsegment^{-1}(cost)$
+					
+					\State $cost \gets cost - |\gamma_i - \sigma_i|$
+					\State $i \gets i-1$
+					\EndWhile
+					
+				\end{algorithmic}
+			\end{algorithm}
+		\end{figure}
+		
+			
+		%\todo[inline]{Should the example that shows $d_t$-alignment is not straightforward go here?}
 		\begin{example}\label{altdthard}
 			In the simpler case of sequential causal processes it might not seem obvious why aligning under $d_t$ should require such global analysis and quadratic time to perform. 
 			While we do not present a proof of hardness here, a modification of our running example might show how aligning under $d_t$ is unlikely to be doable by some sort of greedy or locally optimising algorithm. 
@@ -828,14 +801,44 @@ In this paper we provide distinct distance functions that can reflect informatio
 						\arrow["{[2,4]}"{description, pos=0.2}, draw=white, from=2-6, to=1-6]
 						\arrow["{[2,2]}"{description, pos=0.2}, draw=white, from=2-4, to=1-4]
 					\end{tikzcd}
-				}
+				}\\
 				
 				Let $\sigma = (reg, 1)(check, 2)(dec, 4)(pay,6)$ be an observed trace.
 				There as a number of optimal $d_t$ alignments for this trace such as $\gamma_1 = (reg, 0)(check, 2)(dec, 4)(pay,5)$ or 	$\gamma_2 = (reg, 1)(check, 3)(dec, 5)(pay,6)$, both of which have net cost $2$ but look quite different. 
 				It is this tendency for edits early on in the trace to force later parts to fit closer to the observation under $d_t$ that makes aligning under it more subtle than with $d_{\theta}$.  		
-				%A similar, two-sided version of this example could be constructed such that simply running the greedy check backwards on the trace will not help either, as the troublesome part of the execution is somewhere in the middle, and judging whether increasing costs initially can be made up for somewhere along the way is not easy. 
 	
 			\end{example}
+		\begin{example}\label{dthard}
+		In fact, if we further change the constraints in our  net, we can see that not only can some of the optimal traces can look unintuitive, but the intuitive traces can be strictly suboptimal : 
+
+			\adjustbox{scale = 0.6}{
+				\begin{tikzcd}
+					& {} && {} && {} &&{} \\
+					\Huge\bigcirc & {\fbox{reg}} & \Huge\bigcirc & {\fbox{check}} & \Huge\bigcirc & {\fbox{dec}} & \Huge\bigcirc & {\fbox{pay}} & \Huge\bigcirc 
+					\arrow["{[0, 5]}"{description, pos=0.2}, draw=white, from=2-2, to=1-2]
+					\arrow["{[0,0]}"{description, pos=0.2}, draw=white, from=2-8, to=1-8]
+					\arrow[from=2-1, to=2-2]
+					\arrow[from=2-2, to=2-3]
+					\arrow[from=2-3, to=2-4]
+					\arrow[from=2-4, to=2-5]
+					\arrow[from=2-5, to=2-6]
+					\arrow[from=2-6, to=2-7]
+					\arrow[from=2-7, to=2-8]
+					\arrow[from=2-8, to=2-9]
+					\arrow["{[0,0]}"{description, pos=0.2}, draw=white, from=2-6, to=1-6]
+					\arrow["{[0,5]}"{description, pos=0.2}, draw=white, from=2-4, to=1-4]
+				\end{tikzcd}
+			}\\
+			
+			Consider $\sigma = (reg, 0)(check, 0)(dec, 10)(pay,10)$.
+			Naively starting from the beginning, one might be tempted to construct the aligning trace $\gamma_{loc} = (reg, 0) (check, 0)(dec, 0)(pay, 0)$, but, the obvious best choices at the start of the trace incur heavy costs towards the second half, giving a total cost of $d_t(\sigma, \gamma_{loc}) = 20$. 
+			
+			However, $\gamma_{glob} = (reg, 5) (check, 10)(dec, 10)(pay, 10)$ is a strictly better choice, as despite being very counter-intuitive at the start, it aligns better for the latter half of the trace, giving a lower total cost of $d_t(\sigma, \gamma_{glob}) = 15$. 
+			
+			%A similar, two-sided version of this example could be constructed such that simply running the greedy check backwards on the trace will not help either, as the troublesome part of the execution is somewhere in the middle, and judging whether increasing costs initially can be made up for somewhere along the way is not easy. 
+
+		\end{example}
+		
 
 
 		\section{Results and Algorithm : Delay Edits}\label{4}
@@ -1121,10 +1124,10 @@ Note that for extended free choice time petri nets, in order to check for the va
 			The alignment the above approach would provide is $(a, 0)(a, 0)(a, 0)$. 
 			But if we assign even a tenth of the cost of action edits to timestamp edits, clearly the closer word in the language was $(b, 100)(a, 100)(a, 100)$. 
 		\end{example}
-		\todo[inline]{How do we define a distance including action labels, without running into the problem highlighted in example 2?\\
-                  Thomas: It does not solve the problem in Example 2. Depending
-                  on the cost we assign to action edits, one or the other
-                  alignment will be preferred. This is quite fair, I think. There is not even much to say about it.}
+		%\todo[inline]{How do we define a distance including action labels, without running into the problem highlighted in example 2?\\
+         %         Thomas: It does not solve the problem in Example 2. Depending
+          %        on the cost we assign to action edits, one or the other
+           %       alignment will be preferred. This is quite fair, I think. There is not even much to say about it.}
 		The issue here is the tradeoff between timestamp edits and action label edits. A better approach would assign one cost $c_A$ to action edits and another $c_T$ to time edits, and seek to minimise their sum. A potential fix to our previous idea would be to essentially retain the above approach, but instead of just doing it for the best untimed alignment, take a selection of good untimed alignments (up to some allowable threshold), and try to align timestamps for each untimed candidate, and then minimise the total cost over this set. This alleviates some of the bias towards preserving action labels by allowing for small action deviations in case the timestamp alignment proves particularly cost efficient, but this is still a naive approach to the wider problem, and we hope to find better solutions in the future. 
 		
 		\section{Implementation}
