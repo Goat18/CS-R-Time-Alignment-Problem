@@ -139,7 +139,7 @@
 	The notion of distance used on these words used is usually either Hamming distance or Levenshtein's edit distance. 
 Hence, for time-aware conformance checking, one requires a notion of distance over timed words, enabling us to measure how close two timed process traces are. 
 Distances over timed words have been explored before, such as in \cite{ABD18} and \cite{CJM14}, both of which have in common the notion of capturing the maximal difference between the timestamps attached to the same action label. 
-There is also earlier work \cite{GHJ97} that explores similar notions of absolute and relative errors but on traces whose event interdependencies are not linked to any model. 
+Earlier, \cite{GHJ97} explored similar notions of absolute and relative errors but on traces whose event interdependencies are not linked to any model. 
 %% \todo[inline]{Neha : I added another reference to a work on timed distances here}
 In this paper we provide distinct distance functions that can reflect information about multiple timestamp discrepancies between timed words, and using them, we pose and solve the alignment problem for time-aware processes.
 
@@ -464,17 +464,14 @@ In this paper we provide distinct distance functions that can reflect informatio
 		
 		The best $d_t$ alignment for the example in the diagram below is $\gamma = (1,3,7, 8)$ with minimum cost $d_t(\sigma, \gamma) = 5$. 
 		
-		The best $d_\theta$ %\todo{right?} %% $d_t=\theta$
-                alignment for the example in the diagram below is also $\gamma = (1,3,7, 8)$, but this time with minimum cost $d_\theta(\sigma, \gamma) = 3$, evidenced by the move sequence $(delay(-2, 1)delay(+1, 2))$.
+		The best $d_\theta$ alignment for the example in the diagram
+                below is also $\gamma = (1,3,7, 8)$, but this time with minimum
+                cost $d_\theta(\sigma, \gamma) = 3$, evidenced by the move
+                sequence $(delay(-2, 1)delay(+1, 2))$.
                 %% \todo{explain abuse of notation: in the definition, \(delay\) and \(stamp\) have 3 parameters}
 		
 		And lastly, the best $d_N$ alignment for the example in the diagram below is also $\gamma = (1,3,7,8)$, the sequence of moves being one stamp and one delay move at the start, $m = stamp(-1, 1)delay(-1, 1)$, and now with minimum cost $d_N(\sigma, \gamma) = 2 < \min \{d_t(\sigma, \gamma), d_\theta(\sigma, \gamma)\}$. 
 	\end{example}
-	
-      %  \todo[inline]{Thomas: I added here the three following simple
-      %    properties, taken from sl. 22 of Thomas' slides at IRIF. WDYT?\\
-	%	  Neha : I think they're very nice! Maybe we can explicitly keep the property the preceding example proves too here? I've added it in the third spot, but I'm not sure it needs repeating, do feel free to delete it if you'd like.\\
-      %            Thomas: There is a problem with the quantifier: all the inequalities are below a forall. The one you added would need an exists. So I delete it.}
         \begin{lemma}
           \label{lemma:distances}
           Given any two timing functions $\tau_1, \tau_2$ over the same causal
@@ -546,7 +543,6 @@ In this paper we provide distinct distance functions that can reflect informatio
 		As $\gamma \in \mathcal{L}(N)$  this means it obeys the set of inequalities corresponding to the state class containing the final marking. Now, the above constraint is convex, so $\gamma$ varies over a convex set. As $\sigma$ is a constant vector, translation by it will keep the space convex, so $\gamma - \sigma \in \mathcal{C}$ for some convex set $\mathcal{C}$. 
 		
 		Now, we wish to minimize $|\gamma - \sigma|$, but it would be better to view this objective as an affine 
-		%\todo{affine?} 
 		function. To this end we use a trick from \cite{BV2014} and use the following variable translation : $$\alpha, \beta \geq 0 : \alpha - \beta = \gamma - \sigma$$
 		
 		As defined above, $\alpha$ and $\beta$ are minimal when they are absolute values of the nonnegative and negative components of the vector $\gamma - \sigma$, respectively, i.e. when their sum is $|\gamma - \sigma|$. Our alignment problem can now be equivalently cast as $$\underset{\alpha - \beta \in \mathcal{C}, \alpha, \beta \geq 0}{\mathsf{minimize}} \hspace{0.5em} \alpha + \beta  $$
@@ -602,7 +598,6 @@ In this paper we provide distinct distance functions that can reflect informatio
 			Overall, we see that the effect of the $\min$ operation is to attach a segment with the same length as the $i$th static interval constraint, at the lowest point of $g_{i-1}$. 
 			
 			We continue similarly : The next black graph is a translation of the previous blue one, with an orange line segment or the same length as the next static interval constraint inserted at the lowest point, and the next green graph is $|x-\sigma_i|$ in the new domain, and summing these two gives the next blue graph. 
-                       % \todo[inline]{Thomas: I changed linear to affine in the next paragraphs}
 			As these are all piecewise affine graphs, summing is simply incrementing the slopes of all the segments of the black-orange curve by one if they're to the right of $\sigma_i$, and by minus one if they're to the left, and translating the height up as needed. 
 			%Clearly the orange, black and green segments of the next graph are obtained like this, and $g_4$ is their sum. 
 			
