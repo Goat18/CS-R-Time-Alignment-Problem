@@ -282,7 +282,7 @@ The cost of a sequence of moves is the sum of the costs of the moves. Armed with
 		The best $d_\theta$ alignment for the above pair is cost 1.5, as it requires a 0.5 delay edit at the first place to push the 0 forward to a 0.5, and then another 1 delay at the second position to pull the rest of the trace from $(3,4)$ back to $(2,3)$. 
 		
 		Now we consider the evenly mixed setting. 
-		Intuitively, when dealing with linear models where the ripple effect of a delay is always to the right irrespective of the values of the timestamps, moves can be applied in any order, so we can assume a minimum cost run is chronological. 
+		Intuitively, when dealing with sequential models where the ripple effect of a delay is always to the right irrespective of the values of the timestamps, moves can be applied in any order, so we can assume a minimum cost run is chronological. 
 		So our first move will have to incur a minimum cost of $0.5$ as we try to align $(0,3,4)$ to our process trace at the first position.
 		Now, if any part of this initial move was a delay, we would push the second component even further away from $2.5$ than it already was, and if any of the delay were negative, then the mixed move seems counterproductive at the first component as the delay and stamp moves work against each other, so let us say the first move was pure stamp. 
 		Now we move on to move two, which will again incur a minimum cost of $0.5$. 
@@ -296,7 +296,7 @@ The cost of a sequence of moves is the sum of the costs of the moves. Armed with
 \subsection{Notation and Setup}
 	Given the nonconstructive nature of the definition of $d_{\alpha}$, it is not clear how one can efficiently calculate the distance between two fixed timed traces, as a minimal cost sequence of moves is not obvious. 
 	As before, we first study the problem over sequential causal processes, as these make analysing the effects of moves significantly simpler. 
-	Before we propose an algorithm that does calculate minimal cost for linear timed traces, we first define a few properties that seem to characterise classes of well formed minimal cost runs, and then prove that these properties both improve cost, and are satisfied solely by the run calculated by the algorithm we provide. 
+	Before we propose an algorithm that does calculate minimal cost for sequential timed traces, we first define a few properties that seem to characterise classes of well formed minimal cost runs, and then prove that these properties both improve cost, and are satisfied solely by the run calculated by the algorithm we provide. 
 	
 	We start with some convenient notation for a common combination of the previously defined moves. 
 	
@@ -332,7 +332,7 @@ Now, we look at a new way to represent timing functions. With delay edits, which
 	\begin{example}\label{wordandflow}
 		
 
-		Consider the word $w = (abc)(1, 5, 9)$. For this linear timed trace, the flow function measuring its successive delays is $(1, 4, 4)$. 
+		Consider the word $w = (abc)(1, 5, 9)$. For this sequential timed trace, the flow function measuring its successive delays is $(1, 4, 4)$. 
 	\end{example}
 	
 	As defined, $f_\tau$ as defined produces exactly the time durations that the guards of each transition in the model checks, i.e. the clock function values during the run.
@@ -364,8 +364,8 @@ Now, we look at a new way to represent timing functions. With delay edits, which
 	The final property, stability, pinpoints exactly at what point the optimal move for the evenly mixed distance, $d_1$ is. 
 	
 	\subsubsection{Order}
-	The first property captures the order in which moves in a sequence target the positions in a linear trace. 
-	It would be good to be able to focus our attention on sequences of moves that proceed in an orderly fashion from one end of the word to another, doing exactly one mixed move at each position. This is intuitively reasonable as doing multiple mixed moves at the same position can only worsen the cost if it at all changes it, and assuming that mixed moves commute on linear words, it would be all the same to arrange them in order of the position it takes effect at. This gives us the following two properties. 
+	The first property captures the order in which moves in a sequence target the positions in a sequential trace. 
+	It would be good to be able to focus our attention on sequences of moves that proceed in an orderly fashion from one end of the word to another, doing exactly one mixed move at each position. This is intuitively reasonable as doing multiple mixed moves at the same position can only worsen the cost if it at all changes it, and assuming that mixed moves commute on sequential traces, it would be all the same to arrange them in order of the position it takes effect at. This gives us the following two properties. 
 	
 	\begin{definition}[Chronology]
 		A sequence of moves aligning $\gamma$ to $\sigma$ is said to be \textit{chronological} if for all positions $i < j \leq n = |\gamma|$, all the moves at position $i$ are performed before any move at position $j$ and exactly one mixed move (where one or both components may be zero) takes place at each position, that is $\rho \in Moves^*$ is chronological iff  $$\forall i \in \{1, 2, \dots n\},  \exists s_i, d_i \in \mathbb{R} :$$$$ \rho = (s_1, d_1, 1)(s_2, d_2, 2)\dots (s_n, d_n, n) $$
@@ -405,7 +405,7 @@ Now, we look at a new way to represent timing functions. With delay edits, which
 	
 	As the above example suggests, we claim : 
 	
-	\begin{lemma}\label{linescommute} For all $\alpha \in \mathbb{R}^+ \cup \{\infty\}$ there is a minimal cost sequence of $\alpha$ weighted mixed moves aligning any two linear timed traces that is chronological/reverse chronological. 
+	\begin{lemma}\label{linescommute} For all $\alpha \in \mathbb{R}^+ \cup \{\infty\}$ there is a minimal cost sequence of $\alpha$ weighted mixed moves aligning any two sequential timed traces that is chronological/reverse chronological. 
 	\end{lemma}
 	
 	\subsubsection{Co-operation}
@@ -430,7 +430,7 @@ Now, we look at a new way to represent timing functions. With delay edits, which
 	
 	Once again, as the example suggests, one can always convert a an evenly mixed non-cooperative run into an equivalent cooperative one with cheaper cost, and in fact this holds for a large number $d_{\alpha}$ as well. 
 	
-	\begin{lemma}\label{linescoop} For all $\alpha \geq 2 \vee \alpha = 1$, there is a cooperative minimal cost chronological (or reverse chronological) sequence of $\alpha$ weighted mixed moves aligning any two linear timed traces. 
+	\begin{lemma}\label{linescoop} For all $\alpha \geq 2 \vee \alpha = 1$, there is a cooperative minimal cost chronological (or reverse chronological) sequence of $\alpha$ weighted mixed moves aligning any two sequential timed traces. 
 	\end{lemma}
 	
 	The rest of our properties need only apply to $d_1$, so for the rest of this subsection assume we are always aligning using evenly mixed distance. Very similar to co-operation is the notion of \emph{cross co-operation}. Much like how mixed moves at a position should work together instead of against each other, a stamp move $s$ at a location should ideally have opposite sign to the delay $d$ at the next position, as its contribution to the next flow component is going to be $-s$. This leads us to the following definition : 
@@ -484,14 +484,14 @@ Now, we look at a new way to represent timing functions. With delay edits, which
 	
 	Once again, as the example suggests, a stable chronological run (or reverse chronological run) is unique , but moreover, we claim that stability improves the cost of the sequence of moves.  
 	
-	\begin{lemma}\label{stableunique} The stable, co-operative, reverse chronological sequence of moves aligning any two linear timed traces is unique. 
+	\begin{lemma}\label{stableunique} The stable, co-operative, reverse chronological sequence of moves aligning any two sequential timed traces is unique. 
 	\end{lemma}
 	
 	\proof{
 		This is clear, as given a partially aligned flow trace the choice of $s$ to make the next move stable as defined above is deterministic, and the corresponding delay moves are determined by reverse chronology and co-operation. 
 }
 	
-	\begin{lemma}\label{stablebest} There is a stable minimal cost sequence of moves aligning any two linear timed traces. 
+	\begin{lemma}\label{stablebest} There is a stable minimal cost sequence of moves aligning any two sequential timed traces. 
 	\end{lemma}
 	
 	\subsection{Computing and aligning $d_{\alpha}$ for $\alpha \geq 2$}\label{2.5}
@@ -499,7 +499,7 @@ A surprising fact is that for this entire class of distances, we get our distanc
 Recall that by Lemmas \ref{linescommute} and \ref{linescoop}, whenever the cost of the stamp move is at least twice as much as the cost of the delay move, any sequence of $\alpha$ weighted mixed moves can be converted to one with lesser or equal cost. 
 In fact, in this case, any sequence of such moves can be converted to a delay-only sequence of moves with the cost improving at most. Hence, assuming $c_d = 1$ and $c_s = \alpha$ (which up to scaling changes nothing), we have the following lemma : 
 
-\begin{lemma}\label{doubleisdelay} When $\alpha \geq 2$ for any sequence of $\alpha$ weighted mixed moves aligning any two linear timed traces, there is a sequence of delay only moves that aligns the same two traces, and has at most equal cost. 
+\begin{lemma}\label{doubleisdelay} When $\alpha \geq 2$ for any sequence of $\alpha$ weighted mixed moves aligning any two sequential timed traces, there is a sequence of delay only moves that aligns the same two traces, and has at most equal cost. 
 	
 \end{lemma}
 
@@ -543,7 +543,7 @@ As a consequence of this lemma, both distance computation and alignment for this
 \end{algorithmic}
 \end{algorithm}
 \end{figure}
-\begin{lemma}\label{mixwordalgostable} Given two time sequences $\sigma = (\sigma_1, \sigma_2, \dots \sigma_n)$ and $\gamma = (\gamma_1, \gamma_2, \dots , \gamma_n)$ with linear underlying causal processes, the sequence of moves the above algorithm calculates ($m$) corresponds to the unique stable sequence of moves that aligns $\sigma$ to $\gamma$. 
+\begin{lemma}\label{mixwordalgostable} Given two time sequences $\sigma = (\sigma_1, \sigma_2, \dots \sigma_n)$ and $\gamma = (\gamma_1, \gamma_2, \dots , \gamma_n)$ with sequential underlying causal processes, the sequence of moves the above algorithm calculates ($m$) corresponds to the unique stable sequence of moves that aligns $\sigma$ to $\gamma$. 
 \end{lemma}
 
 
@@ -558,7 +558,7 @@ This is clear by the definition of stability.
 This holds as by Lemma \ref{mixwordalgostable} the algorithm calculates the unique stable sequence of aligning moves, and by Lemma \ref{stablebest} this must be the minimal cost sequence. 
 \end{proof}
 
-\section{Purely Timed Alignment for Linear Models}\label{4}
+\section{Purely Timed Alignment for Sequential Models}\label{4}
 
 \begin{definition}[Sequential Process Models]
 We define a sequential process model $N$ of length $n$ to be a sequence of intervals $\{[a_i, b_i] | a_i \in \mathbb{R}, b_i \in \mathbb{R} \cup \{\infty\}, i \leq n\}$. 
@@ -579,7 +579,7 @@ The best $d_t=\theta$ alignment for the example in the diagram below is also $\g
 And lastly, the best $d_1$ alignment for the example in the diagram below is also $\gamma = (1,3,4)$, the sequence of moves being simply one stamp and one delay move at the start, $m = stamp(-1, 1)delay(-1, 1)$, and now with minimum cost $d_1(\sigma, \gamma) = 2 < \min \{d_t(\sigma, \gamma), d_\theta(\sigma, \gamma)\}$. 
 \end{example}
 
-\begin{theorem}\label{MixAlign} Given a sequential process model $N$ of a time Petri Net $N$ and a linear observed trace $\sigma$, the word $\gamma \in \mathcal{L}(N)$ such that $f_{\gamma}(i)= \underset{x \in [Eft(t_i), Lft(t_i)]} {\argmin}\hspace{0.5em} {|x - f_\sigma(i)|}$ also has the property $\gamma = \underset{x \in \mathcal{L}(N)}{\argmin} \hspace{0.5em}{d_1(x, \sigma)}$. 
+\begin{theorem}\label{MixAlign} Given a sequential process model $N$ of a time Petri Net $N$ and a sequential observed trace $\sigma$, the word $\gamma \in \mathcal{L}(N)$ such that $f_{\gamma}(i)= \underset{x \in [Eft(t_i), Lft(t_i)]} {\argmin}\hspace{0.5em} {|x - f_\sigma(i)|}$ also has the property $\gamma = \underset{x \in \mathcal{L}(N)}{\argmin} \hspace{0.5em}{d_1(x, \sigma)}$. 
 \end{theorem}
 
 This of course means that we have a linear time algorithm for aligning sequential processes under $d_1$, by locally choosing the best flow vector as shown in Algorithm \ref{MixAlignAlgo}. This, incidentally, is exactly the aligning word obtained by the algorithm developed for delay-only distance, $d_\theta$ in \cite{CR22}.  
@@ -643,7 +643,7 @@ We will detail the proofs of the theorems and lemmas stated above.
 \subsection{Chronology}
 We start with the proof of Lemma \ref{linescommute}. 
 
-\begin{lemma*}For all $\alpha \in \mathbb{R}^+ \cup \{\infty\}$ there is a minimal cost sequence of $\alpha$ weighted mixed moves aligning any two linear timed traces that is chronological/reverse chronological. 
+\begin{lemma*}For all $\alpha \in \mathbb{R}^+ \cup \{\infty\}$ there is a minimal cost sequence of $\alpha$ weighted mixed moves aligning any two sequential timed traces that is chronological/reverse chronological. 
 \end{lemma*}
 
 \begin{proof}
@@ -656,7 +656,7 @@ Where $$\forall 1 \leq k \leq n : \gamma'_k = \begin{cases}
 \gamma_k + s' + d + d' & k = j \\
 \gamma_k + d + d' & k > j
 \end{cases}$$
-That is, on linear timed traces, mixed moves are commutative. 
+That is, on sequential timed traces, mixed moves are commutative. 
 Clearly permuting the moves of a run does not change its cost, so we can assume any sequence of moves to be in increasing order of positions without loss of generality.
 
 Now we can write $m'$ as follows : 
@@ -677,7 +677,7 @@ As for the reverse chronological sequence, by commutativity we can simply revers
 
 \subsection{Co-operation} 
 Now we prove Lemma \ref{linescoop}
-\begin{lemma*}\label{linescoop} For all $\alpha \geq 2 \vee \alpha = 1$, there is a cooperative minimal cost chronological (or reverse chronological) sequence of $\alpha$ weighted mixed moves aligning any two linear timed traces. 
+\begin{lemma*}\label{linescoop} For all $\alpha \geq 2 \vee \alpha = 1$, there is a cooperative minimal cost chronological (or reverse chronological) sequence of $\alpha$ weighted mixed moves aligning any two sequential timed traces. 
 \end{lemma*}
 
 \begin{proof}
@@ -776,10 +776,10 @@ Now, $|d_n| = |\sigma_{n-1} + y - \sigma_n|$ as $m^y|_{n-1}$ fully corrected up 
 
 Now, we can proceed with the proof of Lemma \ref{stablebest}. 
 \begin{lemma*}
-	There is a stable, co-operative, reverse chronological minimal cost sequence of moves aligning any two linear timed traces. 
+	There is a stable, co-operative, reverse chronological minimal cost sequence of moves aligning any two sequential timed traces. 
 \end{lemma*}
 \begin{proof}
-Suppose we seek to align the linear timed trace $\gamma$ to $\sigma$, and consider a minimal cost, reverse chronological, co-operative and cross co-operative sequence of moves $m'$ that aligns $\gamma$ to $\sigma$. 
+Suppose we seek to align the sequential timed trace $\gamma$ to $\sigma$, and consider a minimal cost, reverse chronological, co-operative and cross co-operative sequence of moves $m'$ that aligns $\gamma$ to $\sigma$. 
 We know $m'$ exists by Lemmas \ref{linescoop} and \ref{crosscoop}. 
 On the other hand, consider the unique stable, co-operative, reverse chronological sequence of moves $m$ that aligns $\gamma$ to $\sigma$, that exists by Lemma \ref{stableunique}. 
 
@@ -857,10 +857,10 @@ And hence we are done.
 \subsection{Computing $d_{\alpha}$ when $\alpha \geq 2$}
 We take a brief interlude to show a simple proof for Lemma \ref{doubleisdelay}. 
 
-\begin{lemma*} When $\alpha \geq 2$, for any sequence of $\alpha$ weighted mixed moves aligning any two linear timed traces, there is a sequence of delay only moves that aligns the same two traces, and has at most equal cost. 
+\begin{lemma*} When $\alpha \geq 2$, for any sequence of $\alpha$ weighted mixed moves aligning any two sequential timed traces, there is a sequence of delay only moves that aligns the same two traces, and has at most equal cost. 
 \end{lemma*}
 \begin{proof}
-	Suppose $\alpha \geq 2$, and we have two linear timed traces $\gamma$ and $\sigma$ such that we wish to align $\gamma$ to $\sigma$ using $\alpha$ weighted mixed moves. 
+	Suppose $\alpha \geq 2$, and we have two sequential timed traces $\gamma$ and $\sigma$ such that we wish to align $\gamma$ to $\sigma$ using $\alpha$ weighted mixed moves. 
 	By Lemma \ref{linescoop} we know there exists a minimal cost chronological and co-operative sequence $m' = (s_1, d_1, 1) \dots (s_n, d_n, n)$ that aligns $\gamma$ to $\sigma$. 
 
 	Consider the chronological, co-operative sequence $m = (0, s_1 + d_1)(0, s_2 + d_2 - s_1)\dots(0, s_i + d_i - s_{i-1})\dots (0, s_n + d_n - s_{n-1})$. 
@@ -877,10 +877,10 @@ Hence, any minimal cost aligning sequence of $\alpha$ weighted mixed moves has a
 We can now look at the proof of Theorem \ref{MixAlign}. 
 
 \begin{theorem*}
-	Given a sequential process model $(CN, p)$ of a time Petri Net $N$ and a linear observed trace $\sigma$, the word $\gamma \in \mathcal{L}(N)$ such that $f_{\gamma}(i)= \underset{x \in [Eft(t_i), Lft(t_i)]} {\argmin}\hspace{0.5em} {|x - f_\sigma(i)|}$ also has the property $\gamma = \underset{x \in \mathcal{L}(N)}{\argmin} \hspace{0.5em}{d_N(x, \sigma)}$. 
+	Given a sequential process model $(CN, p)$ of a time Petri Net $N$ and a sequential observed trace $\sigma$, the trace $\gamma \in \mathcal{L}(N)$ such that $f_{\gamma}(i)= \underset{x \in [Eft(t_i), Lft(t_i)]} {\argmin}\hspace{0.5em} {|x - f_\sigma(i)|}$ also has the property $\gamma = \underset{x \in \mathcal{L}(N)}{\argmin} \hspace{0.5em}{d_N(x, \sigma)}$. 
 \end{theorem*}
 \begin{proof}
-As $(CN, p)$ is linear, we can consider the event set $E$ to be totally ordered by $G$, giving us the list $\{e_1, e_2, \dots e_n\}$ and their respective static interval constraints $\forall i \leq n : SI(p(e_i)) = [a_i, b_i]$. In this setting, clearly, $$f_{\gamma}(i)= \argmin_{x \in [a_i, b_i]} {|x - f_\sigma(i)|}$$
+As $(CN, p)$ is sequential, we can consider the event set $E$ to be totally ordered by $G$, giving us the list $\{e_1, e_2, \dots e_n\}$ and their respective static interval constraints $\forall i \leq n : SI(p(e_i)) = [a_i, b_i]$. In this setting, clearly, $$f_{\gamma}(i)= \argmin_{x \in [a_i, b_i]} {|x - f_\sigma(i)|}$$
 
 We claim that for all $\alpha \in \mathcal{L}(N)$ i.e $\forall \alpha : f_{\alpha}(i) \in [a_i, b_i]$, $$d_N(\sigma, \gamma) \leq d_N(\sigma, \alpha)$$
 
