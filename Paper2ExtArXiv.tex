@@ -549,6 +549,18 @@ This is clear by the definition of stability.
 This holds as by Lemma \ref{mixwordalgostable} the algorithm calculates the unique stable sequence of aligning moves, and by Lemma \ref{stablebest} this must be the minimal cost sequence. 
 \end{proof}
 
+
+\subsection{Computing and aligning $d_{\alpha}$ for $\alpha \geq 2$}\label{2.5}
+A surprising fact is that for this entire class of distances, we get our distance computation and alignment algorithms almost for free. 
+Recall that by Lemmas \ref{linescommute} and \ref{linescoop}, whenever the cost of the stamp move is at least twice as much as the cost of the delay move, any sequence of $\alpha$ weighted mixed moves can be converted to one with lesser or equal cost. 
+In fact, in this case, any sequence of such moves can be converted to a delay-only sequence of moves with the cost improving at most. Hence, assuming $c_d = 1$ and $c_s = \alpha$ (which up to scaling changes nothing), we have the following lemma : 
+
+\begin{lemma}\label{doubleisdelay} When $\alpha \geq 2$ for any sequence of $\alpha$ weighted mixed moves aligning any two sequential timed traces, there is a sequence of delay only moves that aligns the same two traces, and has at most equal cost. 
+	
+\end{lemma}
+
+As a consequence of this lemma, both distance computation and alignment for this large class of $d_{\alpha}$'s can be done using the naive greedy algorithm described in \cite{CR22}, which runs in linear time. 
+
 \section{Purely Timed Alignment under $d_1$ for Sequential Models}\label{4}
 
 \begin{definition}[Sequential Process Models]
@@ -591,6 +603,7 @@ This of course means that we have a linear time algorithm for aligning sequentia
 \end{algorithmic}
 \end{algorithm}
 \end{figure}
+
 \section{Implementation}
 
 We have implemented the $d_1$ computation algorithm and the $d_1$ alignment algorithm for sequential process models in python, available at \url{https://github.com/NehaRino/TimedAlignments}. Both algorithms have linear time complexity, and so, they have efficient running times, as evidenced by the table below :\\
@@ -609,16 +622,6 @@ We have implemented the $d_1$ computation algorithm and the $d_1$ alignment algo
 \end{tabular}
 }
 
-\subsection{Computing and aligning $d_{\alpha}$ for $\alpha \geq 2$}\label{2.5}
-A surprising fact is that for this entire class of distances, we get our distance computation and alignment algorithms almost for free. 
-Recall that by Lemmas \ref{linescommute} and \ref{linescoop}, whenever the cost of the stamp move is at least twice as much as the cost of the delay move, any sequence of $\alpha$ weighted mixed moves can be converted to one with lesser or equal cost. 
-In fact, in this case, any sequence of such moves can be converted to a delay-only sequence of moves with the cost improving at most. Hence, assuming $c_d = 1$ and $c_s = \alpha$ (which up to scaling changes nothing), we have the following lemma : 
-
-\begin{lemma}\label{doubleisdelay} When $\alpha \geq 2$ for any sequence of $\alpha$ weighted mixed moves aligning any two sequential timed traces, there is a sequence of delay only moves that aligns the same two traces, and has at most equal cost. 
-	
-\end{lemma}
-
-As a consequence of this lemma, both distance computation and alignment for this large class of $d_{\alpha}$'s can be done using the naive greedy algorithm described in \cite{CR22}, which runs in linear time. 
 
 \section{Perspectives and Conclusion}
 In this paper, we studied the alignment problem for timed processes using the weighted mixed moves distance $d_{\alpha}$. 
