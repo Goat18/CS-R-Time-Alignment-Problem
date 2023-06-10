@@ -857,24 +857,7 @@ And hence we are done.
 
 
 \end{proof}
-\subsection{Computing $d_{\alpha}$ when $\alpha \geq 2$}
-We take a brief interlude to show a simple proof for Lemma \ref{doubleisdelay}. 
 
-\begin{lemma*} When $\alpha \geq 2$, for any sequence of $\alpha$ weighted mixed moves aligning any two sequential timed traces, there is a sequence of delay only moves that aligns the same two traces, and has at most equal cost. 
-\end{lemma*}
-\begin{proof}
-	Suppose $\alpha \geq 2$, and we have two sequential timed traces $\gamma$ and $\sigma$ such that we wish to align $\gamma$ to $\sigma$ using $\alpha$ weighted mixed moves. 
-	By Lemma \ref{linescoop} we know there exists a minimal cost chronological and co-operative sequence $m' = (s_1, d_1, 1) \dots (s_n, d_n, n)$ that aligns $\gamma$ to $\sigma$. 
-
-	Consider the chronological, co-operative sequence $m = (0, s_1 + d_1)(0, s_2 + d_2 - s_1)\dots(0, s_i + d_i - s_{i-1})\dots (0, s_n + d_n - s_{n-1})$. 
-	When one applies $m$ to $\gamma$, the effect on the $i$th timestamp in $\gamma$ is as follows $$m(\gamma)[i] = \gamma_i + \sum_{j = 2}^{i} (s_j + d_j - s_{j-1}) + s_1 + d_1 = \gamma_i + s_i + \sum_{j = 1}^{i} (d_j) = \sigma_i$$
-This is due to the assumption that $m'$ aligned $\gamma$ to $\sigma$ correctly.
-
-Hence, $m$ also aligns the traces correctly. Moreover, we can see that the cost of $m$ is at most that of $m'$ as shown below : 
-$$cost(m) = \sum_{i=2}^{n} (|s_i + d_i - s_{i-1}|) + |s_1 + d_1| \leq \sum_{i=1}^{n} (|d_i| + 2|s_i|) \leq \sum_{i=1}^{n} (|d_i| + \alpha \cdot|s_i|) = cost(m')$$
-
-Hence, any minimal cost aligning sequence of $\alpha$ weighted mixed moves has an equivalent delay-only sequence, so this entire class of languages behaves functionally identical to $d_{\infty}$. 
-\end{proof}
 
 \subsection{Purely Timed Alignment over $d_1$ for Sequential Process Models} 
 We can now look at the proof of Theorem \ref{MixAlign}. 
@@ -949,6 +932,24 @@ Hence, we see that in every possible case, the claim holds for $k= K$ as well, s
 
 Hence, the result holds, and $\gamma$ is an optimal word of $\mathcal{L}(N)$ to align $\sigma$ to. 
 
+\end{proof}
+\subsection{Computing $d_{\alpha}$ when $\alpha \geq 2$}
+We take a brief interlude to show a simple proof for Lemma \ref{doubleisdelay}. 
+
+\begin{lemma*} When $\alpha \geq 2$, for any sequence of $\alpha$ weighted mixed moves aligning any two sequential timed traces, there is a sequence of delay only moves that aligns the same two traces, and has at most equal cost. 
+\end{lemma*}
+\begin{proof}
+	Suppose $\alpha \geq 2$, and we have two sequential timed traces $\gamma$ and $\sigma$ such that we wish to align $\gamma$ to $\sigma$ using $\alpha$ weighted mixed moves. 
+	By Lemma \ref{linescoop} we know there exists a minimal cost chronological and co-operative sequence $m' = (s_1, d_1, 1) \dots (s_n, d_n, n)$ that aligns $\gamma$ to $\sigma$. 
+
+	Consider the chronological, co-operative sequence $m = (0, s_1 + d_1)(0, s_2 + d_2 - s_1)\dots(0, s_i + d_i - s_{i-1})\dots (0, s_n + d_n - s_{n-1})$. 
+	When one applies $m$ to $\gamma$, the effect on the $i$th timestamp in $\gamma$ is as follows $$m(\gamma)[i] = \gamma_i + \sum_{j = 2}^{i} (s_j + d_j - s_{j-1}) + s_1 + d_1 = \gamma_i + s_i + \sum_{j = 1}^{i} (d_j) = \sigma_i$$
+This is due to the assumption that $m'$ aligned $\gamma$ to $\sigma$ correctly.
+
+Hence, $m$ also aligns the traces correctly. Moreover, we can see that the cost of $m$ is at most that of $m'$ as shown below : 
+$$cost(m) = \sum_{i=2}^{n} (|s_i + d_i - s_{i-1}|) + |s_1 + d_1| \leq \sum_{i=1}^{n} (|d_i| + 2|s_i|) \leq \sum_{i=1}^{n} (|d_i| + \alpha \cdot|s_i|) = cost(m')$$
+
+Hence, any minimal cost aligning sequence of $\alpha$ weighted mixed moves has an equivalent delay-only sequence, so this entire class of languages behaves functionally identical to $d_{\infty}$. 
 \end{proof}
 
 \end{document}
