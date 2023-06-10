@@ -400,10 +400,10 @@ The cost of a sequence of moves is the sum of the costs of the moves. Armed with
 		
 	\end{example}
 	
-	As the above example suggests, we claim : 
+	% As the above example suggests, we claim : 
 	
-	\begin{lemma}\label{linescommute} For all $\alpha \in \mathbb{R}^+ \cup \{\infty\}$ there is a minimal cost sequence of $\alpha$ weighted mixed moves aligning any two sequential timed traces that is chronological/reverse chronological. 
-	\end{lemma}
+	% \begin{lemma}\label{linescommute} For all $\alpha \in \mathbb{R}^+ \cup \{\infty\}$ there is a minimal cost sequence of $\alpha$ weighted mixed moves aligning any two sequential timed traces that is chronological/reverse chronological. 
+	% \end{lemma}
 	
 %	\subsubsection{Co-operation}
 	
@@ -424,22 +424,22 @@ $f_\gamma \xmapsto{(0, 0, 5)} (1, 0, 1, 2, 1) \xmapsto{(0.2, 0, 4)} (1, 0, 1, 2.
 	
 	Once again, one can always convert a an evenly mixed non-cooperative run into an equivalent cooperative one with cheaper cost, and in fact this holds for a large number $d_{\alpha}$ as well. 
 	
-	\begin{lemma}\label{linescoop} For all $\alpha \geq 2 \vee \alpha = 1$, there is a cooperative minimal cost chronological (or reverse chronological) sequence of $\alpha$ weighted mixed moves aligning any two sequential timed traces. 
-	\end{lemma}
+	% \begin{lemma}\label{linescoop} For all $\alpha \geq 2 \vee \alpha = 1$, there is a cooperative minimal cost chronological (or reverse chronological) sequence of $\alpha$ weighted mixed moves aligning any two sequential timed traces. 
+	% \end{lemma}
 	
 	For the rest of this subsection assume we are always aligning using evenly mixed distance $d_1$. 
-	Similarly we have \emph{cross co-operation} which states that a stamp move $s$ at a location should ideally have opposite sign to the delay $d$ at the next position, as its contribution to the next flow component is going to be $-s$. 
-	This leads us to the following definition : 
+	% Similarly we have \emph{cross co-operation} which states that a stamp move $s$ at a location should ideally have opposite sign to the delay $d$ at the next position, as its contribution to the next flow component is going to be $-s$. 
+	% This leads us to the following definition : 
 	
-	\begin{definition}[Cross Co-operation]
-		A reverse chronological run ${m = (0, d_n, n) \dots (s_1, d_1, 1)}$ is said to be cross co-operative if no stamp component has the same sign as the delay component of the move played at the next position, that is, $\forall i < n : s_i \cdot d_{i+1} \leq 0$. 
-	\end{definition}
+	% \begin{definition}[Cross Co-operation]
+	% 	A reverse chronological run ${m = (0, d_n, n) \dots (s_1, d_1, 1)}$ is said to be cross co-operative if no stamp component has the same sign as the delay component of the move played at the next position, that is, $\forall i < n : s_i \cdot d_{i+1} \leq 0$. 
+	% \end{definition}
 	
-	Much like co-operation above, cross co-operation can be used to improve the cost of a run, as seen in the next lemma. 
+	%Much like co-operation above, cross co-operation can be used to improve the cost of a run, as seen in the next lemma. 
 	
-	\begin{lemma}\label{crosscoop}
-		For every reverse chronological co-operative evenly mixed run $m'$ aligning $\gamma$ to $\sigma$, there is a reverse chronological, co-operative and cross co-operative run $m$ aligning $\gamma$ to $\sigma$ such that $cost(m) \leq cost(m')$. 
-	\end{lemma}
+	% \begin{lemma}\label{crosscoop}
+	% 	For every reverse chronological co-operative evenly mixed run $m'$ aligning $\gamma$ to $\sigma$, there is a reverse chronological, co-operative and cross co-operative run $m$ aligning $\gamma$ to $\sigma$ such that $cost(m) \leq cost(m')$. 
+	% \end{lemma}
 
 %	\subsubsection{Stability}
 	
@@ -448,7 +448,7 @@ $f_\gamma \xmapsto{(0, 0, 5)} (1, 0, 1, 2, 1) \xmapsto{(0.2, 0, 4)} (1, 0, 1, 2.
 	% The final property we define will be largely used for reverse chronological runs on flow function representations, and it is the last improvement one can make on the cost of a sequence of moves as after enforcing this property, the sequence of moves that results is unique. 
 	% We prefer the flow representation for our current needs because when dealing with reverse chronological models, the flow function still retains the notion of partially aligning suffixes of the traces as we go along, provides a very useful constraint. 
 	% Moreover, we define stability in terms of flow values rather than timestamp values because the effects of mixed moves on flow vectors can be studied locally, while timestamp series get perturbed throughout their length by individual moves, and hence trying to optimise for the effect of a single mixed move involves too many variables. 
-	Until further notice, consider any co-operative run to be reverse chronological, and definitions and algorithms will favour aligning flow functions rather than timing functions. 
+%	Until further notice, consider any co-operative run to be reverse chronological, and definitions and algorithms will favour aligning flow functions rather than timing functions. 
 	%It is quite clear to see that completely aligning a flow function is equivalent to completely aligning its timing function, so this is acceptable. 
 	The notion of co-operation and reverse chronology leaves only one degree of freedom so to speak in our choice of aligning moves, that is, the ratio of stamp to delay at any given position, and this optimal ratio is what stability pinpoints. % Once the stamp components of a sequence of moves has been decided, the delay components are predetermined to align the flow function from right to left. 
 	% Now, at any point, a delay move only affects one flow component, and adds to the cost of one mixed move.
@@ -477,10 +477,10 @@ $f_\gamma \xmapsto{(0, 0, 5)} (1, 0, 1, 2, 1) \xmapsto{(0.2, 0, 4)} (1, 0, 1, 2.
 		
 	\end{example}
 	
-	Once again, as the example suggests, a stable chronological run (or reverse chronological run) is unique , but moreover, we claim that stability improves the cost of the sequence of moves.  
+	As the running example suggests, a stable chronological run (or reverse chronological run) is unique , but moreover, we claim that stability, co-operation, and chronology improve the cost of the sequence of moves.  
 	
-	\begin{lemma}\label{stableunique} The stable, co-operative, reverse chronological sequence of moves aligning any two sequential timed traces is unique. 
-	\end{lemma}
+	% \begin{lemma}\label{stableunique} The stable, co-operative, reverse chronological sequence of moves aligning any two sequential timed traces is unique. 
+	% \end{lemma}
 	
 % 	\proof{
 % 		This is clear, as given a partially aligned flow trace the choice of $s$ to make the next move stable as defined above is deterministic, and the corresponding delay moves are determined by reverse chronology and co-operation. 
@@ -533,16 +533,16 @@ $f_\gamma \xmapsto{(0, 0, 5)} (1, 0, 1, 2, 1) \xmapsto{(0.2, 0, 4)} (1, 0, 1, 2.
 \end{lemma}
 
 
-\begin{proof}
-This is clear by the definition of stability. 
-\end{proof}
+% \begin{proof}
+% This is clear by the definition of stability. 
+% \end{proof}
 
 \begin{theorem}\label{MixAlgoCorr} Algorithm \ref{MixBackwardsAlgo} is correct, that is, its result \textsf(cost) $ = d_1(\gamma, \sigma)$
 \end{theorem}
 
-\begin{proof}
-This holds as by Lemma \ref{mixwordalgostable} the algorithm calculates the unique stable sequence of aligning moves, and by Lemma \ref{stablebest} this must be the minimal cost sequence. 
-\end{proof}
+% \begin{proof}
+% This holds as by Lemma \ref{mixwordalgostable} the algorithm calculates the unique stable sequence of aligning moves, and by Lemma \ref{stablebest} this must be the minimal cost sequence. 
+% \end{proof}
 
 \subsection{Computing and aligning $d_{\alpha}$ for $\alpha \geq 2$}\label{2.5}
 A surprising fact is that for this entire class of distances, we get our distance computation and alignment algorithms almost for free. 
@@ -554,7 +554,6 @@ In fact, in this case, any sequence of such moves can be converted to a delay-on
 \end{lemma}
 
 As a consequence of this lemma, both distance computation and alignment for this large class of $d_{\alpha}$'s can be done using the naive greedy algorithm described in \cite{CR22}, which runs in linear time. 
-
 
 \section{Purely Timed Alignment under $d_1$ for Sequential Models}\label{4}
 
