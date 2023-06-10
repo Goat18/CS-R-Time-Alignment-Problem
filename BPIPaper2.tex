@@ -86,8 +86,8 @@ Thomas Chatain\inst{2}\orcidID{0000-0002-1470-5074}}
 % First names are abbreviated in the running head.
 % If there are more than two authors, 'et al.' is used.
 %
-\institute{LMF, ENS Paris-Saclay, CNRS, Université Paris-Saclay, Inria,
-Gif-sur-Yvette, France \email{neha.rino@ens-paris-saclay.fr}
+\institute{IRIF, ENS Paris-Saclay, CNRS, Université Paris-Saclay, France
+  \email{neha.rino@ens-paris-saclay.fr}
 \and
 LMF, ENS Paris-Saclay, CNRS, Université Paris-Saclay, Inria,
 Gif-sur-Yvette, France
@@ -95,13 +95,14 @@ Gif-sur-Yvette, France
 
 %
 \maketitle              % typeset the header of the contribution
+\todo{check Neha's affiliation}
 %
 \begin{abstract}
-The subject of this paper is to study conformance checking for timed models, that is, process models that consider both the sequence of events as well as their timestamps are recorded. 
+We study conformance checking for timed models, that is, process models that consider both the sequence of events as well as their timestamps are recorded. 
 Time-aware process mining is a growing subfield of research, and as tools that seek to discover timing related properties in processes develop, so does the need for conformance checking techniques that can tackle time 
 constraints and provide insightful quality measures for time-aware process models. 
-One of the most useful conformance artefacts is the alignment, that is, finding the minimal changes necessary to correct a new observation to conform to a process model.  
-This paper follows a previous one, where we have set our problem of timed alignment. In the present paper, we solve the case where the metrics used to compare timed processes allow weighted mixed moves,
+One of the most useful conformance artefacts is the alignment, that is, finding the minimal changes necessary to correct a new observation to conform to a process model.
+In this paper, we solve the timed alignment problem where the metrics used to compare timed processes allows weighted mixed moves,
  i.e. an error on the timestamp of an event may or may not propagate to its successors, and we provide linear time algorithms for a large class of such weighted mixed distances, both for distance computation and alignment on models with sequential causal processes. 
 
 \keywords{Conformance checking \and Alignments \and Timestamps \and Time Petri nets  }
@@ -113,15 +114,20 @@ This paper follows a previous one, where we have set our problem of timed alignm
 	
 %	\subsection{Conformance Checking and Alignments} 
 	
-	Process mining studies vast systems through their event logs, and seeks to extract meaningful ways to model the underlying patterns that govern the behaviour of the system in order to better understand it, or predict future behaviour \cite{A16}.
-	Once such a process model is obtained, it is natural to ask how one is sure the obtained model is a reasonable approximation of the system's behaviour at all, especially given the lack of explainability in the blackbox approach ML takes to producing solutions.
-	This is where conformance checking comes into the picture, as it is the art of judging the performance of a process model by relating modelled and observed behaviour of a process to each other, without depending on the origin of the model \cite{CDSW18}.
+	%% Process mining studies vast systems through their event logs, and seeks to extract meaningful ways to model the underlying patterns that govern the behaviour of the system in order to better understand it, or predict future behaviour \cite{A16}.
+	%% Once such a process model is obtained, it is natural to ask how one is sure the obtained model is a reasonable approximation of the system's behaviour at all, especially given the lack of explainability in the blackbox approach ML takes to producing solutions.
+	%% This is where conformance checking comes into the picture, as it is the art of judging the performance of a process model by relating modelled and observed behaviour of a process to each other, without depending on the origin of the model \cite{CDSW18}.
+Conformance checking
+\cite{CarmonaDSW18} is the task of evaluating the quality of the discovered
+process models w.r.t.\ event logs, i.e. to determine how well a process model
+represents a system observed via the observed traces.
 	%Observed behaviour comes in the form of traces in an event log, as a sequence of events occurring during the functioning of the system, while process models are blueprints that describe what the underlying processes of any given system are supposed to look like.
-	We often do not want the system to always precisely generate any and all possible future system behaviour, but neither should they solely accept the event log. 
-	What is much more useful is a process model that can, up to some small error factor, approximate any reasonable future system behaviour. 
+	%% We often do not want the system to always precisely generate any and all possible future system behaviour, but neither should they solely accept the event log. 
+	%% What is much more useful is a process model that can, up to some small error factor, approximate any reasonable future system behaviour. 
 	
-	In Arya Adriansyah's seminal thesis \cite{Adriansyah2014AligningOA}, we obtain the notion of an alignment, or, the minimal series of corrections needed to transform an observed event trace into the execution of the process model.  
-	This is given as a series of edits, usually insertions or deletions, that transform the observed trace into a process trace.  
+A central notion in conformance checking is the notion of an alignment \cite{Adriansyah2014AligningOA}, or, the minimal %% series of corrections needed to transform an observed event trace into the execution of the process model.  
+	%% This is given as a 
+        series of edits, usually insertions or deletions, that transform an observed trace into a process trace.  
 	Alignments thereby help pinpoint exactly where inevitable deviations from expected behaviour occur, and the more distant the aligning word of a model is to its observed trace, the worse the model is at reflecting real system behaviour. 
 	
 	Assuming the event logs are a list of words over a finite alphabet (the set of possible discrete events), the problem of calculating the alignment has been extensively studied \cite{Adriansyah2014AligningOA} \cite{BCC21}, usually using either Hamming distance or Levenshtein's edit distance. 
