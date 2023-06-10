@@ -251,12 +251,10 @@ Inspired by Levenshtein's edit distance, we view the definition of these distanc
 
 	The next type of move we describe is the more novel and interesting \textit{delay move}. 
 	By formulating this type of edit move, we seek to leverage the structure of the process model itself, by reflecting the causal relationships between events. 
-	
-	A stamp move is purely local, in that when a stamp edit occurs at $e$ its immediate successor events shift their relationship with $e$, thereby ensuring that the change in $e$'s timestamp does not derail the rest of the system. 
-	On the other hand, any delay move at $e$ will preserve relative relationships in the future, at the cost of shifting the timestamp of every causal descendent of $e$ by the same amount. 
+	% A stamp move is purely local, in that when a stamp edit occurs at $e$ its immediate successor events shift their relationship with $e$, thereby ensuring that the change in $e$'s timestamp does not derail the rest of the system. 
+	% On the other hand, any delay move at $e$ will preserve relative relationships in the future, at the cost of shifting the timestamp of every causal descendent of $e$ by the same amount. 
 	
 	This brings us to the following definition : 
-	
 	\begin{definition}[Delay Move]
 		Given a timing function $\gamma : \{1, \dots n\} \to \mathbb{R}$, formally, we define this as : 
 		
@@ -282,7 +280,7 @@ The cost of a sequence of moves is the sum of the costs of the moves. Armed with
 
 		$d_1(\tau_1, \tau_2) = \min \{cost(m) | {m \in (Stamp \cup Delay)^*}, {m(\tau_1) = \tau_2}\}$
 
-		$d_{\infty}(\tau_1, \tau_2) = d_t(\tau_1, \tau_2) = \min \{cost(m) | {m \in Delay^*}, {m(\tau_1) = \tau_2}\}$
+		$d_{\infty}(\tau_1, \tau_2) = d_{\theta}(\tau_1, \tau_2) = \min \{cost(m) | {m \in Delay^*}, {m(\tau_1) = \tau_2}\}$
 
 	Henceforward for consistency we will use $d_0, d_1,$ and $d_{\infty}$. 
 	
@@ -373,13 +371,13 @@ The cost of a sequence of moves is the sum of the costs of the moves. Armed with
 	%The first property captures the fact that we can order our moves in a sequence that goes from left to right or right to left along the positions in the sequential trace. 
 	
 	\begin{definition}[Chronology]
-		A sequence of moves aligning $\gamma$ to $\sigma$ is said to be \textit{chronological} if for all positions $i < j \leq n = |\gamma|$, all the moves at position $i$ are performed before any move at position $j$ and exactly one mixed move (where one or both components may be zero) takes place at each position, that is $\rho \in Moves^*$ is chronological iff  $$\forall i \in \{1, 2, \dots n\},  \exists s_i, d_i \in \mathbb{R} :$$$$ \rho = (s_1, d_1, 1)(s_2, d_2, 2)\dots (s_n, d_n, n) $$
+		A sequence of moves aligning $\gamma$ to $\sigma$ is said to be \textit{chronological} if for all positions $i < j \leq n = |\gamma|$, all the moves at position $i$ are performed before any move at position $j$ and exactly one mixed move (where one or both components may be zero) takes place at each position, that is $\rho \in Moves^*$ is chronological iff  $\forall i \in \{1, 2, \dots n\},  \exists s_i, d_i \in \mathbb{R} : \rho = (s_1, d_1, 1)(s_2, d_2, 2)\dots (s_n, d_n, n) $. 
 		Such that $\forall i \in \{1, 2, \dots n\} : \sigma_i = \gamma_i + s_i + \sum_{j=1}^{i} d_j$. 
 		
 	\end{definition}
 	
 	\begin{definition}[Reverse Chronology]
-		A sequence of moves aligning $\gamma$ to $\sigma$ is said to be \textit{reverse chronological} if for all positions $i < j \leq n = |\gamma|$, all the moves at position $i$ are performed after any move at position $j$ and exactly one mixed move (where one or both components may be zero) takes place at each position, that is $\rho \in Moves^*$ is chronological iff  $$\forall i \in \{1, 2, \dots n\},  \exists s_i, d_i \in \mathbb{R} : $$$$ \rho = (s_n, d_n, n)(s_{n-1}, d_{n-1}, n-1)\dots (s_1, d_1, 1) $$
+		A sequence of moves aligning $\gamma$ to $\sigma$ is said to be \textit{reverse chronological} if for all positions $i < j \leq n = |\gamma|$, all the moves at position $i$ are performed after any move at position $j$ and exactly one mixed move (where one or both components may be zero) takes place at each position, that is $\rho \in Moves^*$ is chronological iff  $\forall i \in \{1, 2, \dots n\},  \exists s_i, d_i \in \mathbb{R} :  \rho = (s_n, d_n, n)(s_{n-1}, d_{n-1}, n-1)\dots (s_1, d_1, 1) $. 
 		Such that $\forall i \in \{1, 2, \dots n\} : \sigma_i = \gamma_i + s_i + \sum_{j=1}^{i} d_j$. 
 	\end{definition}
 	
@@ -395,11 +393,10 @@ The cost of a sequence of moves is the sum of the costs of the moves. Armed with
 	
 	\begin{example}
 		
-		Given $\gamma = (1, 1, 2, 4, 5)$ and $\sigma = (1, 2, 2.5, 4.2, 5)$, an example of a cost 5.3 non-chronological sequence of evenly mixed moves aligning them is as shown below. 
-		 $$\gamma \xmapsto{(-1, 0, 1)} (0, 1, 2, 4, 5) \xmapsto{(0, 2, 1)} (2, 3, 4, 6, 7) \xmapsto{(0, -1, 1)}$$$$ (1, 2, 3, 5, 6) \xmapsto{(0.3, -0.8, 3)} (1, 2, 2.5, 4.2, 5.2) \xmapsto{(0, -0.2, 5)} \sigma$$
-		There is an improved cost 3.3 reverse chronological sequence of moves obtained by reordering the above sequence and combining moves at the same position : 
-		
-		$$\gamma \xmapsto{(0, -0.2, 5)} (1, 1, 2, 4, 4.8) \xmapsto{(0, 0, 4)} (1, 1, 2, 4, 4.8) \xmapsto{(0.3, -0.8, 3)} $$ $$(1, 1, 1.5, 3.2, 4)\xmapsto{(0, 0, 2)} (1, 1, 1.5, 3.2, 4)\xmapsto{(-1, 1, 1)} \sigma $$
+		Given $\gamma = (1, 1, 2, 4, 5)$ and $\sigma = (1, 2, 2.5, 4.2, 5)$, an example of a cost 5.3 non-chronological sequence of evenly mixed moves aligning them is as shown : 
+		 $\gamma \xmapsto{(-1, 0, 1)} (0, 1, 2, 4, 5) \xmapsto{(0, 2, 1)} (2, 3, 4, 6, 7) \xmapsto{(0, -1, 1)} (1, 2, 3, 5, 6) \xmapsto{(0.3, -0.8, 3)} (1, 2, 2.5, 4.2, 5.2) \xmapsto{(0, -0.2, 5)} \sigma$
+
+		There is an improved cost 3.3 reverse chronological sequence of moves obtained by reordering the above sequence and combining moves at the same position : $\gamma \xmapsto{(0, -0.2, 5)} (1, 1, 2, 4, 4.8) \xmapsto{(0, 0, 4)} (1, 1, 2, 4, 4.8) \xmapsto{(0.3, -0.8, 3)}(1, 1, 1.5, 3.2, 4)\xmapsto{(0, 0, 2)} (1, 1, 1.5, 3.2, 4)\xmapsto{(-1, 1, 1)} \sigma $. 
 		
 	\end{example}
 	
@@ -421,7 +418,7 @@ The cost of a sequence of moves is the sum of the costs of the moves. Armed with
 	
 	\begin{example}The previous example (that was a cost 3.3 evenly mixed run, recall) can hence be further improved to become a reverse chronological co-operative cost 1.7 run as follows (on flow vector): 
 		%$$\gamma \xmapsto{(0, 0, 1)} (1, 1, 2, 4, 5) \xmapsto{(1, 0, 2)} (1, 2, 2, 4, 5) \xmapsto{(0.5, 0, 3)} (1, 2, 2.5, 4, 5) \xmapsto{(0.2, 0, 4)} (1, 2, 2.5, 4.2, 5) \xmapsto{(0, 0, 5)} \sigma $$
-			$$f_\gamma \xmapsto{(0, 0, 5)} (1, 0, 1, 2, 1) \xmapsto{(0.2, 0, 4)} (1, 0, 1, 2.2, 0.8) \xmapsto{(0.5, 0, 3)} $$$$(1, 0, 1.5, 1.7, 0.8) \xmapsto{(1, 0, 2)} (1, 1, 1.5, 1.7, 0.8) \xmapsto{(0, 0, 1)} f_\sigma $$
+$f_\gamma \xmapsto{(0, 0, 5)} (1, 0, 1, 2, 1) \xmapsto{(0.2, 0, 4)} (1, 0, 1, 2.2, 0.8) \xmapsto{(0.5, 0, 3)}(1, 0, 1.5, 1.7, 0.8) \xmapsto{(1, 0, 2)} (1, 1, 1.5, 1.7, 0.8) \xmapsto{(0, 0, 1)} f_\sigma $. 
 		
 	\end{example}
 	
@@ -441,7 +438,7 @@ The cost of a sequence of moves is the sum of the costs of the moves. Armed with
 	Much like co-operation above, cross co-operation can be used to improve the cost of a run, as seen in the next lemma. 
 	
 	\begin{lemma}\label{crosscoop}
-		For every reverse chronological co-operative evenly mixed run $m'$ aligning $\gamma$ to $\sigma$, there is a reverse chronological, co-operative and cross co-operative run $m$ aligning $\gamma$ to $\sigma$ such that $$cost(m) \leq cost(m')$$
+		For every reverse chronological co-operative evenly mixed run $m'$ aligning $\gamma$ to $\sigma$, there is a reverse chronological, co-operative and cross co-operative run $m$ aligning $\gamma$ to $\sigma$ such that $cost(m) \leq cost(m')$. 
 	\end{lemma}
 
 %	\subsubsection{Stability}
@@ -476,7 +473,7 @@ The cost of a sequence of moves is the sum of the costs of the moves. Armed with
 	
 		\begin{example}
 		The earlier cost 1.7 example can be even further improved to be stable and have cost 1.5, thereby giving us the following :
-		$$f_\gamma \xmapsto{(0, -0.2, 5)} (1, 0, 1, 2, 0.8) \xmapsto{(0, -0.3, 4)} (1, 0, 1, 1.7, 0.8)$$$$ \xmapsto{(0, 0, 3)} (1, 0, 1, 1.7, 0.8) \xmapsto{(0.5, 0.5, 2)} (1, 1, 1.5, 1.7, 0.8) \xmapsto{(0, 0, 1)} \sigma $$
+	$f_\gamma \xmapsto{(0, -0.2, 5)} (1, 0, 1, 2, 0.8) \xmapsto{(0, -0.3, 4)} (1, 0, 1, 1.7, 0.8) \xmapsto{(0, 0, 3)} (1, 0, 1, 1.7, 0.8) \xmapsto{(0.5, 0.5, 2)} (1, 1, 1.5, 1.7, 0.8) \xmapsto{(0, 0, 1)} \sigma $
 		
 	\end{example}
 	
@@ -531,6 +528,7 @@ The cost of a sequence of moves is the sum of the costs of the moves. Armed with
 \end{algorithmic}
 \end{algorithm}
 \end{figure}
+
 \begin{lemma}\label{mixwordalgostable} Given two time sequences $\sigma = (\sigma_1, \sigma_2, \dots \sigma_n)$ and $\gamma = (\gamma_1, \gamma_2, \dots , \gamma_n)$ with sequential underlying causal processes, the sequence of moves the above algorithm calculates ($m$) corresponds to the unique stable sequence of moves that aligns $\sigma$ to $\gamma$. 
 \end{lemma}
 
@@ -570,11 +568,11 @@ We depict them as follows : $\eye \longrightarrow \underset{[a_1, b_1]}{\square}
 \begin{example}\label{mixedmoveex}
 Consider the below underlying sequential process model, and a new observed trace $\sigma = (3, 4, 5) \not \in \mathcal{L}(N)$. 
 $$\eye \longrightarrow \underset{[0,1]}{\square} \longrightarrow \bigcirc \longrightarrow \underset{[2,2]}{\square} \longrightarrow \bigcirc \longrightarrow \underset{[1,1]}{\square} \longrightarrow \bigcirc$$
-The best $d_t$ alignment for the example in the diagram below is $\gamma = (1,3,4)$ with minimum cost $d_t(\sigma, \gamma) = 4$. 
+The best $d_0$ alignment for the example in the diagram below is $\gamma = (1,3,4)$ with minimum cost $d_0(\sigma, \gamma) = 4$. 
 
-The best $d_t=\theta$ alignment for the example in the diagram below is also $\gamma = (1,3,4)$, but this time with minimum cost $d_\theta(\sigma, \gamma) = 3$, evidenced by the move sequence $(delay(-2, 1)delay(+1, 2))$. 
+The best $d_{\infty}$ alignment for the example in the diagram below is also $\gamma = (1,3,4)$, but this time with minimum cost $d_{\infty}(\sigma, \gamma) = 3$, evidenced by the move sequence $(delay(-2, 1)delay(+1, 2))$. 
 
-And lastly, the best $d_1$ alignment for the example in the diagram below is also $\gamma = (1,3,4)$, the sequence of moves being simply one stamp and one delay move at the start, $m = stamp(-1, 1)delay(-1, 1)$, and now with minimum cost $d_1(\sigma, \gamma) = 2 < \min \{d_t(\sigma, \gamma), d_\theta(\sigma, \gamma)\}$. 
+And lastly, the best $d_1$ alignment for the example in the diagram below is also $\gamma = (1,3,4)$, the sequence of moves being simply one stamp and one delay move at the start, $m = stamp(-1, 1)delay(-1, 1)$, and now with minimum cost $d_1(\sigma, \gamma) = 2 < \min \{d_0(\sigma, \gamma), d_\infty(\sigma, \gamma)\}$. 
 \end{example}
 
 \begin{theorem}\label{MixAlign} Given a sequential process model $N$ of a time Petri Net $N$ and a sequential observed trace $\sigma$, the word $\gamma \in \mathcal{L}(N)$ such that $f_{\gamma}(i)= \underset{x \in [Eft(t_i), Lft(t_i)]} {\argmin}\hspace{0.5em} {|x - f_\sigma(i)|}$ also has the property $\gamma = \underset{x \in \mathcal{L}(N)}{\argmin} \hspace{0.5em}{d_1(x, \sigma)}$. 
@@ -598,7 +596,6 @@ This of course means that we have a linear time algorithm for aligning sequentia
 \end{algorithmic}
 \end{algorithm}
 \end{figure}
-
 
 \section{Implementation}
 
