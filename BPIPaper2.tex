@@ -111,21 +111,21 @@ This paper follows a previous one, where we have set our problem of timed alignm
 %
 \section{Introduction} 
 	
-	\subsection{Conformance Checking and Alignments} 
+%	\subsection{Conformance Checking and Alignments} 
 	
 	Process mining studies vast systems through their event logs, and seeks to extract meaningful ways to model the underlying patterns that govern the behaviour of the system in order to better understand it, or predict future behaviour \cite{A16}.
 	Once such a process model is obtained, it is natural to ask how one is sure the obtained model is a reasonable approximation of the system's behaviour at all, especially given the lack of explainability in the blackbox approach ML takes to producing solutions.
 	This is where conformance checking comes into the picture, as it is the art of judging the performance of a process model by relating modelled and observed behaviour of a process to each other, without depending on the origin of the model \cite{CDSW18}.
 	%Observed behaviour comes in the form of traces in an event log, as a sequence of events occurring during the functioning of the system, while process models are blueprints that describe what the underlying processes of any given system are supposed to look like.
-	We often do not want the system to always precisely generate any and all possible future system behaviour, but neither should they simply regurgitate the event log and accept no new system behaviours. 
+	We often do not want the system to always precisely generate any and all possible future system behaviour, but neither should they solely accept the event log. 
 	What is much more useful is a process model that can, up to some small error factor, approximate any reasonable future system behaviour. 
 	
-	In Arya Adriansyah's seminal thesis \cite{Adriansyah2014AligningOA}, we obtain the notion of an alignment, that is, the minimal series of corrections needed to transform an observed event trace into the execution of the process model that most closely mimics it.  
+	In Arya Adriansyah's seminal thesis \cite{Adriansyah2014AligningOA}, we obtain the notion of an alignment, or, the minimal series of corrections needed to transform an observed event trace into the execution of the process model.  
 	This is given as a series of edits, usually insertions or deletions, that transform the observed trace into a process trace.  
 	Alignments thereby help pinpoint exactly where inevitable deviations from expected behaviour occur, and the more distant the aligning word of a model is to its observed trace, the worse the model is at reflecting real system behaviour. 
 	
 	Assuming the event logs are a list of words over a finite alphabet (the set of possible discrete events), the problem of calculating the alignment has been extensively studied \cite{Adriansyah2014AligningOA} \cite{BCC21}, usually using either Hamming distance or Levenshtein's edit distance. 
-	It is natural to want to study process mining for explicitly timed systems \cite{RMAW13} \cite{CRHA20}  \cite{AS21},
+	One can study process mining for explicitly timed systems \cite{RMAW13} \cite{CRHA20}  \cite{AS21},
 	%, that is, systems that record the timestamps that show when each event happens, 
 	as by considering events along with their timestamps when mining processes, we can glean information about the minimum delay between two events, the maximum duration the system takes to converge upon a state, or check deadlines, all of which are highly relevant in real world applications \cite{Cheikhrouhou2014TheTP} \cite{Eder1999TimeCI} \cite{inbook}. 
 	
@@ -138,7 +138,7 @@ As for process models, there are ways to use existing process mining notation to
 	As time-aware process mining grows popular, new quality measures and conformance checking techniques must be developed that are sensitive to temporal constraints, but so far in the study of alignments, we notice that the process model used is rarely time-aware. 
 	This paper seeks to investigate a class of what we call weighted mixed distance functions, $d_{\alpha}$, generalising the three distances defined in \cite{CR22} and solve the alignment problem for a subset of the same. 
 	
-	\subsection{Timed Alignments}
+%	\subsection{Timed Alignments}
 	
 	\begin{example} Consider a model of composing and sending an email, where the intervals signify allowed durations between the current event and its immediate predecessor, depicted below with input and output places marked with an $i$ and an $o$ : 
 		
@@ -214,9 +214,8 @@ The untimed part is already aligned, and in order to make the timestamps fit we 
 	\label{2}
 	
 Inspired by Levenshtein's edit distance, we view the definition of these distances as an exercise in cost minimisation over some set of transformations between words. 
-	In order to formalise the same, we define what the valid moves of such a transformation could be. 
 	We define \textit{moves} as functions that map one time sequence to another. 
-	What sort of functions are useful notions of transformation on a timed system? 
+	What are useful notions of transformation on a timed system? 
 
 	\begin{example}
 		Say we seek to align the timed trace $(4,6,6)$ with $(3, 6, 6)$. 
@@ -233,7 +232,6 @@ Inspired by Levenshtein's edit distance, we view the definition of these distanc
 	\end{example}
 	
 	Based on the above example, we naturally arrived at two types of moves in \cite{CR22}.  
-	
 	We define a \textit{stamp move} as a move that translates the timing function only at a point, i.e., that edits a particular element of the timestamp series $\tau$. 
 	Calculating $d_t$ between two traces can be viewed as a cost minimization process in aligning the traces using only stamp moves. 
 	
@@ -253,8 +251,8 @@ Inspired by Levenshtein's edit distance, we view the definition of these distanc
 	By formulating this type of edit move, we seek to leverage the structure of the process model itself, by reflecting the causal relationships between events. 
 	% A stamp move is purely local, in that when a stamp edit occurs at $e$ its immediate successor events shift their relationship with $e$, thereby ensuring that the change in $e$'s timestamp does not derail the rest of the system. 
 	% On the other hand, any delay move at $e$ will preserve relative relationships in the future, at the cost of shifting the timestamp of every causal descendent of $e$ by the same amount. 
-	
 	This brings us to the following definition : 
+	
 	\begin{definition}[Delay Move]
 		Given a timing function $\gamma : \{1, \dots n\} \to \mathbb{R}$, formally, we define this as : 
 		
@@ -287,7 +285,7 @@ The cost of a sequence of moves is the sum of the costs of the moves. Armed with
 	\begin{example}\label{stamptoy}
 		Let us try to align the observed trace $(0, 3, 4)$ to the process trace $(0.5, 2.5, 3.5)$
 		
-		The best $d_0$ alignment for the example is a cost 1.5, with stamp moves editing each position. 
+		The best $d_0$ alignment has cost 1.5, with stamp moves editing each position. 
 		
 		The best $d_{\infty}$ alignment is cost 1.5, as it requires a 0.5 delay edit at the first place to push the 0 forward to a 0.5, and then another 1 delay at the second position to pull the rest of the trace from $(3,4)$ back to $(2,3)$. 
 		
@@ -306,7 +304,6 @@ The cost of a sequence of moves is the sum of the costs of the moves. Armed with
 	Given the nonconstructive nature of the definition of $d_{\alpha}$, it is not clear how one can efficiently calculate the distance between two fixed timed traces, as a minimal cost sequence of moves is not obvious. 
 	%As before, we first study the problem over sequential causal processes, as these make analysing the effects of moves significantly simpler. 
 	Before we propose an algorithm that does calculate minimal cost for sequential timed traces, we first define a few properties that seem to characterise classes of well formed minimal cost runs, and then prove that these properties both improve cost, and are satisfied solely by the run calculated by the algorithm we provide. 
-	
 	We start with some convenient notation for a common combination of the previously defined moves. 
 	
 	\begin{definition}[Mixed Move]
@@ -318,8 +315,7 @@ The cost of a sequence of moves is the sum of the costs of the moves. Armed with
 	Given any move $m \in Moves$ we define the function $cost_{\alpha} : Moves \to \mathbb{R}^+$ that returns the cost of the move.  
 	The cost of a mixed move $(s, d, e)$ is the sum of the cost of the stamp and delay moves it's made up of, $c_s\cdot|s| + c_d \cdot|d|$.
 	By default by $cost((s, d, e))$ we are refering to the evenly mixed cost $cost_1((s, d, e)) = |s| + |d|$. 
-
-	We say a sequence of moves $m_1m_2\dots m_n = m \in Moves^*$ \textit{aligns} $\tau_1$ to $\tau_2$ if $m(\tau_1) = m_n(\dots (m_2(m_1(\tau_1))\dots) = \tau_2$. 
+We say a sequence of moves $m_1m_2\dots m_n = m \in Moves^*$ \textit{aligns} $\tau_1$ to $\tau_2$ if $m(\tau_1) = m_n(\dots (m_2(m_1(\tau_1))\dots) = \tau_2$. 
 	
  Now, we look at a new way to represent timing functions. 
  %With delay edits, which constitute a new way of thinking about how a time-series can be transformed, comes a new perspective with which we can view timing functions over causal processes. 
