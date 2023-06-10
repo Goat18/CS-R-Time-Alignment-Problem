@@ -157,7 +157,8 @@ As for process models, there are ways to use existing process mining notation to
 				\arrow[from=1-4, to=1-5]
 				\arrow[from=2-2, to=1-1]
 			\end{tikzcd}
-		}\\
+		}
+
 		One process trace is $(draft, 5)(dispatch, 6)(sent, 11)$, which depicts drafting the message in 5 units and then dispatching it, and having it send successfully. An example of an observed trace which does not conform to the process above would be $(draft, 3)(draft, 5)(dispatch, 7)(dispatch, 7)(sent, 12)$. Clearly, there is an extraneous letter here, as the same message cannot be dispatched twice, and the timestamps for dispatch and sending come too late. One possible optimally close process trace for this observation is $(draft, 3)(draft,6)(dispatch, 7)(sent, 12)$, which deletes the extra $dispatch$, and extends the second $draft$ event by a unit, allowing the rest of the trace to thereby be in time. 
 	\end{example}
 	
@@ -207,8 +208,8 @@ The untimed part is already aligned, and in order to make the timestamps fit we 
 	In sections \ref{2} and \ref{3} of this paper we will focus on the problem of computing the distance function $d_1$ and in section \ref{4}, we return to the problem of aligning sequential process models to observed traces. 
 	In subsection \ref{2.5} we also show that computing and aligning $d_{\alpha}$ for $\alpha \geq 2$ can be reduced to the delay only case, which was solved in \cite{CR22}. 
 	We present linear time algorithms for both computing $d_N$ and solving the alignment problem in this setting..  
-	The full proofs for all of the results stated here can be found at [arxiv link]. 
-	\todo[inline]{arxiv link!}
+	The full proofs for all of the results stated here can be found at \cite{arxivmix}. 
+
 	\section{Preliminaries : Edit Moves for Timed Words}
 	\label{2}
 	
@@ -275,28 +276,30 @@ The cost of a sequence of moves is the sum of the costs of the moves. Armed with
 		
 	\end{definition}
 	
-	From this definition, we can recover the stamp only ($d_t$), delay only ($d_{\theta}$) and evenly mixed ($d_N$) distances defined in \cite{CR22} as natural special cases. 
-		$$d_0(\tau_1, \tau_2) = d_t(\tau_1, \tau_2) = \min \{cost(m) | {m \in Stamp^*}, {m(\tau_1) = \tau_2}\}$$
-		$$d_1(\tau_1, \tau_2) = \min \{cost(m) | {m \in (Stamp \cup Delay)^*}, {m(\tau_1) = \tau_2}\}$$
-		$$d_{\infty}(\tau_1, \tau_2) = d_t(\tau_1, \tau_2) = \min \{cost(m) | {m \in Delay^*}, {m(\tau_1) = \tau_2}\}$$
+	From this definition, we can recover the stamp only ($d_t$), delay only ($d_{\theta}$) and evenly mixed ($d_N$) distances defined in \cite{CR22} as natural special cases:
+		
+	$d_0(\tau_1, \tau_2) = d_t(\tau_1, \tau_2) = \min \{cost(m) | {m \in Stamp^*}, {m(\tau_1) = \tau_2}\}$
 
-	Hence forward for consistency in notation we will use $d_0, d_1, and d_{\infty}$ whenever referring to the same. 
+		$d_1(\tau_1, \tau_2) = \min \{cost(m) | {m \in (Stamp \cup Delay)^*}, {m(\tau_1) = \tau_2}\}$
+
+		$d_{\infty}(\tau_1, \tau_2) = d_t(\tau_1, \tau_2) = \min \{cost(m) | {m \in Delay^*}, {m(\tau_1) = \tau_2}\}$
+
+	Henceforward for consistency we will use $d_0, d_1,$ and $d_{\infty}$. 
 	
 	\begin{example}\label{stamptoy}
 		Let us try to align the observed trace $(0, 3, 4)$ to the process trace $(0.5, 2.5, 3.5)$
 		
-		The best $d_t$ alignment for the example is a cost 1.5, with stamp moves editing each position. 
+		The best $d_0$ alignment for the example is a cost 1.5, with stamp moves editing each position. 
 		
-		The best $d_\theta$ alignment for the above pair is cost 1.5, as it requires a 0.5 delay edit at the first place to push the 0 forward to a 0.5, and then another 1 delay at the second position to pull the rest of the trace from $(3,4)$ back to $(2,3)$. 
+		The best $d_{\infty}$ alignment is cost 1.5, as it requires a 0.5 delay edit at the first place to push the 0 forward to a 0.5, and then another 1 delay at the second position to pull the rest of the trace from $(3,4)$ back to $(2,3)$. 
 		
-		Now we consider the evenly mixed setting. 
-		Intuitively, when dealing with sequential models where the ripple effect of a delay is always to the right, moves can be applied in any order, so we can proceed left to right. 
-		So our first move will have to incur a minimum cost of $0.5$ as we try to align $(0,3,4)$ to our process trace at the first position.
-		If any part of this initial move was a delay, we would push the second component even further away from $2.5$ than it already was, and if any of the delay were negative, then the mixed move seems counterproductive at the first component, so let us say the first move was pure stamp. 
+		Now we consider $d_1$. 
+		In sequential models, the cascading effect of a delay is always to the right, so assuming moves commute, we can proceed left to right. 
+		Our first move will have to incur a minimum cost of $0.5$ as we try to align $(0,3,4)$ to our process trace at the first position.
+		If any part of this initial move was a delay, we would push the second component even further away from $2.5$ than it already was, and if any of the delay were negative, then it seems to counter the effect of the stamp, so let us say the first move was pure stamp. 
 		Moving on to move two, which will again incur a minimum cost of $0.5$. 
 		If the stamp part of this move were positive, it would leave the third component further off from the goal $3.5$ than if all of the move was delay, and so a pure delay move seems best here. 
-		Hence, the least cost alignment is $(0.5, 0, 1)(0, 0.5, 2)$, with total cost 1. 
-		
+		This gives a cost 1 alignment, $(0.5, 0, 1)(0, 0.5, 2)$. 
 		All the intuitive reasoning given above will be justified in subsequent sections, and in fact distance 1 is the best we can do here even in the mixed case. 
 	\end{example}
 	
@@ -559,11 +562,9 @@ As a consequence of this lemma, both distance computation and alignment for this
 
 \begin{definition}[Sequential Process Models]
 We define a sequential process model $N$ of length $n$ to be a sequence of intervals $\{[a_i, b_i] | a_i \in \mathbb{R}, b_i \in \mathbb{R} \cup \{\infty\}, i \leq n\}$. 
+In addition, we define its language $\mathcal{L}(N)$ as follows : $\{(t_1, \dots t_n) | \forall i \leq n : t_i - t_{i-1} \in [a_i, b_i]\}$ where $t_0 = 0$. 
 
-In addition, we define its language $\mathcal{L}(N)$ as follows : $\{(t_1, \dots t_n) | \forall i \leq n : t_i - t_{i-1} \in [a_i, b_i]\}$ Where $t_0 = 0$. 
-
-We depict them as follows : 
-$\eye \longrightarrow \underset{[a_1, b_1]}{\square} \longrightarrow \bigcirc \longrightarrow \underset{[a_2,b_2]}{\square}  \dots  \underset{[a_n, b_n]}{\square} \longrightarrow \bigcirc$. 
+We depict them as follows : $\eye \longrightarrow \underset{[a_1, b_1]}{\square} \longrightarrow \bigcirc \longrightarrow \underset{[a_2,b_2]}{\square}  \dots  \underset{[a_n, b_n]}{\square} \longrightarrow \bigcirc$. 
 \end{definition}
 
 \begin{example}\label{mixedmoveex}
