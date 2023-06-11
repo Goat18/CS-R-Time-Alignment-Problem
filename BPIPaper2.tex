@@ -95,7 +95,7 @@ Gif-sur-Yvette, France
 
 %
 \maketitle              % typeset the header of the contribution
-\todo{check Neha's affiliation}
+%\todo{check Neha's affiliation}
 %
 \begin{abstract}
 We study conformance checking for timed models, that is, process models that consider both the sequence of events as well as their timestamps are recorded. 
@@ -548,7 +548,7 @@ $f_\gamma \xmapsto{(0, 0, 5)} (1, 0, 1, 2, 1) \xmapsto{(0.2, 0, 4)} (1, 0, 1, 2.
 
 \subsection{Computing and aligning $d_{\alpha}$ for $\alpha \geq 2$}\label{2.5}
 A surprising fact is that for this entire class of distances, we get our distance computation and alignment algorithms almost for free. 
-Recall that by Lemmas \ref{linescommute} and \ref{linescoop}, whenever the cost of the stamp move is at least twice as much as the cost of the delay move, any sequence of $\alpha$ weighted mixed moves can be converted to one with lesser or equal cost. 
+Since both chronology and co-operation both improve cost when computing $d_{\alpha}$, whenever the cost of the stamp move is at least twice as much as the cost of the delay move, any sequence of $\alpha$ weighted mixed moves can be converted to one with lesser or equal cost. 
 In fact, in this case, any sequence of such moves can be converted to a delay-only sequence of moves with the cost improving at most. Hence, assuming $c_d = 1$ and $c_s = \alpha$ (which up to scaling changes nothing), we have the following lemma : 
 
 \begin{lemma}\label{doubleisdelay} When $\alpha \geq 2$ for any sequence of $\alpha$ weighted mixed moves aligning any two sequential timed traces, there is a sequence of delay only moves that aligns the same two traces, and has at most equal cost. 
