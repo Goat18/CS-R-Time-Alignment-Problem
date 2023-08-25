@@ -1,0 +1,15 @@
+Here is a summary of the changes made to the extended journal version of the Timed Alignments paper. 
+
+1. The abstract, the introduction, the conclusion, and the title of section 7 have been edited to better reflect the actual contributions and focus of our paper. 
+
+2. The introduction now clearly states that this is an extension of the existing conference version, and the changes in this paper have been highlighted. 
+
+3. The preliminaries have been edited to be easier to grasp, and typographical errors have been addressed. 
+
+4. The implementation section has been removed. 
+
+5. A related work section has been added, which details some other approaches to distances for timed words, and alignments over time-series. 
+
+6. Language has been adjusted throughout to address most of the ambiguities mentioned. 
+
+7. (To do) Improved the running examples to provide more context for the design choices, and better readability. 
