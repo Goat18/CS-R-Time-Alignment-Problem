@@ -165,176 +165,184 @@ This paper is an extension of the ICPM 2022 conference paper \cite{CR22}, provid
 	
 	\section{Preliminaries}\label{preliminaries}
 	We represent events as pairs $(a,\tau)$ where $a \in \Sigma$ is the name of the action, and $t$ denotes the time at which said action was taken.
-	
-	\begin{definition}
-		A timed trace is a sequence $\gamma \in (\Sigma \times \mathbb{R}^+)^*$ of timed events, seen as a timed word. 
-	\end{definition}
-	
-	We will often ignore the action labels of timed words, i.e., deleting the projection $\pi_1$ onto $\Sigma^*$, leaving just the timestamps, the projection $\pi_2$ onto $\mathbb{R}^{+*}$. 
-	Especially when the underlying process model is sequential, we denote the time component of a timed trace as a sequence of non-decreasing timestamps, so $(a,1)(b,2)(c,3)$ corresponds to the timestamp series $(1,2,3)$. 
-	%% \todo[inline]{Neha : Inserted a reference to timestamp series notation}
+    
+    \begin{definition}
+        A timed trace is a sequence $\gamma \in (\Sigma \times \mathbb{R}^+)^*$ of timed events, seen as a timed word. 
+    \end{definition}
+    
+   Since the main focus of this paper is a purely timed version of the alignment problem, we will often ignore the action labels of timed words, i.e., deleting the projection $\pi_1$ onto $\Sigma^*$, leaving just the timestamps, the projection $\pi_2$ onto $\mathbb{R}^{+*}$. 
+    Especially when the underlying process model is sequential, we denote the time component of a timed trace as a sequence of non-decreasing timestamps, so the timed word $(a,1)(b,2)(c,3)$ is identified with its corresponding timestamp series $(1,2,3)$. 
+    %% \todo[inline]{Neha : Inserted a reference to timestamp series notation}
 
-	The timed process model we use here is a labeled time Petri net. 
-	
-	\begin{definition}[Labeled Time Petri Net] \label{tpn} A labeled \textit{time Petri net} (or TPN) is a tuple $N = (P, T, F, SI, \Sigma, \lambda, M_0, M_f)$, where $P, T$ are disjoint sets of places and transitions respectively,  $F \subseteq (P \times T) \cup (T \times P)$ is the flow relation,  $SI : T \rightarrow \mathbb{Q}^+ \times (\mathbb{Q}^+ \cup \{\infty\})$ is the static interval function, where $SI(t) = (Eft(t), Lft(t))$ is a pair of positive rational numbers, the second of which might be infinity, such that $Eft$ stands for earliest firing time, and $Lft$ for latest firing time, $\lambda : T \rightarrow \Sigma$ is the labeling function, labeling transitions with actions from the action set $\Sigma$, and  $ M_0 , M_f: P \to \mathbb{N}$ are the initial and final markings. % of $N$. 
-	\end{definition}
-	
-	Given a transition $t \in T$ we define the pre-set of $t$ as $\pre t = \{p \in P | (p, t) \in F\}$ and its post-set similarly is defined as $t \pre = \{p \in P | (t, p) \in F\}$, (the presets and post-sets of places are defined similarly). 
-	A transition $t$ of a TPN is \textit{enabled} at marking $M$ iff $\forall p \in \pre t :  M(p) > 0$. 
-	The set of all enabled transitions at a marking $M$ is denoted by \textit{Enabled(M)}. 
-	In this work, we do not consider silent transitions. 
+    The timed process model we use here is a labelled time Petri net. 
+    
+    \begin{definition}[Labeled Time Petri Net] \label{tpn} A labeled \textit{time Petri net} (or TPN) is a tuple $N = (P, T, F, SI, \Sigma, \lambda, M_0, M_f)$. 
+Here $P, T$ are disjoint sets of places and transitions respectively,  and $F \subseteq (P \times T) \cup (T \times P)$ is the flow relation that relates transitions to the places it takes tokens from and returns tokens to. 
+The function $SI : T \rightarrow \mathbb{Q}^+ \times (\mathbb{Q}^+ \cup \{\infty\})$ is the static interval function which assigns to each transition an earliest and latest firing time, i.e.,  $SI(t) = (Eft(t), Lft(t))$ is a pair of positive rational numbers, the second of which might be infinity, such that $Eft$ stands for the earliest firing time, and $Lft$ for latest firing time. We use the function $\lambda : T \rightarrow \Sigma$ to label our transitions with actions from the action set $\Sigma$, and note that we do not consider silent transitions in this work (i.e. $\lambda$ is a total function). We let $ M_0 , M_f: P \to \mathbb{N}$ are the initial and final markings, that denote the initial and final configurations of tokens in the time Petri net. % of $N$. 
+    \end{definition}
+    
+    Given a transition $t \in T$ we define the pre-set of $t$ as $\pre t = \{p \in P | (p, t) \in F\}$ and its post-set similarly is defined as $t \pre = \{p \in P | (t, p) \in F\}$, (the presets and post-sets of places are defined similarly). A transition on firing erases one token from each of its preplaces, and writes an additional token to each of its postplaces. 
+    We say that a transition $t$ of a TPN is \textit{enabled} at a marking $M$ iff $\forall p \in \pre t :  M(p) > 0$, i.e., the transition is capable of consuming one token from each of its preplaces. 
+    The set of all enabled transitions at a marking $M$ is denoted by \textit{Enabled(M)}. 
 
-	A \textit{state} of a TPN $N = (P, T, F, SI, \Sigma, \lambda, M_0, M_f)$ is a pair $S = (M, I)$, where $M$ is a marking of $N$ and $I : Enabled(M) \rightarrow \mathbb{R^+}$ is called the \textit{clock function}. Every enabled transition hence has an implicit clock, measuring how long it has been since its most recent enabling. The initial state is $(M_0, \mathbf{0})$, where $\mathbf{0} $ is the zero function. 
-	
-	A transition $t$ can fire from state $S = (M, I)$ after a delay of $\theta \in \mathbb{R}^+$ post enabling 
-	if $t$ is enabled at $M$, and $I(t) + \theta \in [Eft(t), Lft(t)]$ and for
-	every other \(t'\) enabled at \(M\), $I(t') + \theta \leq Lft(t')$.
-	%This last constraint encodes the notion of urgency, that is, if $t$ is enabled
-	%at marking $M$ it must fire before its clock value reaches $Lft(t)$, unless
-	%another transition disables it.
-	This firing is denoted $(M, I)[t\rangle(M'', I')$ with the new state $(M'', I')$ defined as follows:
-	$$M''(p) = \begin{cases}
-		M(p) + 1 &  p \in t \pre \setminus \pre t\\
-		M(p) - 1 & p \in \pre t \setminus t \pre\\
-		M(p) & otherwise\\
-	\end{cases}$$ 
-	$$I'(t) =
-	\begin{cases}
-		I(t) + \theta & \textrm{If } t \in Enabled(M'') \cap Enabled(M')\\
-		0 & \textrm{If } t \in Enabled(M'') \setminus Enabled(M')\\
-	\end{cases}$$
-	%Once a fireable transition $t$ is fired, the marking and clock function are both updated to reflect the firing, as defined below : %$M'$ as in the untimed case (subtracting one token from each preplace, and adding one token to each postplace), and the clock function $I$ is updated to $I'$ by increasing clock values by $\theta$ for any transition that was enabled at both $M$ and $M'$, setting clock values to 0 for any transitions newly enabled by $M'$ that were not enabled at $M$, and leaving clock values undefined for any transitions that are not currently enabled. 
-	%% This is also denoted by $(M, I)[t\rangle(M'', I')$
-	%An important feature of TPNs is the notion of urgency, that is, if $t$ is enabled at marking $M$ and has clock value $Lft(t)$, it must fire, or another transition must fire at the same instant disabling $t$.  
-	
-	%We need a notion of valid instances of processes the model wishes to recognise. This is why we equip our time Petri nets with a notion of a final marking. 
-	A valid execution of the model begins at the initial state, fires a sequence of transitions %%(representing a series of activities occurring at certain times) and at the end of the firing sequence 
-	and reaches $M_f$, with some clock function $I$. 
-	
-	\begin{definition}[Language of a TPN]
-		A word $w = ((a_0, \tau_0), (a_1, \tau_1), \dots (a_n, \tau_n)) \in (\Sigma \times \mathbb{R}^+)^*$ is in the language $\mathcal{L}(N)$ of the labeled TPN $N$ $\mathcal{L}(N)$ if there is a valid execution of the model such that there exists a sequence of transitions $(t_0, t_1 \dots t_n) \in (T, \mathbb{R^+})^*$ satisfying $(\lambda(t_0),\lambda( t_1), \dots,\lambda (t_n)) = w $ and they transform the initial state into a final one, that is, there exists some clock function $I$ on $M_f$, $(M_0, \mathbf{0}) [t_0, t_1, \dots t_n\rangle (M_f, I)$, where each $t_i$ is fireable at $\tau_i$. 
-	\end{definition}
-	
-	\begin{example}\label{TPN}
-		Consider the following example (adapted from \cite{AS21}) of a TPN $N$, modelling an airline refund office: \\
-		\adjustbox{scale = 0.6}{
-			
-			\begin{tikzcd}
-				& {} & \Huge\bigcirc & {\fbox{ec}} & \Huge\bigcirc & {} && {\fbox{pay}} \\
-				\Huge\bigcirc & {\fbox{reg}} && {\fbox{et}} && {\fbox{dec}} & \Huge\bigcirc & {} & \Huge\bigcirc \\
-				&& \Huge\bigcirc & {\fbox{{ct}}} & \Huge\bigcirc &&& {\fbox{rej}}
-				\arrow["{[0, 1]}"{description, pos=0.2}, shift left=3, draw=white, from=2-2, to=1-2]
-				\arrow[""{name=0, anchor=center, inner sep=0}, "{[2,2]}"{description, pos=0.1}, draw=white, from=2-4, to=1-4]
-				\arrow["{[2,2]}"{description, pos=0.1}, draw=white, from=3-4, to=2-4]
-				\arrow["{[2,4]}"{description, pos=0.1}, shift right=4, draw=white, from=2-6, to=1-6]
-				\arrow["{[0,1]}"{description, pos=0.1}, draw=white, from=1-8, to=2-8]
-				\arrow["{[0,0]}"{description, pos=0.1}, draw=white, from=3-8, to=2-8]
-				\arrow[from=2-1, to=2-2]
-				\arrow[curve={height=-12pt}, from=2-2, to=1-3]
-				\arrow[curve={height=12pt}, from=2-2, to=3-3]
-				\arrow[from=1-3, to=1-4]
-				\arrow[from=1-4, to=1-5]
-				\arrow[curve={height=12pt}, from=1-3, to=2-4]
-				\arrow[curve={height=12pt}, from=2-4, to=1-5]
-				\arrow[from=3-3, to=3-4]
-				\arrow[from=3-4, to=3-5]
-				\arrow[curve={height=-12pt}, from=1-5, to=2-6]
-				\arrow[curve={height=12pt}, from=3-5, to=2-6]
-				\arrow[from=2-6, to=2-7]
-				\arrow[curve={height=-12pt}, from=2-7, to=1-8]
-				\arrow[curve={height=12pt}, from=2-7, to=3-8]
-				\arrow[curve={height=12pt}, from=3-8, to=2-9]
-				\arrow[curve={height=-12pt}, from=1-8, to=2-9]
-				\arrow["{[0,2]}"{description, pos=0.2}, draw=white, from=1-4, to=0]
-			\end{tikzcd}
-		}
-		\\
-		
-		The action labels are as follows : Register request (reg), Examine thoroughly  (et), Examine casually (ec), Check ticket (ct), Decide (dec), Pay (pay), and Reject (rej). 
-		
-		The firing sequence $(reg, 1) (ec, 2)(ct, 3)(dec, 7)(rej, 7)$ is a valid execution of $N$. The initial marking only has $reg$ enabled, and registering the request at time $1$ updates the marking by removing the token from $reg$'s preplace and filling its two post-places, thereby enabling $ec, et, \textrm{ and } ct$. Now $ec$ fires at $2$, satisfying the constraint, filling one preplace of $dec$. Then $ct$ fires, having been enabled for $2$ units of time. Now, finally, $dec$ is enabled, and fires after $4$ units of having been enabled, and $rej$ is fired immediately after. 
-	\end{example}
-	
-	Now we will build some vocabulary to help us talk about individual executions of timed words on TPNs, that take the form of branching paths. Much like runs of finite automata, causal processes are a way to unroll an execution of a Petri net, each element of $B$ being a copy of a place being visited by a token (so the same place if revisited will have multiple copies in $B$) and $E$ is the analogous object for copies of transitions fired in the original net. The partial order $G$ captures the copies of flow arcs in the original net, and hence it captures the causal relationships between different transitions and places during an execution. 
-	%These correspond to runs in nondeterministic automata, but in this setting every configuration is a set of token-filled places, so to represent a particular execution we use what we define below as causal processes. 
-	
-	\begin{definition}[Causal Net] \label{cn}
-		A \textit{causal net} $CN = (B, E, G)$ is a finite, acyclic graph where 
-	 $B$ (conditions) and $E$ (events) comprise the vertices, $G$ denotes the edges (i.e., $G \subseteq (B \times E \cup E \times B)$) and $\forall b \in B : |b \pre| \leq 1 \wedge | \pre b| \leq 1$. . 
-	\end{definition}
-	
-	This is meant to represent an unfolded run of the original Petri net, such that every time a place is revisited, it is copied afresh to ensure that the execution only ever moves forward. 
-	Multiple elements of $B$ or $E$ map to the same element in $P$ or $T$ respectively, a notion that is expressed via the map $p$ defined below. Let $Min(CN)$ be the set of vertices of $CN$ that are minimal under the $G$ pre-ordering
-	
-	\begin{definition}[Homomorphism] \label{hom}  Let $N$ be a TPN with place set $P$ and transition set $T$, and ${CN = (B, E, G)}$ be a causal net. 
-		A mapping $p : B \cup E \rightarrow P \cup T$ is a \textit{homomorphism} if $p(B) \subseteq P$,  $p(E) \subseteq T$ and $\forall e \in E$ the restriction of $p$ to $\pre e$ is a bijection between $\pre e$ and $\pre p(e)$, the restriction of $p$ to $e \pre $ is a bijection between $e \pre $ and $p(e) \pre $ and the restriction of $p$ to $Min(CN)$ is a bijection between $Min(CN)$ and $Supp(M_0)$. 
-	\end{definition}
-	
-	\begin{definition}[Causal Process]\label{cp} A \textit{causal process} of a TPN is a pair $(CN, p)$ where $CN$ is a causal net and $p$ is a homomorphism from $CN$ to $TPN$. 
-	\end{definition}
-%	\todo[inline]{Example of a CP here?}
-	Using $p$, elements of $CN$ are identified with their corresponding \emph{originals} in the TPN, and as a result, any causal process corresponds uniquely to an untimed run on the untimed version of a given TPN. 
-	
-	\begin{definition}[Timing Function]\label{tau} A \textit{timing function} $\tau : E \rightarrow \mathbb{R}$ is a function from events of a causal process into time values. 
-	\end{definition}
 
-	When the underlying causal process is sequential, we can represent timing functions as a nondecreasing timestamp series, by projecting onto the timestamp component of any timed trace. 
+    A \textit{state} of a TPN $N = (P, T, F, SI, \Sigma, \lambda, M_0, M_f)$ is a pair $S = (M, I)$, where $M$ is a marking of $N$ and $I : Enabled(M) \rightarrow \mathbb{R^+}$ is called the \textit{clock function}. Every enabled transition hence has an implicit clock, measuring how long it has been since its most recent enabling. The initial state is $(M_0, \mathbf{0})$, where $\mathbf{0} $ is the zero function. 
+    
+    A transition $t$ can fire from state $S = (M, I)$ after a delay of $\theta \in \mathbb{R}^+$ post enabling 
+    if $t$ is enabled at $M$, and $I(t) + \theta \in [Eft(t), Lft(t)]$ and for
+    every other \(t'\) enabled at \(M\), $I(t') + \theta \leq Lft(t')$.
+    The first constraint encodes the purpose of the static interval function, while the second constraint encodes the notion of urgency, that is, if $t$ is enabled at marking $M$ and has clock value $Lft(t)$, it must fire, or another transition must fire at the same instant disabling $t$.  
 
-	
-%	\todo[inline]{Should this section be here?\\
+    This firing is denoted $(M, I)[t\rangle(M'', I')$ with the new state $(M'', I')$ defined as follows:
+    $$M''(p) = \begin{cases}
+        M(p) + 1 &  p \in t \pre \setminus \pre t\\
+        M(p) - 1 & p \in \pre t \setminus t \pre\\
+        M(p) & otherwise\\
+    \end{cases}$$ 
+    $$I'(t) =
+    \begin{cases}
+        I(t) + \theta & \textrm{If } t \in Enabled(M'') \cap Enabled(M')\\
+        0 & \textrm{If } t \in Enabled(M'') \setminus Enabled(M')\\
+    \end{cases}$$
+where  $$M'(p) = \begin{cases}
+        M(p) - 1 & p \in \pre t \\
+        M(p) & otherwise\\
+    \end{cases}$$ 
+
+    Once a fireable transition $t$ is fired, the marking and the clock function are both updated to reflect the firing, as defined below : 
+$M''$ as in the untimed case (subtracting one token from each preplace, and adding one token to each postplace), and the clock function $I$ is updated to $I'$ by increasing clock values by $\theta$ for any transition that was enabled at both $M$ and $M'$, setting clock values to 0 for any transitions newly enabled by $M''$ that were not enabled at $M$, and leaving clock values undefined for any transitions that are not currently enabled. 
+    
+    %We need a notion of valid instances of processes the model wishes to recognise. This is why we equip our time Petri nets with a notion of a final marking. 
+    A valid execution of the model begins at the initial state, fires a sequence of transitions %%(representing a series of activities occurring at certain times) and at the end of the firing sequence 
+    and reaches $M_f$, with some clock function $I$. 
+
+    
+    \begin{definition}[Language of a TPN]
+        A timed word $w = ((a_0, \tau_0), (a_1, \tau_1), \dots (a_n, \tau_n)) \in (\Sigma \times \mathbb{R}^+)^*$ is in the language $\mathcal{L}(N)$ of the labelled TPN $N$ if there is a valid execution of the model such that there exists a sequence of transitions $(t_0, t_1 \dots t_n) \in (T)^*$ satisfying $(\lambda(t_0),\lambda( t_1), \dots,\lambda (t_n)) = w $, such that when they fire at the times ($\tau_0, \tau_1 \dots \tau_n$), they transform the initial state into a final one, that is, there exists some clock function $I$ on $M_f$, $(M_0, \mathbf{0}) [t_0, t_1, \dots t_n\rangle (M_f, I)$, where each $t_i$ is fireable at $\tau_i$. 
+    \end{definition}
+    
+Throughout we use the term \textit{valid execution} to distinguish it from faulty executions of the time Petri net. This is because we are studying alignments, and as a result studying how a non-fitting trace diverges in its ``execution'' from what is required by the time Petri net is our central concern. 
+
+    \begin{example}\label{TPN}
+        Consider the following example (adapted from \cite{AS21}) of a TPN $N$, modelling an airline refund office: \\
+        \adjustbox{scale = 0.6}{
+            
+            \begin{tikzcd}
+                & {} & \Huge\bigcirc & {\fbox{ec}} & \Huge\bigcirc & {} && {\fbox{pay}} \\
+                \Huge\bigcirc & {\fbox{reg}} && {\fbox{et}} && {\fbox{dec}} & \Huge\bigcirc & {} & \Huge\bigcirc \\
+                && \Huge\bigcirc & {\fbox{{ct}}} & \Huge\bigcirc &&& {\fbox{rej}}
+                \arrow["{[0, 1]}"{description, pos=0.2}, shift left=3, draw=white, from=2-2, to=1-2]
+                \arrow[""{name=0, anchor=center, inner sep=0}, "{[2,2]}"{description, pos=0.1}, draw=white, from=2-4, to=1-4]
+                \arrow["{[2,2]}"{description, pos=0.1}, draw=white, from=3-4, to=2-4]
+                \arrow["{[2,4]}"{description, pos=0.1}, shift right=4, draw=white, from=2-6, to=1-6]
+                \arrow["{[0,1]}"{description, pos=0.1}, draw=white, from=1-8, to=2-8]
+                \arrow["{[0,0]}"{description, pos=0.1}, draw=white, from=3-8, to=2-8]
+                \arrow[from=2-1, to=2-2]
+                \arrow[curve={height=-12pt}, from=2-2, to=1-3]
+                \arrow[curve={height=12pt}, from=2-2, to=3-3]
+                \arrow[from=1-3, to=1-4]
+                \arrow[from=1-4, to=1-5]
+                \arrow[curve={height=12pt}, from=1-3, to=2-4]
+                \arrow[curve={height=12pt}, from=2-4, to=1-5]
+                \arrow[from=3-3, to=3-4]
+                \arrow[from=3-4, to=3-5]
+                \arrow[curve={height=-12pt}, from=1-5, to=2-6]
+                \arrow[curve={height=12pt}, from=3-5, to=2-6]
+                \arrow[from=2-6, to=2-7]
+                \arrow[curve={height=-12pt}, from=2-7, to=1-8]
+                \arrow[curve={height=12pt}, from=2-7, to=3-8]
+                \arrow[curve={height=12pt}, from=3-8, to=2-9]
+                \arrow[curve={height=-12pt}, from=1-8, to=2-9]
+                \arrow["{[0,2]}"{description, pos=0.2}, draw=white, from=1-4, to=0]
+            \end{tikzcd}
+        }
+        \\
+        
+        The action labels are as follows : Register request (reg), Examine thoroughly  (et), Examine casually (ec), Check ticket (ct), Decide (dec), Pay (pay), and Reject (rej). 
+        
+        The firing sequence $(reg, 1) (ec, 2)(ct, 3)(dec, 7)(rej, 7)$ is a valid execution of $N$. The initial marking only has $reg$ enabled, and registering the request at time $1$ updates the marking by removing the token from $reg$'s preplace and filling its two post-places, thereby enabling $ec, et, \textrm{ and } ct$. Now $ec$ fires at $2$, satisfying the constraint, filling one preplace of $dec$. Then $ct$ fires, having been enabled for $2$ units of time. Now, finally, $dec$ is enabled, and fires after $4$ units of having been enabled, and $rej$ is fired immediately after. 
+    \end{example}
+    
+    Now we will build some vocabulary to help us talk about individual executions of timed words on TPNs, that take the form of branching paths. Much like runs of finite automata, causal processes are a way to unroll an execution of a Petri net, each element of $B$ being a copy of a place being visited by a token (so the same place if revisited will have multiple copies in $B$) and $E$ is the analogous object for copies of transitions fired in the original net. The partial order $G$ captures the copies of flow arcs in the original net, and hence it captures the causal relationships between different transitions and places during an execution. 
+    These correspond to runs in nondeterministic automata, but in this setting every configuration is a set of token-filled places, so to represent a particular execution we use what we define below as causal processes. 
+    
+    \begin{definition}[Causal Net] \label{cn}
+        A \textit{causal net} $CN = (B, E, G)$ is a finite, acyclic graph where 
+     $B$ (conditions) and $E$ (events) comprise the vertices, $G$ denotes the edges (i.e., $G \subseteq (B \times E \cup E \times B)$) and $\forall b \in B : |b \pre| \leq 1 \wedge | \pre b| \leq 1$. . 
+    \end{definition}
+    
+    This is meant to represent an unfolded run of the original Petri net, such that every time a place is revisited, it is copied afresh to ensure that the execution only ever moves forward. 
+    Multiple elements of $B$ or $E$ map to the same element in $P$ or $T$ respectively, a notion that is expressed via the map $p$ defined below. Let $Min(CN)$ be the set of vertices of $CN$ that are minimal under the $G$ pre-ordering
+    
+    \begin{definition}[Homomorphism] \label{hom}  Let $N$ be a TPN with place set $P$ and transition set $T$, and ${CN = (B, E, G)}$ be a causal net. 
+        A mapping $p : B \cup E \rightarrow P \cup T$ is a \textit{homomorphism} if $p(B) \subseteq P$,  $p(E) \subseteq T$ and $\forall e \in E$ the restriction of $p$ to $\pre e$ is a bijection between $\pre e$ and $\pre p(e)$, the restriction of $p$ to $e \pre $ is a bijection between $e \pre $ and $p(e) \pre $ and the restriction of $p$ to $Min(CN)$ is a bijection between the sets of places $Min(CN)$ and $Supp(M_0)$, where $Supp(M_0)$ is the support of the marking function $M_0$. 
+    \end{definition}
+    
+    \begin{definition}[Causal Process]\label{cp} A \textit{causal process} of a TPN is a pair $(CN, p)$ where $CN$ is a causal net and $p$ is a homomorphism from $CN$ to $TPN$. 
+    \end{definition}
+%   \todo[inline]{Example of a CP here?}
+    Using $p$, elements of $CN$ are identified with their corresponding \emph{originals} in the TPN, and as a result, any causal process corresponds uniquely to a run of its sequence of actions (an untimed run) on the untimed version of a given TPN (the underlying Petri net when the static interval function is ignored). 
+    
+    \begin{definition}[Timing Function]\label{tau} A \textit{timing function} $\tau : E \rightarrow \mathbb{R}$ is a function from events of a causal process into time values. 
+    \end{definition}
+
+    When the underlying causal process is sequential, we can represent timing functions as a nondecreasing timestamp series, by projecting onto the timestamp component of any timed trace. 
+
+    
+%   \todo[inline]{Should this section be here?\\
  %         Thomas: I am not sure yet, but let's try here. I need it for Lemma~\ref{lemma:distances} at end of Section~\ref{sec:alignmentpb}.}
-	\subsection{A Note on Sequential Causal Processes}
+
 %        \todo[inline]{If we keep this section here, then slightly adapt the text.}
-	We take a moment to discuss the structurally restricted class of models, ones that generate causal processes whose graphical structure is that of a straight line. 
-	These reflect the executions of TPNs that do not have any branching points ($e \in E : |e \pre | > 1$) and naturally as a consequence, no points of synchronisation ($e \in E : |\pre e| > 1$). 
-	This essentially reflects the executions of automata, allowing for exclusive branching ($p \in P : |p \pre| > 1$) and iteration (that is, cycles in the model) only. 
-	It loses the ability to capture properties of a concurrent nature, as the run never splits into more than one token. 
-	On the other hand, the $G$ preorder becomes total, so studying the language of this restricted class and the alignment problem over it becomes substantially simpler, and so we restrict our attention to this class for the next section. 
-	
-	\begin{example}\label{Branchingcp}
-		Going back to the net $N$ in example \ref{TPN}, and the firing sequence we analysed then $$w = (reg, 1)(ec, 2)(ct, 3)(dec, 7)(rej,7)$$ 
-		
-		We now construct the causal process of this execution, and see that it is indeed branching, as the very first transition, $reg$, itself has two post-places, which violates the no branching condition $e \in E : |e \pre | \leq  1$. 
-		\adjustbox{scale = 0.8}{
-			\begin{tikzcd}
-				\bigcirc & {\fbox{reg}} & \bigcirc & {\fbox{ec}} & \bigcirc & {\fbox{rej}} & \bigcirc \\
-				&\bigcirc& {\fbox{ct}} & \bigcirc & {\fbox{dec}} & \bigcirc
-				\arrow[from=1-1, to=1-2]
-				\arrow[from=1-2, to=1-3]
-				\arrow[from=1-2, to=2-2]
-				\arrow[from=2-2, to=2-3]
-				\arrow[from=2-3, to=2-4]
-				\arrow[from=1-3, to=1-4]
-				\arrow[from=1-4, to=1-5]
-				\arrow[from=1-5, to=1-6]
-				\arrow[from=2-4, to=2-5]
-				\arrow[from=2-5, to=2-6]
-				\arrow[from=2-6, to=1-6]
-				\arrow[from=1-6, to=1-7]
-		\end{tikzcd}}
-		
-	\end{example}
-	
-	\begin{example}\label{Sequentialcp}
-		On the other hand, when we look at the model $N'$ from example \ref{stamptoy} we see that  all the branching and joining happens at places rather than transitions, so its executions all have sequential causal processes, such as below causal process for the untimed word $w = reg \cdot check \cdot dec \cdot pay$. \\
-					
-			\adjustbox{scale = 0.6}{
-				\begin{tikzcd}
-					\Huge\bigcirc & {\fbox{reg}} & \Huge\bigcirc & {\fbox{check}} & \Huge\bigcirc & {\fbox{dec}} & \Huge\bigcirc & {\fbox{pay}} & \Huge\bigcirc 
-					\arrow[from=1-1, to=1-2]
-					\arrow[from=1-2, to=1-3]
-					\arrow[from=1-3, to=1-4]
-					\arrow[from=1-4, to=1-5]
-					\arrow[from=1-5, to=1-6]
-					\arrow[from=1-6, to=1-7]
-					\arrow[from=1-7, to=1-8]
-					\arrow[from=1-8, to=1-9]		
-				\end{tikzcd}
-			}
-			\\
-		This causal process is unrolled from the Petri net, exactly the way runs of finite state automata are simple paths over the graph of the automaton. 
-		We throughout assume that wherever needed, such a causal process can be obtained via breadth-first search. 
-	\end{example}
+    We take a moment to discuss the structurally restricted class of models, ones that generate causal processes whose graphical structure is that of a straight line. 
+    These reflect the executions of TPNs that do not have any branching points ($e \in E : |e \pre | > 1$) and naturally as a consequence, no points of synchronisation ($e \in E : |\pre e| > 1$). 
+    This essentially reflects the executions of automata, allowing for exclusive branching ($p \in P : |p \pre| > 1$) and iteration (that is, cycles in the model) only. 
+    It loses the ability to capture properties of a concurrent nature, as the run never splits into more than one token. 
+    On the other hand, the $G$ preorder becomes total, so studying the language of this restricted class and the alignment problem over it becomes substantially simpler, and so we restrict our attention to this class for the next section. 
+    
+    \begin{example}\label{Branchingcp}
+        Going back to the net $N$ in example \ref{TPN}, and the firing sequence we analysed then $$w = (reg, 1)(ec, 2)(ct, 3)(dec, 7)(rej,7)$$ 
+        
+        We now construct the causal process of this execution, and see that it is indeed branching, as the very first transition, $reg$, itself has two post-places, which violates the no branching condition $e \in E : |e \pre | \leq  1$. 
+        \adjustbox{scale = 0.8}{
+            \begin{tikzcd}
+                \bigcirc & {\fbox{reg}} & \bigcirc & {\fbox{ec}} & \bigcirc & {\fbox{rej}} & \bigcirc \\
+                &\bigcirc& {\fbox{ct}} & \bigcirc & {\fbox{dec}} & \bigcirc
+                \arrow[from=1-1, to=1-2]
+                \arrow[from=1-2, to=1-3]
+                \arrow[from=1-2, to=2-2]
+                \arrow[from=2-2, to=2-3]
+                \arrow[from=2-3, to=2-4]
+                \arrow[from=1-3, to=1-4]
+                \arrow[from=1-4, to=1-5]
+                \arrow[from=1-5, to=1-6]
+                \arrow[from=2-4, to=2-5]
+                \arrow[from=2-5, to=2-6]
+                \arrow[from=2-6, to=1-6]
+                \arrow[from=1-6, to=1-7]
+        \end{tikzcd}}
+        
+    \end{example}
+    
+    \begin{example}\label{Sequentialcp}
+        On the other hand, when we look at the model $N'$ from example \ref{stamptoy} we see that  all the branching and joining happens at places rather than transitions, so its executions all have sequential causal processes, such as below causal process for the untimed word $w = reg \cdot check \cdot dec \cdot pay$. \\
+                    
+            \adjustbox{scale = 0.6}{
+                \begin{tikzcd}
+                    \Huge\bigcirc & {\fbox{reg}} & \Huge\bigcirc & {\fbox{check}} & \Huge\bigcirc & {\fbox{dec}} & \Huge\bigcirc & {\fbox{pay}} & \Huge\bigcirc 
+                    \arrow[from=1-1, to=1-2]
+                    \arrow[from=1-2, to=1-3]
+                    \arrow[from=1-3, to=1-4]
+                    \arrow[from=1-4, to=1-5]
+                    \arrow[from=1-5, to=1-6]
+                    \arrow[from=1-6, to=1-7]
+                    \arrow[from=1-7, to=1-8]
+                    \arrow[from=1-8, to=1-9]        
+                \end{tikzcd}
+            }
+            \\
+        This causal process is unrolled from the Petri net, exactly the way runs of finite state automata are simple paths over the graph of the automaton. 
+        We throughout assume that wherever needed, such a causal process can be obtained via breadth-first search. 
+    \end{example}
 
 	\section{The Alignment Problem in Timed Settings}\label{sec:alignmentpb}
 	The alignment problem, given a trace from an event log and a process model, involves finding a valid execution of the model that is closest to the trace under some metric.
@@ -509,13 +517,15 @@ This paper is an extension of the ICPM 2022 conference paper \cite{CR22}, provid
           these two delay moves is twice the cost of the original stamp move. (If
           the \(i\)\textsuperscript{th} event is the last one, then there is nothing to
           compensate.)
-          For example, a \(stamp(+3, 2)\) move applied to the timing function
+          
+        \end{proof}
+	
+		For example, a \(stamp(+3, 2)\) move applied to the timing function
           $(3, 4, 8, 9)$ gives \((3, 7, 8, 9)\) at cost 3. As a replacement,
           a \(delay(+3, 2)\) move gives \((3, 7, 11, 12)\) and its effect on
           the last two timestamps can be compensated by a \(delay(-3, 3)\) move.
           The total cost for the two delay moves is 6.
-        \end{proof}
-	
+		  
 	\section{Results and Algorithm : Stamp Edits}\label{3}
 	\begin{lemma}[Stamp only distance : $d_t$]\label{manhattan}
 		
