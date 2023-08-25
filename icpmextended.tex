@@ -97,10 +97,12 @@
 	
 	\begin{abstract}
 		The subject of this paper is to study conformance checking for timed models, that is, process models that consider both the sequence of events in a process as well as the timestamps at which each event is recorded. 
-		Time-aware process mining is a growing subfield of research, and as tools that seek to discover timing related properties in processes develop, so does the need for conformance checking techniques that can tackle time constraints and provide insightful quality measures for time-aware process models. 
-		In particular, one of the most useful conformance artefacts is the alignment, that is, finding the minimal changes necessary to correct a new observation to conform to a process model.  
-		In this paper, we set our problem of timed alignment and solve two cases each corresponding to a different metric over time processes. %For the first, we have an algorithm whose time complexity is linear both in the size of the observed trace and the process model, while for the second we have a quadratic time algorithm for linear process models. 
-	\end{abstract}
+        Time-aware process mining is a growing subfield of research, and as tools that seek to discover timing-related properties in processes develop, so does the need for conformance-checking techniques that can tackle time constraints and provide insightful quality measures for time-aware process models. 
+        In particular, one of the most useful conformance artefacts is the alignment, that is, finding the minimal changes necessary to correct a new observation to conform to a process model.  
+        In this paper, we formulate the general problem of timed alignment for process models represented as time Petri nets, and a purely timed version of the timed alignment problem that assumes only the timestamps of the trace need aligning rather than the actions. 
+		Corresponding to one metric over timed traces, we present techniques to solve the purely timed alignment problem for extended free choice time Petri nets, and corresponding to another metric, we present a general method to compute purely timed alignments for bounded time Petri nets, and a more efficient direct method for a more restricted class of time Petri nets. 
+		These techniques complement traditional untimed alignment methods to yield a preliminary approach for solving the general timed alignment problem. 
+    \end{abstract}
 	
 	
 	\begin{IEEEkeywords}
@@ -109,50 +111,59 @@
 	
 	\section{Introduction} 
 	%\subsection{Conformance Checking and Alignments} 
-	Process mining studies vast systems through their event logs, and seeks to extract meaningful ways to model the underlying patterns or processes that govern the behaviour of the system in order to better understand it, or predict its future behaviour \cite{A16}.
-	Once such a process model is obtained, it is natural to ask how one is sure the obtained model is a reasonable approximation of the system’s behaviour, especially given the issue of explainability in the domain of machine learning.
-	Conformance checking is the art of judging the performance of a process model by relating the modelled behaviour and the observed behaviour of a process, without relying on the origin of the model \cite{CDSW18}.
-	Observed behaviour comes in the form of traces in an \textit{event log}, a sequence of events that occur during the functioning of the system, while \textit{process models} are blueprints that describe what the underlying process of the system is expected to look like.
-	Measures of how well a model reflects system behaviour include fitness, precision, generalisation, and simplicity.
-	We often do not want the model to precisely generate all possible future system behaviour, but neither should it simply regurgitate the event log and accept no new system behaviours. 
-	Hence, what is often sought is a process model that can, up to some acceptable error factor, approximate any reasonable future system behaviour. 
-	
-	In Arya Adriansyah's seminal thesis \cite{Adriansyah2014AligningOA}, we obtain the notion of an alignment, that is, the minimal series of corrections needed to transform an observed trace into the trace of the process model that most closely mimics it.  
-	It can be computed using the synchronised product of the process model and a \emph{trace model} i.e. a simple model that captures exactly one event log trace. 
-	This gives us a series of edits, usually insertions or deletions, that transform the observed trace  into a process trace.  
-	%For our purposes we will use the term alignment to mean the process trace of the model that aligns closest to the observation, and how to transform this optimal execution to the observed one is clear depending on the edit moves available.
-	Alignments thereby pinpoint exactly where inevitable deviations from expected behaviour occur, and the more distant the aligning word of a model is from its observed trace, the worse the model is at reflecting real system behaviour. 
-	
-	%\subsection{Time-aware Processes}
-	
-	Process models that do not seek to capture timing constraints can be represented using a variety of formal objects, including Petri nets and Business Process Mining Notation (BPMN).
-	It is natural to want to study explicitly timed systems,	as by considering events along with their timestamps when mining processes, we can glean information about the minimum delay between two events, the maximum duration the system takes to converge upon a state, or check deadlines, all of which are highly relevant in real world applications \cite{Cheikhrouhou2014TheTP} \cite{Eder1999TimeCI} \cite{inbook}. 
-	In addition, one may want to predict the timestamps of processes \cite{SSA11}. 
-	Time-aware process mining seeks to study both what the underlying processes govern system behaviour are, and what time constraints they obey \cite{RMAW13} \cite{CRHA20}  \cite{AS21}. 
-	In the process mining community, there are ways to use existing process model notation in order to denote time constraints. BPMN 2.0 comes equipped with \emph{timer events} and can record absolute, relative, and cyclical time constraints. 
-	The main extensions to Petri nets that model time include time Petri nets, timed transition Petri nets, timed place Petri nets and timed-arc Petri nets. 
-	For our purposes, we use \textit{time Petri nets} or TPNs, that is, Petri nets augmented with the ability to record and check the duration it takes to fire a transition once enabled, using which one can impose certain constraints on the relationships between the timestamps of different events. 
-	While our discussion in this paper mainly centres time Petri nets, the notions of delay and stamp edits, the metrics defined and the problem statement can be adapted to suit these other models as well. 
-	
-	As time-aware process mining grows popular, new quality measures and conformance checking techniques must be developed that are sensitive to temporal constraints, but so far in the study of alignments as a conformance checking artefact, we notice that the process model used is never time-aware. 
-	Traditionally, when one assumes the event logs are a list of words over a finite alphabet (the set of possible action labels), the problem of calculating the alignment has been extensively studied \cite{Adriansyah2014AligningOA} \cite{BCC21}. 
-	The notion of distance used on these words used is usually either Hamming distance or Levenshtein's edit distance. 
+    Process mining studies vast systems through their event logs, and seeks to extract meaningful ways to model the underlying patterns or processes that govern the behaviour of the system in order to better understand it, or predict its future behaviour \cite{A16}.
+    Once such a process model is obtained, it is natural to ask how one is sure the obtained model is a reasonable approximation of the system’s behaviour, especially given the issue of explainability in the domain of machine learning.
+    Conformance checking is the art of judging the performance of a process model by relating the modelled behaviour and the observed behaviour of a process, without relying on the origin of the model \cite{CDSW18}.
+    Observed behaviour comes in the form of traces in an \textit{event log}, a sequence of events that occur during the functioning of the system, while \textit{process models} are blueprints that describe what the underlying process of the system is expected to look like.
+    Measures of how well a model reflects system behaviour include fitness, precision, generalisation, and simplicity.
+    We often do not want the model to precisely generate all possible future system behaviours, but neither should it simply regurgitate the event log and accept no new system behaviours. 
+    Hence, what is often sought is a process model that can, up to some acceptable error factor, approximate any reasonable future system behaviour. 
+    
+    In Arya Adriansyah's seminal thesis \cite{Adriansyah2014AligningOA}, we obtain the notion of an alignment, that is, the minimal series of corrections needed to transform an observed trace into the trace of the process model that most closely mimics it.  
+    It can be computed using the synchronised product of the process model and a \emph{trace model} i.e. a simple model that captures exactly one event log trace. 
+    This gives us a series of edits, usually insertions or deletions, that transform the observed trace into a process trace.  
+    For our purposes, we will use the term alignment to mean the process trace of the model that aligns closest to the observation, and how to transform this optimal execution to the observed one is clear depending on the edit moves available.
+    Alignments thereby pinpoint exactly where inevitable deviations from expected behaviour occur, and the more distant the aligning word of a model is from its observed trace, the worse the model is at reflecting real system behaviour. 
+    
+    %\subsection{Time-aware Processes}
+    
+    Process models that do not seek to capture timing constraints can be represented using a variety of formal objects, including Petri nets and Business Process Mining Notation (BPMN).
+    It is natural to want to study explicitly timed systems,  as by considering events along with their timestamps when mining processes, we can glean information about the minimum delay between two events, the maximum duration the system takes to converge upon a state, or check deadlines, all of which are highly relevant in real-world applications \cite{Cheikhrouhou2014TheTP} \cite{Eder1999TimeCI} \cite{inbook}. 
+    In addition, one may want to predict the timestamps of processes \cite{SSA11}. 
+    Time-aware process mining seeks to study both what the underlying processes governing system behaviour are, and what time constraints they obey \cite{RMAW13} \cite{CRHA20}  \cite{AS21}. 
+    In the process mining community, there are ways to use existing process model notation in order to denote time constraints. BPMN 2.0 comes equipped with \emph{timer events} and can record absolute, relative, and cyclical time constraints. 
+    The main extensions to Petri nets that model time include time Petri nets, timed transition Petri nets, timed place Petri nets and timed-arc Petri nets. 
+    For our purposes, we use \textit{time Petri nets} or TPNs, that is, Petri nets augmented with the ability to record and check the duration it takes to fire a transition once enabled, using which one can impose certain constraints on the relationships between the timestamps of different events. 
+    While our discussion in this paper mainly centres time Petri nets, the notions of delay and stamp edits, the metrics defined and the problem statement can be adapted to suit these other models as well. 
+    
+    As time-aware process mining grows popular, new quality measures and conformance-checking techniques must be developed that are sensitive to temporal constraints, but so far in the study of alignments as a conformance-checking artefact, but as far as we know, the process model used is never time-aware. 
+    Traditionally, when one assumes the event logs are a list of words over a finite alphabet (the set of possible action labels), the problem of calculating the alignment has been extensively studied \cite{Adriansyah2014AligningOA} \cite{BCC21}. 
+    The notion of distance used over these words used here is usually either Hamming distance or Levenshtein's edit distance. 
 Hence, for time-aware conformance checking, one requires a notion of distance over timed words, enabling us to measure how close two timed process traces are. 
-Distances over timed words have been explored before, such as in \cite{ABD18} and \cite{CJM14}, both of which have in common the notion of capturing the maximal difference between the timestamps attached to the same action label. 
-Earlier, \cite{GHJ97} explored similar notions of absolute and relative errors but on traces whose event interdependencies are not linked to any model. 
-%% \todo[inline]{Neha : I added another reference to a work on timed distances here}
-In this paper we provide distinct distance functions that can reflect information about multiple timestamp discrepancies between timed words, and using them, we pose and solve the alignment problem for time-aware processes.
+Distances over timed words have been explored before, such as in \cite{AsarinBD18} and \cite{CIM14}, both of which have in common the notion of capturing the maximal difference between the timestamps attached to the same action label. 
+Earlier, \cite{alldistHenz} explored similar notions of absolute and relative errors but on traces whose event interdependencies are not linked to any model (see section \ref{relwork} for a more detailed discussion about alternative notions of distance). 
+%% \todo[inline]{Neha: I added another reference to work on timed distances here}
+In this paper, we provide three distinct distance functions that can reflect information about multiple timestamp discrepancies between timed words, and using them, we pose and solve the alignment problem for time-aware processes.
 
-	%\medskip%\subsection{Three Distances, and Algorithms to Align them}
+    %\medskip%\subsection{Three Distances, and Algorithms to Align them}
+    
+ 
+Our contribution begins with formally setting the alignment problem and its purely timed version, which assumes that the trace to be aligned needs no edits to its actions, only its timestamps. We then propose three different distance functions over sequences of timestamps. 
+We begin with our approaches for alignment under the simplest of the distance functions we defined over timed executions, $d_t$. 
+For the wide class of process models that can be represented by bounded time Petri nets, we present an encoding of the purely timed alignment problem as a linear programming problem. 
+This approach yields a polynomial upper bound on the worst-case running time of computing the purely timed alignment for most practical TPNs, and in practice linear programming problem solvers perform quite efficiently. We also take care to note that in the case of unbounded time Petri nets, most key properties such as reachability are undecidable, and as a result for sound and complete methods boundedness is a reasonable restriction. 
+  Still, the above method, both in theory and practice, takes at least $\mathcal{O}(n^3)$-time to run, which is unnecessarily slow in the case of simpler process models. Hence, using an entirely different technique that we call cost-graphs, we present a direct, quadratic time $d_t$ alignment algorithm in the case of a structurally restricted class of models (sequential causal processes).
+Now, for our contributions towards solving the purely timed alignment problem for a second distance function, $d_{\theta}$. This distance function provides a new insight into the nature of time processes and their properties as it utilises the structure of the process model in its calculations. 
+For all extended free choice time Petri nets, we present a straightforward algorithm for solving purely timed alignment in this case, whose time complexity is linear in the size of the causal process and the transition set of the model. This class of nets excludes those precisely those time Petri nets that exhibit a behaviour known as confusion, which is often undesirable when modelling real-world systems. 
+
+This paper is an extension of the ICPM 2022 conference paper \cite{CR22}, providing greater details into the proofs and techniques used to obtain our results. In particular, this includes a description of how to obtain the linear programming problem encoding that we use to show that the purely timed alignment for $d_t$ can be solved in polynomial time for bounded time Petri nets. We also provide a more detailed explanation of the direct, quadratic algorithm we provide for purely timed alignment under $d_t$ for sequential causal processes, discussing why the cost-graph technique we use is sound. We believe this method can be extended to a wider class of time Petri nets, and hence a more detailed look at this technique is valuable. 
+    
+ We organise this paper as follows. We begin with defining timed words, time Petri nets, and the semantics of the execution of time Petri nets in section \ref{preliminaries}. Then, we proceed to section \ref{sec:alignmentpb}, where we formally set the alignment problem and its purely timed version, which assumes that the trace to be aligned needs no edits to its actions, only its timestamps. We then propose three different distance functions over sequences of timestamps. 
+   In section \ref{lpp}, we present the encoding of the purely timed alignment problem under $d_t$, as a linear programming problem, and in section \ref{mcg} we present our direct, quadratic time algorithm in the case of a structurally restricted class of models (sequential causal processes).
+    Then, in section \ref{4} we study purely timed alignment under $d_\theta$ and provide a linear time algorithm for computing the same for all extended free choice time Petri nets. We return to discussing how our method can complement traditional untimed alignment techniques to provide an approach for solving the general timed alignment problem and the limitations of the same in section \ref{align}.  We discuss related works in section \ref{relwork} and conclude in section \ref{conc}. 
+
 	
-	In this paper, we start in Section \ref{sec:alignmentpb} by formally setting the alignment problem and, proposing three different distance functions over sequences of timestamps. 
-	In Section \ref{mcg} we look at aligning under one of these distance functions, $d_t$, and give a quadratic time alignment algorithm in the case of a structurally restricted class of models (sequential causal processes).
-	For all other types of models, in Section \ref{lpp} we present an encoding as a linear programming problem, albeit with slower worst-case time complexity. 
-	Finally in section \ref{4} we study another distance function, $d_\theta$, which utilises the structure of the process model in its calculations, and we present a straightforward algorithm for solving the alignment in this case, whose time complexity is linear in the size of the causal process and the transition set of the model. 
-	The second setting, and the notion of delay edits that we proposed, provide new insight into the nature of time processes and their properties.
-	
-	
-	\section{Preliminaries}
+	\section{Preliminaries}\label{preliminaries}
 	We represent events as pairs $(a,\tau)$ where $a \in \Sigma$ is the name of the action, and $t$ denotes the time at which said action was taken.
 	
 	\begin{definition}
@@ -165,13 +176,14 @@ In this paper we provide distinct distance functions that can reflect informatio
 
 	The timed process model we use here is a labeled time Petri net. 
 	
-	\begin{definition}[Labelled Time Petri Net] \label{tpn} A labeled \textit{time Petri net} (or TPN) is a tuple $N = (P, T, F, SI, \Sigma, \lambda, M_0, M_f)$, where $P, T$ are disjoint sets of places and transitions respectively,  $F \subseteq (P \times T) \cup (T \times P)$ is the flow relation,  $SI : T \rightarrow \mathbb{Q}^+ \times (\mathbb{Q}^+ \cup \{\infty\})$ is the static interval function, where $SI(t) = (Eft(t), Lft(t))$ such that $Eft$ stands for earliest firing time, and $Lft$ for latest firing time, $\lambda : T \rightarrow \Sigma$ is the labeling function, labeling transitions with actions from the action set $\Sigma$, and  $ M_0 , M_f: P \to \mathbb{N}$ are the initial and final markings. % of $N$. 
+	\begin{definition}[Labeled Time Petri Net] \label{tpn} A labeled \textit{time Petri net} (or TPN) is a tuple $N = (P, T, F, SI, \Sigma, \lambda, M_0, M_f)$, where $P, T$ are disjoint sets of places and transitions respectively,  $F \subseteq (P \times T) \cup (T \times P)$ is the flow relation,  $SI : T \rightarrow \mathbb{Q}^+ \times (\mathbb{Q}^+ \cup \{\infty\})$ is the static interval function, where $SI(t) = (Eft(t), Lft(t))$ is a pair of positive rational numbers, the second of which might be infinity, such that $Eft$ stands for earliest firing time, and $Lft$ for latest firing time, $\lambda : T \rightarrow \Sigma$ is the labeling function, labeling transitions with actions from the action set $\Sigma$, and  $ M_0 , M_f: P \to \mathbb{N}$ are the initial and final markings. % of $N$. 
 	\end{definition}
 	
 	Given a transition $t \in T$ we define the pre-set of $t$ as $\pre t = \{p \in P | (p, t) \in F\}$ and its post-set similarly is defined as $t \pre = \{p \in P | (t, p) \in F\}$, (the presets and post-sets of places are defined similarly). 
 	A transition $t$ of a TPN is \textit{enabled} at marking $M$ iff $\forall p \in \pre t :  M(p) > 0$. 
 	The set of all enabled transitions at a marking $M$ is denoted by \textit{Enabled(M)}. 
-	
+	In this work, we do not consider silent transitions. 
+
 	A \textit{state} of a TPN $N = (P, T, F, SI, \Sigma, \lambda, M_0, M_f)$ is a pair $S = (M, I)$, where $M$ is a marking of $N$ and $I : Enabled(M) \rightarrow \mathbb{R^+}$ is called the \textit{clock function}. Every enabled transition hence has an implicit clock, measuring how long it has been since its most recent enabling. The initial state is $(M_0, \mathbf{0})$, where $\mathbf{0} $ is the zero function. 
 	
 	A transition $t$ can fire from state $S = (M, I)$ after a delay of $\theta \in \mathbb{R}^+$ post enabling 
@@ -200,7 +212,7 @@ In this paper we provide distinct distance functions that can reflect informatio
 	and reaches $M_f$, with some clock function $I$. 
 	
 	\begin{definition}[Language of a TPN]
-		A word $w = ((a_0, \tau_0), (a_1, \tau_1), \dots (a_n, \tau_n)) \in (\Sigma \times \mathbb{R})^*$ is in the language $\mathcal{L}(N)$ of the labeled TPN $N$ $\mathcal{L}(N)$ if there is a valid execution of the model such that there exists a sequence of transitions $(t_0, t_1 \dots t_n) \in (T, \mathbb{R^+})^*$ satisfying $(\lambda(t_0),\lambda( t_1), \dots,\lambda (t_n)) = w $ and they transform the initial state into a final one, that is, there exists some clock function $I$ on $M_f$, $(M_0, \mathbf{0}) [t_0, t_1, \dots t_n\rangle (M_f, I)$, where each $t_i$ is fireable at $\tau_i$. 
+		A word $w = ((a_0, \tau_0), (a_1, \tau_1), \dots (a_n, \tau_n)) \in (\Sigma \times \mathbb{R}^+)^*$ is in the language $\mathcal{L}(N)$ of the labeled TPN $N$ $\mathcal{L}(N)$ if there is a valid execution of the model such that there exists a sequence of transitions $(t_0, t_1 \dots t_n) \in (T, \mathbb{R^+})^*$ satisfying $(\lambda(t_0),\lambda( t_1), \dots,\lambda (t_n)) = w $ and they transform the initial state into a final one, that is, there exists some clock function $I$ on $M_f$, $(M_0, \mathbf{0}) [t_0, t_1, \dots t_n\rangle (M_f, I)$, where each $t_i$ is fireable at $\tau_i$. 
 	\end{definition}
 	
 	\begin{example}\label{TPN}
@@ -247,12 +259,12 @@ In this paper we provide distinct distance functions that can reflect informatio
 	%These correspond to runs in nondeterministic automata, but in this setting every configuration is a set of token-filled places, so to represent a particular execution we use what we define below as causal processes. 
 	
 	\begin{definition}[Causal Net] \label{cn}
-		A \textit{causal net} $CN = (B, E, G)$ is a finite, acyclic net where 
-		$\forall b \in B : |b \pre| \leq 1 \wedge | \pre b| \leq 1$. \linebreak $B$ (conditions) and $E$ (events) are the vertices, and $G$ denotes the edges. 
+		A \textit{causal net} $CN = (B, E, G)$ is a finite, acyclic graph where 
+	 $B$ (conditions) and $E$ (events) comprise the vertices, $G$ denotes the edges (i.e., $G \subseteq (B \times E \cup E \times B)$) and $\forall b \in B : |b \pre| \leq 1 \wedge | \pre b| \leq 1$. . 
 	\end{definition}
 	
-	%This can be viewed as the original Petri net itself, but every time a place is revisited, it is copied afresh to ensure that the execution only ever moves forward. 
-	Multiple elements of $B$ or $E$ map to the same element in $P$ or $T$ respectively, a notion that is expressed via the map $p$ defined below. Let $Min(CN)$ is the set of vertices of $CN$ that are minimal under the $G$ pre-ordering
+	This is meant to represent an unfolded run of the original Petri net, such that every time a place is revisited, it is copied afresh to ensure that the execution only ever moves forward. 
+	Multiple elements of $B$ or $E$ map to the same element in $P$ or $T$ respectively, a notion that is expressed via the map $p$ defined below. Let $Min(CN)$ be the set of vertices of $CN$ that are minimal under the $G$ pre-ordering
 	
 	\begin{definition}[Homomorphism] \label{hom}  Let $N$ be a TPN with place set $P$ and transition set $T$, and ${CN = (B, E, G)}$ be a causal net. 
 		A mapping $p : B \cup E \rightarrow P \cup T$ is a \textit{homomorphism} if $p(B) \subseteq P$,  $p(E) \subseteq T$ and $\forall e \in E$ the restriction of $p$ to $\pre e$ is a bijection between $\pre e$ and $\pre p(e)$, the restriction of $p$ to $e \pre $ is a bijection between $e \pre $ and $p(e) \pre $ and the restriction of $p$ to $Min(CN)$ is a bijection between $Min(CN)$ and $Supp(M_0)$. 
@@ -286,10 +298,11 @@ In this paper we provide distinct distance functions that can reflect informatio
 		\adjustbox{scale = 0.8}{
 			\begin{tikzcd}
 				\bigcirc & {\fbox{reg}} & \bigcirc & {\fbox{ec}} & \bigcirc & {\fbox{rej}} & \bigcirc \\
-				&& {\fbox{ct}} & \bigcirc & {\fbox{dec}} & \bigcirc
+				&\bigcirc& {\fbox{ct}} & \bigcirc & {\fbox{dec}} & \bigcirc
 				\arrow[from=1-1, to=1-2]
 				\arrow[from=1-2, to=1-3]
-				\arrow[from=1-3, to=2-3]
+				\arrow[from=1-2, to=2-2]
+				\arrow[from=2-2, to=2-3]
 				\arrow[from=2-3, to=2-4]
 				\arrow[from=1-3, to=1-4]
 				\arrow[from=1-4, to=1-5]
@@ -1124,23 +1137,23 @@ Note that for extended free choice time petri nets, in order to check for the va
           %        on the cost we assign to action edits, one or the other
            %       alignment will be preferred. This is quite fair, I think. There is not even much to say about it.}
 		The issue here is the tradeoff between timestamp edits and action label edits. A better approach would assign one cost $c_A$ to action edits and another $c_T$ to time edits, and seek to minimise their sum. A potential fix to our previous idea would be to essentially retain the above approach, but instead of just doing it for the best untimed alignment, take a selection of good untimed alignments (up to some allowable threshold), and try to align timestamps for each untimed candidate, and then minimise the total cost over this set. This alleviates some of the bias towards preserving action labels by allowing for small action deviations in case the timestamp alignment proves particularly cost efficient, but this is still a naive approach to the wider problem, and we hope to find better solutions in the future. 
+		\section{Related Work}\label{relwork}
+		% \section{Implementation}
 		
-		\section{Implementation}
-		
-		We have implemented the stamp only alignment algorithm in Python, available at \url{https://github.com/NehaRino/TimedAlignments}. This algorithm is quadratic in time complexity, and runs well in practice, as seen below 
-		\centerline{
-			\begin{tabular}{|c|c|c|c|}
-				\hline
-				Trace Length & 10 & 100 & 1000\\
-				\hline
-				Running Time (seconds) & 0.001 & 0.1 & 9.8 \\ 
-				\hline
-			\end{tabular}
-		}
+		% We have implemented the stamp only alignment algorithm in Python, available at \url{https://github.com/NehaRino/TimedAlignments}. This algorithm is quadratic in time complexity, and runs well in practice, as seen below 
+		% \centerline{
+		% 	\begin{tabular}{|c|c|c|c|}
+		% 		\hline
+		% 		Trace Length & 10 & 100 & 1000\\
+		% 		\hline
+		% 		Running Time (seconds) & 0.001 & 0.1 & 9.8 \\ 
+		% 		\hline
+		% 	\end{tabular}
+		% }
 		
 
 		
-		\section{Perspectives and Conclusion}
+		\section{Perspectives and Conclusion}\label{conc}
 		
 		In this paper, we posed the alignment problem for timed processes, devised three metrics for studying alignments for timestamp sequences, and solved the purely timed alignment problem for the first two metrics proposed. As far as we know, this is the first step in conformance checking for time-aware process mining, and much further work can be inspired from this point. The alignment problem for the third metric $d_N$ is a first future direction. Secondly, for both metrics studied here the class of models for which the alignment problem was solved efficiently are structurally restricted (being sequential causal processes for $d_t$ and extended free choice time Petri nets for $d_\theta$) and it would be interesting to see how to broaden their scope to larger classes of process models.  Also, while the definitions of the metrics and problems presented here do readily adapt to other types of timed process models such as time transition/place Petri nets or timed-arc Petri nets, the methods for solving the problems may not. Thirdly, further investigation in the general timed alignment problem is necessary, as our proposed approach here is rather rudimentary and can certainly be improved. Lastly, there are a number of other conformance artefacts that can be set and studied in the timed setting, such as anti-alignments \cite{CBC21}, and one can better develop all such conformance checking methods to account for timed process models.
 		%%mention g-algo specifically?
