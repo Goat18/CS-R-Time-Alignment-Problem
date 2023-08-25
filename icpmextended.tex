@@ -156,7 +156,11 @@ This approach yields a polynomial upper bound on the worst-case running time of 
 Now, for our contributions towards solving the purely timed alignment problem for a second distance function, $d_{\theta}$. This distance function provides a new insight into the nature of time processes and their properties as it utilises the structure of the process model in its calculations. 
 For all extended free choice time Petri nets, we present a straightforward algorithm for solving purely timed alignment in this case, whose time complexity is linear in the size of the causal process and the transition set of the model. This class of nets excludes those precisely those time Petri nets that exhibit a behaviour known as confusion, which is often undesirable when modelling real-world systems. 
 
-This paper is an extension of the ICPM 2022 conference paper \cite{CR22}, providing greater details into the proofs and techniques used to obtain our results. In particular, this includes a description of how to obtain the linear programming problem encoding that we use to show that the purely timed alignment for $d_t$ can be solved in polynomial time for bounded time Petri nets. We also provide a more detailed explanation of the direct, quadratic algorithm we provide for purely timed alignment under $d_t$ for sequential causal processes, discussing why the cost-graph technique we use is sound. We believe this method can be extended to a wider class of time Petri nets, and hence a more detailed look at this technique is valuable. 
+This paper is an extension of the ICPM 2022 conference paper \cite{CR22}, providing greater details into the proofs and techniques used to obtain our results. 
+In particular, this includes a description of how to obtain the linear programming problem encoding that we use to show that the purely timed alignment for $d_t$ can be solved in polynomial time for bounded time Petri nets. 
+We also provide a more detailed explanation of the direct, quadratic algorithm we provide for purely timed alignment under $d_t$ for sequential causal processes, discussing why the cost-graph technique we use is sound. 
+We believe this method can be extended to a wider class of time Petri nets, and hence a more detailed look at this technique is valuable.
+We also provide a section on related works about distances over timed words and time-series alignments, and discuss how and why our approach diverges from the literature.  
     
  We organise this paper as follows. We begin with defining timed words, time Petri nets, and the semantics of the execution of time Petri nets in section \ref{preliminaries}. Then, we proceed to section \ref{sec:alignmentpb}, where we formally set the alignment problem and its purely timed version, which assumes that the trace to be aligned needs no edits to its actions, only its timestamps. We then propose three different distance functions over sequences of timestamps. 
    In section \ref{lpp}, we present the encoding of the purely timed alignment problem under $d_t$, as a linear programming problem, and in section \ref{mcg} we present our direct, quadratic time algorithm in the case of a structurally restricted class of models (sequential causal processes).
@@ -533,7 +537,6 @@ Throughout we use the term \textit{valid execution} to distinguish it from fault
 		$d_t$ as defined above is equivalent to the \textit{Manhattan distance} or \textit{taxicab distance} between two points of $\mathbb{R}^n$, where $|E| = n$, say $\mathbf{t} = (t_1, t_2, \dots t_n) $ and $\mathbf{s} = (s_1, s_2, \dots s_n)$, defined as $$d_t(\mathbf{t}, \mathbf{s}) = \sum_{i = 1}^{n} |t_i - s_i|$$
 	\end{lemma}
 		\begin{proof}
-		The way we see this is as follows. 
 		Given a causal process $CN = (B, E, G)$ and two timing functions (not necessarily constituting valid timings) $\tau_1, \tau_2$, let $$d_t(\tau_1, \tau_2) = \sum_{e \in E} |\tau_1(e) - \tau_2(e)|$$
 		This is both achievable by stamp only moves by doing the corresponding $\tau_1(e) - \tau_2(e)$ stamp move to the second word, and is the least cost any such stamp only path can take as Manhattan distance obeys the triangle inequality, and every stamp move results in a word at exactly the same Manhattan distance from its predecessor as the cost of said stamp move. 
 		
@@ -563,22 +566,27 @@ Throughout we use the term \textit{valid execution} to distinguish it from fault
 			t(j) - t(k) \leq c_{jk} & \forall j \neq k
 		\end{cases}$$
 		
-		As $\gamma \in \mathcal{L}(N)$  this means it obeys the set of inequalities corresponding to the state class containing the final marking. Now, the above constraint is convex, so $\gamma$ varies over a convex set. As $\sigma$ is a constant vector, translation by it will keep the space convex, so $\gamma - \sigma \in \mathcal{C}$ for some convex set $\mathcal{C}$. 
+		As $\gamma \in \mathcal{L}(N)$  this means it obeys the set of inequalities corresponding to the state class containing the final marking. 
+		Now, the above constraint is convex, so $\gamma$ varies over a convex set. 
+		As $\sigma$ is a constant vector, translation by it will keep the space convex, so $\gamma - \sigma \in \mathcal{C}$ for some convex set $\mathcal{C}$. This convex set $\mathcal{C}$ is the one we will utilise as the domain of our convex optimization. 
 		
 		Now, we wish to minimize $|\gamma - \sigma|$, but it would be better to view this objective as an affine 
 		function. To this end we use a trick from \cite{BV2014} and use the following variable translation : $$\alpha, \beta \geq 0 : \alpha - \beta = \gamma - \sigma$$
 		
-		As defined above, $\alpha$ and $\beta$ are minimal when they are absolute values of the nonnegative and negative components of the vector $\gamma - \sigma$, respectively, i.e. when their sum is $|\gamma - \sigma|$. Our alignment problem can now be equivalently cast as $$\underset{\alpha - \beta \in \mathcal{C}, \alpha, \beta \geq 0}{\mathsf{minimize}} \hspace{0.5em} \alpha + \beta  $$
-		\end{proof}
+		As defined above, the sum of $\alpha$ and $\beta$ is minimal when they are equal to the absolute values of the nonnegative and negative components of the vector $\gamma - \sigma$, respectively, i.e. when their sum is $|\gamma - \sigma|$. 
+		Our alignment problem can now be equivalently cast as $$\underset{\alpha - \beta \in \mathcal{C}, \alpha, \beta \geq 0}{\mathsf{minimize}} \hspace{0.5em} \alpha + \beta  $$
+
+hence, we have proved that the $d_t$ alignment problem for bounded TPNs can be encoded as a linear programming problem.		\end{proof}
 
 	
 	%% \begin{remark}
 		
-		By the above theorem we see that the alignment problem for $d_t$ is easily cast as a linear progamming problem, and can be solved by any linear programming solver. 
-		%% Hence it can be solved in polynomial average running time, but
+		By the above theorem we see that the alignment problem for $d_t$ is easily cast as a linear progamming problem, and can be solved by any of the class of ellipsoid or simplex methods for the same. 
+		 Hence we have a polynomial time upper bound on the complexity of this problem. 
 		However this approach does not take into account the specific form of our problem, and LPP methods can be slow in the worst-case. 
 		
-		This bound is not necessarily tight, but either improving it or proving its tightness are left for future work. While the general case seems to be hard to solve efficiently, there is a subclass of process models for which the problem seems more tractable, and moreover, has a quadratic time solution. 
+		This bound is not necessarily tight, but either improving it or providing a matching lower bound are left for future work. 
+		While the general case seems to be hard to solve efficiently, there is a subclass of process models for which the problem seems more tractable, and moreover, has a quadratic time solution. 
 		
 
 		\subsection{A Direct Algorithm for Sequential Models}\label{mcg}
@@ -1101,7 +1109,7 @@ Note that for extended free choice time petri nets, in order to check for the va
 
 		\begin{remark} Note that Algorithm \ref{DelayAlgo} runs through the events of the causal process $E$ exactly once, and each time runs through the set of currently enabled transitions, and the total set of transitions, and hence its time complexity is linear in the size of the input $|CN|$, and the size of the transition set, i.e, $O(|E||T|)$. 
 		\end{remark}
-		\section{The General Timed Alignment Problem} \label{align}
+		\section{General Timed Alignment Problem: Approaches and Limitations} \label{align}
 		
 		Now that we have provided methods to tackle the purely timed alignment problem for two metrics, we return to the general timed alignment problem. As our examples throughout have reflected, the purely timed alignment problem does not so much ignore the action labels as assume that they do  not need editing. 
 		As a result, one approach for solving the general timed alignment problem would be to begin by completely ignoring the timed aspect, and aligning only the action labels of the word $w$ and the process model $N$ (now reduced to the underlying untimed Petri net) using the $\mathbb{A}^*$ algorithm\cite{Adriansyah2014AligningOA}, which can be used to get a valid control flow, that is, a valid causal process. This, for us, is an untimed word $w'$ which can then be given a timing function based on that of $w$, %preserving timestamps wherever possible and 
