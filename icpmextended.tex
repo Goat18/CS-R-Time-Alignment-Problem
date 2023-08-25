@@ -275,7 +275,7 @@ Throughout we use the term \textit{valid execution} to distinguish it from fault
     Multiple elements of $B$ or $E$ map to the same element in $P$ or $T$ respectively, a notion that is expressed via the map $p$ defined below. Let $Min(CN)$ be the set of vertices of $CN$ that are minimal under the $G$ pre-ordering
     
     \begin{definition}[Homomorphism] \label{hom}  Let $N$ be a TPN with place set $P$ and transition set $T$, and ${CN = (B, E, G)}$ be a causal net. 
-        A mapping $p : B \cup E \rightarrow P \cup T$ is a \textit{homomorphism} if $p(B) \subseteq P$,  $p(E) \subseteq T$ and $\forall e \in E$ the restriction of $p$ to $\pre e$ is a bijection between $\pre e$ and $\pre p(e)$, the restriction of $p$ to $e \pre $ is a bijection between $e \pre $ and $p(e) \pre $ and the restriction of $p$ to $Min(CN)$ is a bijection between the sets of places $Min(CN)$ and $Supp(M_0)$, where $Supp(M_0)$ is the support of the marking function $M_0$. 
+        A mapping $p : B \cup E \rightarrow P \cup T$ is a \textit{homomorphism} if $p(B) \subseteq P$,  $p(E) \subseteq T$ and $\forall e \in E$ the map $p$ when restricted to $\pre e$ is a bijection between $\pre e$ and $\pre p(e)$, and similarly, $p$ when restricted to $e \pre $ is a bijection between $e \pre $ and $p(e) \pre $,  and lastly, $p$ when restricted to $Min(CN)$ is also a bijection between the sets of places $Min(CN)$ and $Supp(M_0)$, where $Supp(M_0)$ is the support of the marking function $M_0$. 
     \end{definition}
     
     \begin{definition}[Causal Process]\label{cp} A \textit{causal process} of a TPN is a pair $(CN, p)$ where $CN$ is a causal net and $p$ is a homomorphism from $CN$ to $TPN$. 
@@ -1147,9 +1147,27 @@ Note that for extended free choice time petri nets, in order to check for the va
           %        on the cost we assign to action edits, one or the other
            %       alignment will be preferred. This is quite fair, I think. There is not even much to say about it.}
 		The issue here is the tradeoff between timestamp edits and action label edits. A better approach would assign one cost $c_A$ to action edits and another $c_T$ to time edits, and seek to minimise their sum. A potential fix to our previous idea would be to essentially retain the above approach, but instead of just doing it for the best untimed alignment, take a selection of good untimed alignments (up to some allowable threshold), and try to align timestamps for each untimed candidate, and then minimise the total cost over this set. This alleviates some of the bias towards preserving action labels by allowing for small action deviations in case the timestamp alignment proves particularly cost efficient, but this is still a naive approach to the wider problem, and we hope to find better solutions in the future. 
-		\section{Related Work}\label{relwork}
-		% \section{Implementation}
 		
+		\section{Related Work}\label{relwork}
+
+		There are a number of existing definitions of distance functions over timed words, such as the six topologically equivalent definitions listed in \cite{alldistHenz}. 
+		Two of these distances are notably very similar to our stamp and delay based distances, and much like in our setting, the distance between two words is only defined when they action sequences match up exactly. 
+		In \cite{CIM14}, a notion of edit distance for timed words is introduced, which similar to our approach for solving the general timed alignment problem, given two timed words, first tries to edit the untimed parts to match optimally, and then proceeds to edit their timestamps using stamp-like edits, yielding not a real value as the distance but a pair of values, the first component being the action sequence's edit distance and the latter being the stamp distance on the transformed timing sequences. 
+		In \cite{AsarinBD18}, the distance function finds the maximal timing deviation between any two events that correspond to the same action, and is closely related to the Hausdorff distance between point-sets. 
+		The latter two allow for differences in the number and placement of actions in the word, while the first work pointedly does not. 
+		An important way we deviate from all of these distances, is the way $d_{\theta}$ reflects the causal dependencies of the model. 
+		As we operate within the domain of process mining, an important goal in the field is to leverage the insight that process models provide about the systems they represent. 
+		Whether we are measuring the fitness of the model, trying to repair the model, or trying to determine how to best replay a faulty trace on a process model we trust, using the fact that the causal order imposed by the model would make errors cascade forward allows us to better study the model, and all of its causal implications, when computing the alignment. 
+		In case when aligning a certain trace, $d_t$ comes out to be large but $d_{\theta}$ returns a much smaller number, we know that the process model predicts that the deviation that caused the trace to fail can be modelled as localised to fewer events, which caused knock-on effects later on, simplifying the isolation and repair of faults. 
+		Hence, in this domain, we believe that making our distance dependent on the process model enriches the information we receive via alignment. 
+
+		Given that this paper mainly focuses on the purely timed aspect of alignment, we take a moment to note that alignment between timed traces has been well studied in the time-series community. 
+A popular method used for discrete time series is Dynamic Time Warping \cite{DTW}, which is a notion of edit distance over finite (possibly unequal length) sequences of real numbers, where the cost is minimised over a many-one matching between the timed sequences. 
+Another is the Geometric Edit Distance \cite{GEdit}, which is similar to Dynamic Time Warping but it assumes the real sequences are matched using a one-one function, and if any points are missed out, each missing point incurs a constant additional cost. 
+As actions do not have a nontrivial notion of distance between them, the best way of applying these to our setting is to consider timestamp sequences indexed by their position in the word. 
+In this case, Dynamic Time Warping seems to compute distances between traces assuming that one word is a stutter of another, while Geometric Edit Distance will allow for deleting some events (possibly ones whose actions do not match), and both of these alternatives seem to yield distance measures that require specialised modelling preferences. 
+These distances also have more continuous counterparts such as the Skorohod distance \cite{skorokhod1956limit} and the Fr\'echet distance \cite{frechet1906quelques}, but we restrict ourselves to the case of discrete timed event sequences. 
+
 		% We have implemented the stamp only alignment algorithm in Python, available at \url{https://github.com/NehaRino/TimedAlignments}. This algorithm is quadratic in time complexity, and runs well in practice, as seen below 
 		% \centerline{
 		% 	\begin{tabular}{|c|c|c|c|}
