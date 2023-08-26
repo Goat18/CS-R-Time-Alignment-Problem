@@ -16,7 +16,7 @@
 \makeatletter
 \renewcommand{\ALG@beginalgorithmic}{\small}
 \makeatother
-
+\usepackage{xcolor}
 \usepackage{mathtools}
 \usepackage{mathdots}
 \usepackage{tikz-cd} 
@@ -228,8 +228,12 @@ $M''$ as in the untimed case (subtracting one token from each preplace, and addi
 Throughout we use the term \textit{valid execution} to distinguish it from faulty executions of the time Petri net. This is because we are studying alignments, and as a result studying how a non-fitting trace diverges in its ``execution'' from what is required by the time Petri net is our central concern. 
 
     \begin{example}\label{TPN}
-        Consider the following example (adapted from \cite{AS21}) of a TPN $N$, modelling an airline refund office: \\
-        \adjustbox{scale = 0.6}{
+        Consider the example (adapted from \cite{AS21}) of a TPN $N$ illustrated in Figure \ref{N}, modelling an airline refund office: 
+      \begin{figure}
+	
+		\centering
+	
+		\adjustbox{scale = 0.6}{
             
             \begin{tikzcd}
                 & {} & \Huge\bigcirc & {\fbox{\strut ec}} & \Huge\bigcirc & {} && {\fbox{\strut pay}} \\
@@ -260,8 +264,10 @@ Throughout we use the term \textit{valid execution} to distinguish it from fault
                 \arrow["{[0,2]}"{description, pos=0.2}, draw=white, from=1-4, to=0]
             \end{tikzcd}
         }
-        \\
-        
+		\caption{An illustration of a time-aware process model for an airline refund office}
+			\label{N}
+	\end{figure} 
+
         The action labels are as follows : Register request (reg), Examine thoroughly  (et), Examine casually (ec), Check ticket (ct), Decide (dec), Pay (pay), and Reject (rej). 
         
         The firing sequence $(reg, 1) (ec, 2)(ct, 3)(dec, 7)(rej, 7)$ is a valid execution of $N$. The initial marking only has $reg$ enabled, and registering the request at time $1$ updates the marking by removing the token from $reg$'s preplace and filling its two post-places, thereby enabling $ec, et, \textrm{ and } ct$. Now $ec$ fires at $2$, satisfying the constraint, filling one preplace of $dec$. Then $ct$ fires, having been enabled for $2$ units of time. Now, finally, $dec$ is enabled, and fires after $4$ units of having been enabled, and $rej$ is fired immediately after. 
@@ -305,10 +311,51 @@ Throughout we use the term \textit{valid execution} to distinguish it from fault
     On the other hand, the $G$ preorder becomes total, so studying the language of this restricted class and the alignment problem over it becomes substantially simpler, and so we restrict our attention to this class for the next section. 
     
     \begin{example}\label{Branchingcp}
-        Going back to the net $N$ in example \ref{TPN}, and the firing sequence we analysed then $$w = (reg, 1)(ec, 2)(ct, 3)(dec, 7)(rej,7)$$ 
-        
-        We now construct the causal process of this execution, and see that it is indeed branching, as the very first transition, $reg$, itself has two post-places, which violates the no branching condition $e \in E : |e \pre | \leq  1$. 
-        \adjustbox{scale = 0.8}{
+        Going back to the TPN $N$ discussed in example ~\ref{TPN}, in Figure ~\ref{run} we study the run of the same timed word  $$w = (reg, 1)(ec, 2)(ct, 3)(dec, 7)(rej,7)$$ 
+		\begin{figure}
+
+			\centering
+		
+			\adjustbox{scale = 0.6}{
+				
+				\begin{tikzcd}
+					& {} & \Huge\bigcirc & {\fbox{\strut \textcolor{blue}{ec}}} & \Huge\bigcirc & {} && {\fbox{\strut pay}} \\
+					\Huge\bigcirc & {\fbox{\strut \textcolor{blue}{reg}}} && {\fbox{\strut et}} && {\fbox{\strut \textcolor{blue}{dec}}} & \Huge\bigcirc & {} & \Huge\bigcirc \\
+					&& \Huge\bigcirc & {\fbox{\strut \textcolor{blue}{{ct}}}} & \Huge\bigcirc &&& {\fbox{\strut \textcolor{blue}{rej}}}
+					\arrow["{[0, 1]}"{description, pos=0.2}, shift left=3, draw=white, from=2-2, to=1-2]
+					\arrow[""{name=0, anchor=center, inner sep=0}, "{[2,2]}"{description, pos=0.1}, draw=white, from=2-4, to=1-4]
+					\arrow["{[2,2]}"{description, pos=0.1}, draw=white, from=3-4, to=2-4]
+					\arrow["{[2,4]}"{description, pos=0.1}, shift right=4, draw=white, from=2-6, to=1-6]
+					\arrow["{[0,1]}"{description, pos=0.1}, draw=white, from=1-8, to=2-8]
+					\arrow["{[0,0]}"{description, pos=0.1}, draw=white, from=3-8, to=2-8]
+					\arrow[from=2-1, to=2-2]
+					\arrow[curve={height=-12pt}, from=2-2, to=1-3]
+					\arrow[curve={height=12pt}, from=2-2, to=3-3]
+					\arrow[from=1-3, to=1-4]
+					\arrow[from=1-4, to=1-5]
+					\arrow[curve={height=12pt}, from=1-3, to=2-4]
+					\arrow[curve={height=12pt}, from=2-4, to=1-5]
+					\arrow[from=3-3, to=3-4]
+					\arrow[from=3-4, to=3-5]
+					\arrow[curve={height=-12pt}, from=1-5, to=2-6]
+					\arrow[curve={height=12pt}, from=3-5, to=2-6]
+					\arrow[from=2-6, to=2-7]
+					\arrow[curve={height=-12pt}, from=2-7, to=1-8]
+					\arrow[curve={height=12pt}, from=2-7, to=3-8]
+					\arrow[curve={height=12pt}, from=3-8, to=2-9]
+					\arrow[curve={height=-12pt}, from=1-8, to=2-9]
+					\arrow["{[0,2]}"{description, pos=0.2}, draw=white, from=1-4, to=0]
+				\end{tikzcd}
+			}
+			\caption{An illustration of the run of $w$ on $N$}
+						\label{run}
+		\end{figure} 
+
+        We now construct the causal process of this execution (see Figure ~\ref{CP1}), and see that it is indeed branching, as the very first transition, $reg$, itself has two post-places, which violates the no branching condition $e \in E : |e \pre | \leq  1$. 
+        \begin{figure}[!t]
+
+			\centering
+		\adjustbox{scale = 0.8}{
             \begin{tikzcd}
                 \bigcirc & {\fbox{\strut reg}} & \bigcirc & {\fbox{\strut ec}} & \bigcirc & {\fbox{\strut rej}} & \bigcirc \\
                 &\bigcirc& {\fbox{\strut ct}} & \bigcirc & {\fbox{\strut dec}} & \bigcirc
@@ -325,12 +372,47 @@ Throughout we use the term \textit{valid execution} to distinguish it from fault
                 \arrow[from=2-6, to=1-6]
                 \arrow[from=1-6, to=1-7]
         \end{tikzcd}}
-        
+		\caption{An example of a branching causal process}
+					\label{CP1}
+	\end{figure}
     \end{example}
     
     \begin{example}\label{Sequentialcp}
-        On the other hand, when we look at the model $N'$ from example \ref{stamptoy} we see that  all the branching and joining happens at places rather than transitions, so its executions all have sequential causal processes, such as below causal process for the untimed word $w = reg \cdot check \cdot dec \cdot pay$. \\
-                    
+       Let us now study a simplified version of the original process model, a new time Petri net $N'$ that abstracts all the checking actions into one transition called $check$ (see Figure ~\ref{SCPnet}).
+\begin{figure}[h]
+
+	\centering
+	   \adjustbox{scale = 0.6}{
+		\begin{tikzcd}
+			& {{}} && {{}} && {{}} && {\fbox{ \strut \textcolor{blue}{pay}}} \\
+			{\Huge{\bigcirc}} & {\fbox{ \strut \textcolor{blue}{reg}}} & {\Huge{\bigcirc}} & {\fbox{ \strut \textcolor{blue}{check}}} & {\Huge{\bigcirc}} & {\fbox{ \strut \textcolor{blue}{dec}}} & {\Huge{\bigcirc}} & {{}} & {\Huge{\bigcirc}} \\
+			&&&&&&& {\fbox{\strut rej}}
+			\arrow[from=2-1, to=2-2]
+			\arrow[from=2-2, to=2-3]
+			\arrow[from=2-3, to=2-4]
+			\arrow[from=2-4, to=2-5]
+			\arrow[from=2-5, to=2-6]
+			\arrow[from=2-6, to=2-7]
+			\arrow[curve={height=-12pt}, from=2-7, to=1-8]
+			\arrow[curve={height=-12pt}, from=1-8, to=2-9]
+			\arrow[curve={height=12pt}, from=2-7, to=3-8]
+			\arrow[curve={height=12pt}, from=3-8, to=2-9]
+			\arrow["{[0,1]}"{description, pos=0.2}, draw=none, from=2-2, to=1-2]
+			\arrow["{[2,2]}"{description, pos=0.2}, draw=none, from=2-4, to=1-4]
+			\arrow["{[0,1]}"{description, pos=0.2}, draw=none, from=1-8, to=2-8]
+			\arrow["{[0,0]}"{description, pos=0.1}, draw=none, from=3-8, to=2-8]
+			\arrow["{[2,4]}"{description, pos=0.3}, draw=none, from=2-6, to=1-6]
+		\end{tikzcd}
+			}
+			\caption{An illustration of a simpler time Petri net, $N'$}
+				\label{SCPnet}
+			\end{figure}
+
+	    Here, we see that  all the branching and joining happens at places rather than transitions, so its executions all have sequential causal processes, such the causal process in figure ~\ref{CP2} for the untimed word $w = reg \cdot check \cdot dec \cdot pay$. \\
+        
+		\begin{figure}[h]
+
+			\centering
             \adjustbox{scale = 0.6}{
                 \begin{tikzcd}
                     \Huge\bigcirc & {\fbox{\strut reg}} & \Huge\bigcirc & {\fbox{\strut check}} & \Huge\bigcirc & {\fbox{\strut dec}} & \Huge\bigcirc & {\fbox{\strut pay}} & \Huge\bigcirc 
@@ -344,7 +426,9 @@ Throughout we use the term \textit{valid execution} to distinguish it from fault
                     \arrow[from=1-8, to=1-9]        
                 \end{tikzcd}
             }
-            \\
+			\caption{An example of a sequential causal process}
+						\label{CP2}
+		\end{figure}   
         This causal process is unrolled from the Petri net, exactly the way runs of finite state automata are simple paths over the graph of the automaton. 
         We throughout assume that wherever needed, such a causal process can be obtained via breadth-first search. 
     \end{example}
@@ -361,12 +445,16 @@ Throughout we use the term \textit{valid execution} to distinguish it from fault
 	but the timed setting is more complex. 
 	
 	\begin{example}
-		Consider the process model of Example \ref{TPN} and an observed trace $(reg, 1) \cdot (ec, 2) \cdot (ec, 2) \cdot (ct, 3) \cdot (dec, 8) \cdot (rej, 8)$ . Clearly, one shouldn't examine casually twice so one of the $ec$'s is extraneous, and also, the $dec$ event fires too late, it should have waited at most four time units after the firing of event $ct$. 
+		Consider the process model $N$ from Figure ~\ref{N} and an observed trace $(reg, 1) \cdot (ec, 2) \cdot (ec, 2) \cdot (ct, 3) \cdot (dec, 8) \cdot (rej, 8)$ . 
+		Clearly, one shouldn't examine casually twice so one of the $ec$'s is extraneous, and also, the $dec$ event fires too late, it should have waited at most four time units after the firing of event $ct$. 
 		Secondly, consider an observed trace of the form $(reg, 1) \cdot (ec, 2) \cdot (ct, 3) \cdot (dec, 7) \cdot (rej, 8)$. The control flow run itself is valid, but with the timestamps, we notice that the last transition is invalid. We could either edit the $rej$ action to a $pay$ one and leave the timestamp alone, or, edit the timestamp to get $(rej, 7)$. 
 		Timestamps are attached to the letters they belong to, so it is hard to compare firing event $rej$ at time $7$ versus firing event $pay$ at time $8$ as the time constraints on different events are often different. In this manner, it is not clear how meaningful it would be to define edit moves that transform timestamps that are attached to different tasks. 
 	\end{example}
 	
-	This is why, we first restrict our attention to the case where the untimed part of $\sigma$ does match the model, that is to say, if $\pi_1(\sigma)$ has a valid causal process $(CN, p)$ over $N$. Clearly this case of the problem needs to be solved if the general timed alignment problem is to be solved, and we argue that this case is interesting and complex in its own right. 
+	This example witnesses the types of domain-specific tradeoffs one may have to consider when devising an approach for the general timed alignment problem, and we discuss this issue at greater length in Section ~\ref{align}. 
+	In order to avoid having to make such choices, we follow the principle used in \cite{CIM14}, wherein the edit distance over a timed word is decoupled into first aligning its actions, and once those are assumed to be well aligned, to proceed with aligning timestamps. 
+	Hence, in this paper, we restrict our attention to the case where the untimed part of $\sigma$ does match the model, that is to say, if $\pi_1(\sigma)$ has a valid causal process $(CN, p)$ over $N$. 
+	Clearly this case of the problem needs to be solved if the general timed alignment problem is to be solved, and we argue that this case is interesting and complex in its own right. 
 	
 	This ensures that we can compare the timing constraints on analogous parts of the process, and hence reason meaningfully about timing deviations from the model. This gives us the following problem : 
 	
@@ -375,9 +463,9 @@ Throughout we use the term \textit{valid execution} to distinguish it from fault
 		
 	\end{definition}
 	
-	In sections \ref{sec:alignmentpb}, \ref{3} and \ref{4} of this paper, we will ignore the action labels of the words, i.e we assume the word $\sigma$ we wish to align comes with a valid causal process $(CN, p)$ of the model, and seek to find timing functions on said causal process that are both valid, and minimize distance to $\sigma$ under the metric of choice. 
+	In sections ~\ref{sec:alignmentpb}, ~\ref{3} and ~\ref{4} of this paper, we will ignore the action labels of the words, i.e we assume the word $\sigma$ we wish to align comes with a valid causal process $(CN, p)$ of the model, and seek to find timing functions on said causal process that are both valid, and minimize distance to $\sigma$ under the metric of choice. 
 	
-	We shall return to the general timed alignment problem in section \ref{align}, and briefly discuss some ways our methods can be combined with existing (untimed) alignment techniques to provide initial approaches to the general timed alignment problem. 
+	We shall return to the general timed alignment problem in section ~\ref{align}, and briefly discuss some ways our methods can be combined with existing (untimed) alignment techniques to provide initial approaches to the general timed alignment problem. 
 	These initial approaches have clear limitations, but they provide a first step towards addressing the general timed alignment problem. 
 	
 	\subsection{Edit Moves on Timing Functions}
@@ -389,23 +477,69 @@ Throughout we use the term \textit{valid execution} to distinguish it from fault
 	%What sort of functions are useful notions of transformation on a timed system? 
 	
 	\begin{example}
-		Let us go back to example \ref{TPN}, and study the process model $N$ presented there. 
+		Let us go back to the TPN $N$ in Figure ~\ref{N}. 
 		Say we had the following words that did not fit the model, and we wished to analyse how best to modify them to fit them back into the model. 
 		
 		We start with $\sigma = (reg, 1)\cdot  (ct, 2)  \cdot (ec, 2) \cdot (dec, 6) \cdot (rej, 6)$. 
+
 		One candidate for the closest valid execution would be $\gamma = (reg, 1)\cdot  (ct, 3)  \cdot (ec, 2) \cdot (dec, 6) \cdot (rej, 6)$, and it feels reasonable to say that the cost for aligning $\sigma$ to this $\gamma$ is 1. 
-		A way to arrive at this conclusion is by noticing that on trying to execute $\sigma$'s firing sequence only the guard for $ct$ fails. If $ct$ were shifted to fire at 3 instead, the whole run would execute without a hitch. This sort of local, almost typographical error can often happen in systems, and it is the simplest kind to fix.  
+		A way to arrive at this conclusion is by noticing that on trying to execute $\sigma$'s firing sequence only the guard for $ct$ fails (See figure ~\ref{stamperror}). 
+		\begin{figure}[h]
+
+			\centering
 		
-		There is, however, another way to look at it. A closest valid timing function would try to preserve the positions of $reg$ and  $ec$ but the moment it tries to fire $ct$, $\sigma$ runs early. 
+			\adjustbox{scale = 0.6}{
+				
+				\begin{tikzcd}
+					& {} & \Huge\bigcirc & {\fbox{\strut \textcolor{blue}{ec}}} & \Huge\bigcirc & {} && {\fbox{\strut pay}} \\
+					\Huge\bigcirc & {\fbox{\strut \textcolor{blue}{reg}}} && {\fbox{\strut et}} && {\fbox{\strut \textcolor{blue}{dec}}} & \Huge\bigcirc & {} & \Huge\bigcirc \\
+					&& \Huge\bigcirc & {\fbox{\strut \textcolor{blue}{{ct}}}} & \Huge\bigcirc &&& {\fbox{\strut \textcolor{blue}{rej}}}
+					\arrow["{[0, 1]}"{description, pos=0.2}, shift left=3, draw=white, from=2-2, to=1-2]
+					\arrow[""{name=0, anchor=center, inner sep=0}, "{[2,2]}"{description, pos=0.1}, draw=white, from=2-4, to=1-4]
+					\arrow["{\textcolor{red}{[2,2]}}"{description, pos=0.1}, draw=white, from=3-4, to=2-4]
+					\arrow["{[2,4]}"{description, pos=0.1}, shift right=4, draw=white, from=2-6, to=1-6]
+					\arrow["{[0,1]}"{description, pos=0.1}, draw=white, from=1-8, to=2-8]
+					\arrow["{[0,0]}"{description, pos=0.1}, draw=white, from=3-8, to=2-8]
+					\arrow[from=2-1, to=2-2]
+					\arrow[curve={height=-12pt}, from=2-2, to=1-3]
+					\arrow[curve={height=12pt}, from=2-2, to=3-3]
+					\arrow[from=1-3, to=1-4]
+					\arrow[from=1-4, to=1-5]
+					\arrow[curve={height=12pt}, from=1-3, to=2-4]
+					\arrow[curve={height=12pt}, from=2-4, to=1-5]
+					\arrow[from=3-3, to=3-4]
+					\arrow[from=3-4, to=3-5]
+					\arrow[curve={height=-12pt}, from=1-5, to=2-6]
+					\arrow[curve={height=12pt}, from=3-5, to=2-6]
+					\arrow[from=2-6, to=2-7]
+					\arrow[curve={height=-12pt}, from=2-7, to=1-8]
+					\arrow[curve={height=12pt}, from=2-7, to=3-8]
+					\arrow[curve={height=12pt}, from=3-8, to=2-9]
+					\arrow[curve={height=-12pt}, from=1-8, to=2-9]
+					\arrow["{[0,2]}"{description, pos=0.2}, draw=white, from=1-4, to=0]
+				\end{tikzcd}
+			}
+			\caption{An illustration of a faulty execution on $N$}
+						\label{stamperror}
+		\end{figure} 
+
+
+		If $ct$ were shifted to fire at 3 instead, the whole run would execute without a hitch. (Note that we allow timestamps to be out of order when representing timed words, so long as the overall partial order imposed by the process model is preserved).
+		This sort of local, almost typographical error can often happen in systems, and it is the simplest kind to fix.  
+		
+		There is, however, another way to look at it.
+		A closest valid timing function would try to preserve the positions of $reg$ and  $ec$ but the moment it tries to fire $ct$, $\sigma$ runs early. 
+		As seen in Figure ~\ref{stamperror}, the only guard that was failed was that of $ct$, and if one only locally edits the trace, it changes the values of the clocks at all the subsequent guards, which implicitly assumes that all the future events compensate by taking less time to complete, in order to stay on track overall.  
 		By pushing $ct$ forward, it should take longer for the decision to be made and the rejection to happen, as those events depended on the checking of the ticket being done first. 
 		This causes a cascading chain of errors where if $ct$ is moved forward to fire at 3, to preserve the relative relationships between $ct$ and its successors, we get the trace $\gamma' = (reg, 1)\cdot  (ct, 3)  \cdot (ec, 2) \cdot (dec, 7) \cdot (rej, 7)$, and in this sense, $\gamma'$ is closer to $\sigma$ as it preserves more relative gaps. 
 		As we just knocked one event a little later by 1 unit, we can view this as a cost 1 edit too.  
 		%, if we assume $e$ and $f$ only care about the relative durations or delays between activities
-	
 		This is a slightly more complex type of error, but it reflects the real life fact of cascading errors, and hence is an important type of edit to consider when diagnosing such cascading faults. 
+
 	\end{example}
 	
-	Based on the above example, we  arrive at two types of moves. 
+	Inspired by the above example, we consider two types of edit moves for timed executions. 
+	Both of these moves make clear conceptual sense, and result in different types of insight about the root cause of faults in ill-fitting traces. 
 	
 	We define a \textit{stamp move} as a move that translates the timing function only at a point, i.e., that edits a single element of the timing function $\tau$. 
 	
@@ -435,7 +569,9 @@ Throughout we use the term \textit{valid execution} to distinguish it from fault
 		
 	\end{definition}
 	
-	The cost of a move is the magnitude $|x|$ in the above definitions, and the cost of a sequence of moves is the sum of the costs of the moves. Let the set of all stamp moves on a causal process be called $Stamp$, and the set of all delay moves be called $Delay$. Armed with these definitions, three natural notions of distance can be constructed. 
+	The cost of a move is the magnitude $|x|$ in the above definitions, and the cost of a sequence of moves is the sum of the costs of the moves. 
+	Let the set of all stamp moves on a causal process be called $Stamp$, and the set of all delay moves be called $Delay$. 
+	Armed with these definitions, three natural notions of distance can be constructed, which aim to minimise the cost of editing traces using one or both of these types of moves. 
 	
 	\begin{definition}[Stamp Only Distance : $d_t$]
 		Given any two timing functions $\tau_1, \tau_2$ over the same causal process $(CN, p)$, we define the stamp-only distance $d_t$ as follows : 
@@ -462,30 +598,36 @@ Throughout we use the term \textit{valid execution} to distinguish it from fault
 	\end{definition} 
 	
 	\begin{example}\label{stamptoy}
-		Consider a simplification of our net from \ref{TPN}, collapsing checking the ticket and the examination steps into one $check$ step : 
-			
-			We first have the process model $N'$ : \\
-			\adjustbox{scale = 0.6}{
-				\begin{tikzcd}
-					& {} && {} && {} &&{} \\
-					\Huge\bigcirc & {\fbox{\strut reg}} & \Huge\bigcirc & {\fbox{\strut check}} & \Huge\bigcirc & {\fbox{\strut dec}} & \Huge\bigcirc & {\fbox{\strut pay}} & \Huge\bigcirc 
-					\arrow["{[0, 1]}"{description, pos=0.2}, draw=white, from=2-2, to=1-2]
-					\arrow["{[0,1]}"{description, pos=0.2}, draw=white, from=2-8, to=1-8]
-					\arrow[from=2-1, to=2-2]
-					\arrow[from=2-2, to=2-3]
-					\arrow[from=2-3, to=2-4]
-					\arrow[from=2-4, to=2-5]
-					\arrow[from=2-5, to=2-6]
-					\arrow[from=2-6, to=2-7]
-					\arrow[from=2-7, to=2-8]
-					\arrow[from=2-8, to=2-9]
-					\arrow["{[2,4]}"{description, pos=0.2}, draw=white, from=2-6, to=1-6]
-					\arrow["{[2,2]}"{description, pos=0.2}, draw=white, from=2-4, to=1-4]
-				\end{tikzcd}
-			}\\
+We return to the simplified net $N'$ that we discussed first in Example ~\ref{Sequentialcp}. 
+\begin{figure}[h]
+	\centering
+	   \adjustbox{scale = 0.6}{
+		\begin{tikzcd}
+			& {{}} && {{}} && {{}} && {\fbox{ \strut \textcolor{blue}{pay}}} \\
+			{\Huge{\bigcirc}} & {\fbox{ \strut \textcolor{blue}{reg}}} & {\Huge{\bigcirc}} & {\fbox{ \strut \textcolor{blue}{check}}} & {\Huge{\bigcirc}} & {\fbox{ \strut \textcolor{blue}{dec}}} & {\Huge{\bigcirc}} & {{}} & {\Huge{\bigcirc}} \\
+			&&&&&&& {\fbox{\strut rej}}
+			\arrow[from=2-1, to=2-2]
+			\arrow[from=2-2, to=2-3]
+			\arrow[from=2-3, to=2-4]
+			\arrow[from=2-4, to=2-5]
+			\arrow[from=2-5, to=2-6]
+			\arrow[from=2-6, to=2-7]
+			\arrow[curve={height=-12pt}, from=2-7, to=1-8]
+			\arrow[curve={height=-12pt}, from=1-8, to=2-9]
+			\arrow[curve={height=12pt}, from=2-7, to=3-8]
+			\arrow[curve={height=12pt}, from=3-8, to=2-9]
+			\arrow["{[0,1]}"{description, pos=0.2}, draw=none, from=2-2, to=1-2]
+			\arrow["{[2,2]}"{description, pos=0.2}, draw=none, from=2-4, to=1-4]
+			\arrow["{[0,1]}"{description, pos=0.2}, draw=none, from=1-8, to=2-8]
+			\arrow["{[0,0]}"{description, pos=0.1}, draw=none, from=3-8, to=2-8]
+			\arrow["{[2,4]}"{description, pos=0.3}, draw=none, from=2-6, to=1-6]
+		\end{tikzcd}
+			}
+			\caption{An illustration of a simpler time Petri net, $N'$}
+			\end{figure}
 
                        % \todo[inline]{make sure that the notation for timing functions (without action names) is well introduced.}
-		Now for this $N$, let the observed trace's timing function ${\sigma = (3, 4, 8, 9) \not \in \mathcal{L}(N)}$. 
+		Now for this TPN, let the observed trace's timing function ${\sigma = (3, 4, 8, 9) \not \in \mathcal{L}(N')}$. 
 		
 		The best $d_t$ alignment for the example in the diagram below is $\gamma = (1,3,7, 8)$ with minimum cost $d_t(\sigma, \gamma) = 5$. 
 		
@@ -524,11 +666,11 @@ Throughout we use the term \textit{valid execution} to distinguish it from fault
           
         \end{proof}
 	
-		For example, a \(stamp(+3, 2)\) move applied to the timing function
-          $(3, 4, 8, 9)$ gives \((3, 7, 8, 9)\) at cost 3. As a replacement,
-          a \(delay(+3, 2)\) move gives \((3, 7, 11, 12)\) and its effect on
-          the last two timestamps can be compensated by a \(delay(-3, 3)\) move.
-          The total cost for the two delay moves is 6.
+		% For example, a \(stamp(+3, 2)\) move applied to the timing function
+        %   $(3, 4, 8, 9)$ gives \((3, 7, 8, 9)\) at cost 3. As a replacement,
+        %   a \(delay(+3, 2)\) move gives \((3, 7, 11, 12)\) and its effect on
+        %   the last two timestamps can be compensated by a \(delay(-3, 3)\) move.
+        %   The total cost for the two delay moves is 6.
 		  
 	\section{Results and Algorithm : Stamp Edits}\label{3}
 
@@ -552,7 +694,7 @@ Throughout we use the term \textit{valid execution} to distinguish it from fault
 	This lemma also allows us to encode the purely timed alignment problem for $d_t$ as a linear programming problem, as we see below. 
 	
 	\subsection{Casting Alignment as a Linear Programming Problem}\label{lpp}
-	The alignment problem in the stamp-only setting can be viewed as a problem of convex optimization, minimizing the stamp only cost from a fixed observed trace $\sigma$, which by Lemma \ref{manhattan} is $cost(\tau|_i) = \sum_{j = 1}^{i} |\tau_j - \sigma_j|$ over the set of valid timestamp series $\tau$ for the model $N$. 
+	The alignment problem in the stamp-only setting can be viewed as a problem of convex optimization, minimizing the stamp only cost from a fixed observed trace $\sigma$, which by Lemma ~\ref{manhattan} is $cost(\tau|_i) = \sum_{j = 1}^{i} |\tau_j - \sigma_j|$ over the set of valid timestamp series $\tau$ for the model $N$. 
 	What remains is to show that the space of valid runs of the model is a convex set, as shown in \cite{BM82}. 
 	In this paper, the concept of a firing domain is proposed, that is, at each configuration of the time Petri net, the set of valid time intervals in which a transition enabled at that configuration can fire. 
 	Using these firing domains, states are grouped into state classes,which are sets of states with clock functions in the same firing domain, and for bounded time Petri nets there are finitely many such state classes. 
@@ -589,7 +731,8 @@ hence, we have proved that the $d_t$ alignment problem for bounded TPNs can be e
 	
 	%% \begin{remark}
 		
-		By the above theorem we see that the alignment problem for $d_t$ is easily cast as a linear progamming problem, and can be solved by any of the class of ellipsoid or simplex methods for the same. 
+		By the above theorem we see that the alignment problem for $d_t$ is easily cast as a linear progamming problem, and can be solved by any of the class of ellipsoid or simplex methods for the same.
+		We take care to note that this is not an encoding into an Integer Linear Programming problem (ILP), which is much more complex to solve. 
 		 Hence we have a polynomial time upper bound on the complexity of this problem. 
 		However this approach does not take into account the specific form of our problem, and LPP methods can be slow in the worst-case. 
 		
@@ -598,7 +741,12 @@ hence, we have proved that the $d_t$ alignment problem for bounded TPNs can be e
 		
 
 		\subsection{A Direct Algorithm for Sequential Models}\label{mcg}
-		\subsubsection{The $g_i$ functions}
+		In this subsection, we focus on solving the purely timed alignment problem for $d_t$ when the time Petri net in question branches only at places, not transitions. 
+		This is a significant restriction on the model, but the upshot is that it allows us to use a new technique to solve the purely timed alignment problem in quadratic time. 
+		The central object of study here is the cost-graph, an effectively computable and storable function that tells us the optimal cost of partially aligning a trace to the model, as a function of the last timestamp it chooses. 
+		In this subsection we first define and discuss cost-graphs, then see a method for effectively computing them, and computing the overall optimal alignment in the end. 
+
+		\subsubsection{Cost-graph functions ($g_i$)}
 		We are given a process model $N$, an observed trace $\sigma$, and its underlying sequential causal process $CN = (B, E, G)$ with homomorphism $p$ for the untimed run of $\sigma$ on $N$. 
 		We express the cost of aligning a prefix of $\sigma$ to some timing function $\tau$ on the truncation of the sequential causal process up to the $i$th transition, call it $cost$. 
 		$$cost(\tau|_i) = \sum_{j = 1}^{i} |\tau_j - \sigma_j| = |\tau_i - \sigma_i| + cost(\tau|_{i-1})$$
@@ -616,11 +764,11 @@ hence, we have proved that the $d_t$ alignment problem for bounded TPNs can be e
 				\includegraphics[width = 0.48\textwidth]{g12.png}
 				
 				\includegraphics[width = 0.4\textwidth]{g34.png}
-				\caption{Illustration of a run of the algorithm found in Example \ref{stampcomp}.}
+				\caption{Illustration of a run of the algorithm found in Example ~\ref{stampcomp}.}
 			\end{figure}
 		\begin{example}\label{stampcomp}
 			
-			We take a moment to look at an example of the computation of this family of functions on the model $N'$ from example \ref{stamptoy}, as it has a sequential causal process. 
+			We take a moment to look at an example of the computation of this family of functions on the model $N'$ from example ~\ref{stamptoy}, as it has a sequential causal process. 
 			
 				The observed trace is $\sigma = (reg, 1)\cdot (check, 2) \cdot (dec, 4) \cdot (pay, 6)$. 
 			%%
@@ -648,7 +796,7 @@ hence, we have proved that the $d_t$ alignment problem for bounded TPNs can be e
 		\end{example}
 		\subsubsection{The Direct Stamp Algorithm}
 		
-		With this intuition, we present Algorithm \ref{StampAlgo} that progressively calculates the graphs of $g_i$ (represented as lists of segments, each characterised by their slopes and x-projections of endpoints) each round, and claim it is both correct and efficient. 
+		With this intuition, we present Algorithm ~\ref{StampAlgo} that progressively calculates the graphs of $g_i$ (represented as lists of segments, each characterised by their slopes and x-projections of endpoints) each round, and claim it is both correct and efficient. 
 		The algorithm precisely executes the above procedure, where the subfunction \textsc{graphMin} takes $g_i(d)$ and outputs $$\min_{d-d' \in [a,b]} g(d') = \begin{cases}
 			g(d-a) & l + a \leq d < m + a \\
 			g(m) & m+a \leq d \leq m' + b \\
@@ -700,14 +848,14 @@ hence, we have proved that the $d_t$ alignment problem for bounded TPNs can be e
 		\end{figure}
 		
 		\begin{theorem}\label{StampAlgoCorr}
-			Algorithm \ref{StampAlgo} is correct, i.e., it outputs a valid execution
+			Algorithm ~\ref{StampAlgo} is correct, i.e., it outputs a valid execution
 			$\gamma \in \mathcal{L}(N)$ which minimizes the distance $d_t(\gamma, \sigma)$
 			to the trace $\sigma$.
 		\end{theorem}
 		
 		\subsubsection{Correctness of Algorithm 1}
 		
-	Before we prove Theorem \ref{StampAlgoCorr}, we prove a small, relevant lemma. 
+	Before we prove Theorem ~\ref{StampAlgoCorr}, we prove a small, relevant lemma. 
 	
 	\begin{lemma}\label{minpwc}
 		For any convex piecewise affine function $g$, the following function $g'$ is also convex and piecewise affine. 
@@ -738,7 +886,7 @@ hence, we have proved that the $d_t$ alignment problem for bounded TPNs can be e
 	\end{proof}
 	
 
-	We may now prove Theorem \ref{StampAlgoCorr}. 
+	We may now prove Theorem ~\ref{StampAlgoCorr}. 
 	
 		\begin{proof}
 		We are given a process model $N$, an observed trace $\sigma$, and its underlying sequential causal process $CN = (B, E, G)$ with homomorphism $p$ for the untimed run of $\sigma$ on $N$.
@@ -750,7 +898,7 @@ hence, we have proved that the $d_t$ alignment problem for bounded TPNs can be e
 		
 		If we can calculate the family of functions $\forall i \leq n : g_i$ efficiently, then the minimal cost for aligning $\sigma$ to $N$ is simply $$\min_{d} g_n(d)$$
 		
-		Hence to prove the correctness of Theorem \ref{StampAlgoCorr} we only need show that the auxiliary subfunctions called do indeed do their job correctly, as the main function just implements the recursion. 
+		Hence to prove the correctness of Theorem ~\ref{StampAlgoCorr} we only need show that the auxiliary subfunctions called do indeed do their job correctly, as the main function just implements the recursion. 
 		
 		To this end, we first notice that the family of functions $g_i(d)$ are convex and piecewise affine. 
 		This can be seen through induction : 
@@ -758,14 +906,14 @@ hence, we have proved that the $d_t$ alignment problem for bounded TPNs can be e
 		Firstly $g_1(d) = |d - \sigma_1|$ so the base case is covered. 
 		
 		Now suppose $g_{i-1}$ is known to be convex and piecewise affine for some $i \geq 2$. 
-		By Lemma \ref{minpwc} we see that $\min_{d-d' \in [a_i,b_i]} g_{i-1}(d')$  is also convex and piecewise affine, and so is $|d - \sigma_i|$ and both these properties are preserved by addition, so $g_i(d)$ must also be convex and piecewise affine. 
+		By Lemma ~\ref{minpwc} we see that $\min_{d-d' \in [a_i,b_i]} g_{i-1}(d')$  is also convex and piecewise affine, and so is $|d - \sigma_i|$ and both these properties are preserved by addition, so $g_i(d)$ must also be convex and piecewise affine. 
 		
 		Now that we have this result, our representation of the graph as a sequence of line segments, each represented as a triple (left x endpoint, slope, right x endpoint) is justified. 
 		The y value of any graph $g_i$ can be back calculated because we know the value of the cost of the leftmost endpoint, it represents the word obtained by firing every transition at the earliest possible time. 
 		
 		Now subfunction \textsc{graphAddMod} is adding the point $\sigma_i$ if it is inside the domain of the function, and changing the slopes of the segments before $\sigma_i$ by subtracting one, and of those after $\sigma_i$ by adding one, which has the effect of adding the modulus component $|d - \sigma_i|$ to the previous graph. 
 		
-		Subfunction \textsc{graphMin} is even simpler, as Lemma \ref{minpwc} suggests all it does is translate the whole graph forward by $a$, and then translate the strictly increasing portion from $[m', h]$ by an addition $b-a$, adding an extra flat segment of length $b-a$ in between to keep the two portions of the function connected, and so on input $g(d), [a, b]$ it outputs $\min_{d-d' \in [a,b]}{g(d')}$. 
+		Subfunction \textsc{graphMin} is even simpler, as Lemma ~\ref{minpwc} suggests all it does is translate the whole graph forward by $a$, and then translate the strictly increasing portion from $[m', h]$ by an addition $b-a$, adding an extra flat segment of length $b-a$ in between to keep the two portions of the function connected, and so on input $g(d), [a, b]$ it outputs $\min_{d-d' \in [a,b]}{g(d')}$. 
 		
 		Subfunction \textsc{backTrack} takes the minimum cost obtained by the calculation of the $g_n$ function, finds the value of $d$, ie $\gamma_n$ for which the minimum is achieved, and subtracts the cost aligning only the last place incurs, thereby finding the minimum cost for aligning the $n-1$ length prefix. 
 		It then proceeds to do the same iteratively for each prefix, reverse-engineering a trace $\gamma$ for which the total minimum cost of aligning to $\sigma$ is achieved. 
@@ -773,8 +921,8 @@ hence, we have proved that the $d_t$ alignment problem for bounded TPNs can be e
 	\end{proof}
 	
 
-		\begin{remark} Note that the subfunctions \textsc{graphMin} and  \textsc{graphAddMod} both run through the list of segments of the graph once each, and hence are linear in the sizes of their inputs, and Algorithm \ref{StampAlgo} calls each of these subfunctions once for each letter of the observed trace, each time on a graph with size linear in the current prefix.  
-			So the cost calculation section of Algorithm \ref{StampAlgo} has quadratic time complexity in the size of the input. 
+		\begin{remark} Note that the subfunctions \textsc{graphMin} and  \textsc{graphAddMod} both run through the list of segments of the graph once each, and hence are linear in the sizes of their inputs, and Algorithm ~\ref{StampAlgo} calls each of these subfunctions once for each letter of the observed trace, each time on a graph with size linear in the current prefix.  
+			So the cost calculation section of Algorithm ~\ref{StampAlgo} has quadratic time complexity in the size of the input. 
 			
 			The subfunction \textsc{backTrack} runs a binary search on each stored graph in $graphlist$ to find a trace in the language that does indeed give the minimum cost, letter by letter, and so overall takes $O(n \log(n))$ time, keeping the overall time complexity  $O(n^2)$ where $n = |\sigma|$.
 		\end{remark}
@@ -876,7 +1024,9 @@ hence, we have proved that the $d_t$ alignment problem for bounded TPNs can be e
 
 
 		\section{Results and Algorithm : Delay Edits}\label{4}
-		
+		In this section, we focus on the delay-only setting, studying the purely timed alignment problem in depth for $d_{\theta}$. 
+		To this end, we begin by setting up some relevant notation, and prove some basic lemmas, before proceeding to the main result, an efficient and correct algorithm for solving the purely timed alignment problem for $d_{\theta}$ over any extended free choice time Petri net. 
+
 		\subsection{Flows}
 		
 		Delay edits provide a new way of thinking about transformations over time-series, and inspire a new way of viewing timing functions over causal processes. 
@@ -895,7 +1045,7 @@ hence, we have proved that the $d_t$ alignment problem for bounded TPNs can be e
 		\end{definition}
 		
 		\begin{example}\label{wordandflow}
-			Consider again the model $N$ in example \ref{TPN}.
+			Consider again the model $N$ in example ~\ref{TPN}.
 			Say we want to align  $w = (reg, 1)(et, 2)(ct, 5)(dec, 6)(rej, 8)$ to $N$.  
 			Consider the values the clock takes during a faulty ``execution'' $reg \to 1, et \to 1, ct \to 4, dec \to 1, rej \to 2$. This is the flow function. 
 		\end{example}
@@ -917,14 +1067,14 @@ hence, we have proved that the $d_t$ alignment problem for bounded TPNs can be e
 		\end{lemma}	
 				
 	\begin{proof}
-		By noting that delay moves on a trace $\tau$ translate exactly to stamp moves on $f_\tau$, we can deduce by the same argument as Lemma \ref{manhattan} that the distance function $d_\theta$ can be seen to be identical the manhattan distance on flow functions, i.e, the above formulation. 
+		By noting that delay moves on a trace $\tau$ translate exactly to stamp moves on $f_\tau$, we can deduce by the same argument as Lemma ~\ref{manhattan} that the distance function $d_\theta$ can be seen to be identical the manhattan distance on flow functions, i.e, the above formulation. 
 	\end{proof}
 	
 		The flow function is hence a dual representation of timing functions, as if a timing function traditionally labels its transition nodes with timestamps, the flow function labels edges leading up to transitions with the duration since said transition was enabled. This gives us a new way to formulate the alignment problem in terms of minimising distance from the flow vector of $\sigma$. 
 		
 		
 		\begin{example}
-			Let us return to example \ref{wordandflow}. 
+			Let us return to example ~\ref{wordandflow}. 
 			Say we now wish to align  $w$ to $N$. We recall that we calculated its flow function to be $reg \to 1, et \to 1, ct \to 4, dec \to 1, rej \to 2$. 
 			Pick the closest flow values in the model possible, naively, as illustrated bin Figure~{fig:DelayAlgo}.
 			The resulting flow function is  $reg \to 1, et \to 2, ct \to 2, dec \to 2, rej \to 0$ From which we can reconstruct the closest word $u = (reg, 1)(et, 3)(ct, 3)(dec, 5)(rej, 5)$.
@@ -964,7 +1114,7 @@ hence, we have proved that the $d_t$ alignment problem for bounded TPNs can be e
 %	\arrow["{[0,2]}"{description, pos=0.2}, draw=white, from=1-4, to=0]
 \end{tikzcd}
 	}
-\caption{Illustration of Algorithm~\ref{DelayAlgo} for aligning $\sigma = (reg, 1)(et, 2)(ct, 5)(dec, 6)(rej, 8)$ to the model $N$ in example \ref{TPN}.
+\caption{Illustration of Algorithm~\ref{DelayAlgo} for aligning $\sigma = (reg, 1)(et, 2)(ct, 5)(dec, 6)(rej, 8)$ to the model $N$ in example ~\ref{TPN}.
   Every label $a \rightarrow b$ on an action shows the delay \(a\) for the
   faulty ``execution'' guided by \(\sigma\), and the best corrected value \(b\)
   satisfying the time constraints in the model. From these corrected values we reconstruct the
@@ -1017,7 +1167,7 @@ hence, we have proved that the $d_t$ alignment problem for bounded TPNs can be e
 			
 		\end{figure}
 	
-		Hence, we present Algorithm \ref{DelayAlgo}, which minimizes the delay cost at each transition locally, while still overall ensuring membership in the language of the model. The main step in the algorithm is line 12, the rest just ensures validity. 
+		Hence, we present Algorithm ~\ref{DelayAlgo}, which minimizes the delay cost at each transition locally, while still overall ensuring membership in the language of the model. The main step in the algorithm is line 12, the rest just ensures validity. 
 		
 		\begin{theorem}\label{DelayAlgoCorr} Algorithm \ref{DelayAlgo} is correct, i.e., it outputs a valid execution
 			$\gamma \in \mathcal{L}(N)$ which minimizes the distance $d_\theta(\gamma, \sigma)$
