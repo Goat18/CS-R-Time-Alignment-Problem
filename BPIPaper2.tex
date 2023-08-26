@@ -98,11 +98,11 @@ Gif-sur-Yvette, France
 %% \todo{check Neha's affiliation}
 %
 \begin{abstract}
-We study conformance checking for timed models, that is, process models that consider both the sequence of events as well as their timestamps are recorded. 
+We study conformance checking for timed models, that is, process models that consider both the sequence of events that occur, as well as the timestamps at which each event is recorded. 
 Time-aware process mining is a growing subfield of research, and as tools that seek to discover timing related properties in processes develop, so does the need for conformance checking techniques that can tackle time 
 constraints and provide insightful quality measures for time-aware process models. 
 One of the most useful conformance artefacts is the alignment, that is, finding the minimal changes necessary to correct a new observation to conform to a process model.
-In this paper, we solve the timed alignment problem where the metrics used to compare timed processes allows weighted mixed moves,
+In this paper, we solve the timed alignment problem where the metrics used to compare timed processes allow weighted mixed moves,
  i.e. an error on the timestamp of an event may or may not propagate to its successors, and we provide linear time algorithms for a large class of such weighted mixed distances, both for distance computation and alignment on models with sequential causal processes. 
 
 \keywords{Conformance checking \and Alignments \and Timestamps \and Time Petri nets}
@@ -114,20 +114,12 @@ In this paper, we solve the timed alignment problem where the metrics used to co
 	
 %	\subsection{Conformance Checking and Alignments} 
 	
-	%% Process mining studies vast systems through their event logs, and seeks to extract meaningful ways to model the underlying patterns that govern the behaviour of the system in order to better understand it, or predict future behaviour \cite{A16}.
-	%% Once such a process model is obtained, it is natural to ask how one is sure the obtained model is a reasonable approximation of the system's behaviour at all, especially given the lack of explainability in the blackbox approach ML takes to producing solutions.
-	%% This is where conformance checking comes into the picture, as it is the art of judging the performance of a process model by relating modelled and observed behaviour of a process to each other, without depending on the origin of the model \cite{CDSW18}.
 Conformance checking %% \cite{CarmonaDSW18}
 is the task of evaluating the quality of the discovered
-process models w.r.t.\ event logs, i.e. to determine how well a process model
+process models with respect to event logs, i.e. to determine how well a process model
 represents a system observed via the observed traces.
-	%Observed behaviour comes in the form of traces in an event log, as a sequence of events occurring during the functioning of the system, while process models are blueprints that describe what the underlying processes of any given system are supposed to look like.
-	%% We often do not want the system to always precisely generate any and all possible future system behaviour, but neither should they solely accept the event log. 
-	%% What is much more useful is a process model that can, up to some small error factor, approximate any reasonable future system behaviour. 
 	
-A central notion in conformance checking is the notion of an alignment \cite{Adriansyah2014AligningOA}, or, the minimal %% series of corrections needed to transform an observed event trace into the execution of the process model.  
-	%% This is given as a 
-        series of edits, usually insertions or deletions, that transform an observed trace into a process trace.  
+A central notion in conformance checking is the notion of an alignment \cite{Adriansyah2014AligningOA}, or, the minimal series of edits, usually insertions or deletions, that transform an observed trace into a process trace.  
 	Alignments thereby help pinpoint exactly where inevitable deviations from expected behaviour occur, and the more distant the aligning word of a model is to its observed trace, the worse the model is at reflecting real system behaviour. 
 	
 	Assuming the event logs are a list of words over a finite alphabet (the set of possible discrete events), the problem of calculating the alignment has been extensively studied \cite{Adriansyah2014AligningOA} \cite{BCC21}, usually using either Hamming distance or Levenshtein's edit distance. 
@@ -135,23 +127,26 @@ A central notion in conformance checking is the notion of an alignment \cite{Adr
 	%, that is, systems that record the timestamps that show when each event happens, 
 	as by considering events along with their timestamps when mining processes, we can glean information about the minimum delay between two events, the maximum duration the system takes to converge upon a state, or check deadlines, all of which are highly relevant in real world applications \cite{Cheikhrouhou2014TheTP} \cite{Eder1999TimeCI} \cite{inbook}. 
 	
-	Hence, for time-aware conformance checking, one requires a notion of distance over timed words, enabling us to measure how close two timed process traces are. 
-Distances over timed words have been explored before, such as in \cite{ABD18}, \cite{GHJ97} and \cite{CJM14}, which capture differences between the timestamps attached to the same action label but do not link it to a model events. 
+	In order to study alignments for time-aware conformance checking, one requires a notion of distance over timed words, enabling us to measure how close two timed process traces are. 
+Distances over timed words have been explored before, such as in \cite{ABD18}, \cite{GHJ97} and \cite{CJM14}, which capture differences between the timestamps attached to the same action label but do not link it to model events. 
+Here we use and generalise the distances defined in \cite{CR22}. 
 As for process models, there are ways to use existing process mining notation to denote time constraints. BPMN 2.0 comes equipped with \emph{timer events}. 
 	For our purposes, we use time Petri nets, an extension of Petri nets equipped with the ability to express constraints on the duration of time between an action being enabled, and its actual occurrence. 
 	In particular, in this paper, we restrict ourselves to time Petri nets with no branching points. 
 	
 	As time-aware process mining grows popular, new quality measures and conformance checking techniques must be developed that are sensitive to temporal constraints, but so far in the study of alignments, we notice that the process model used is rarely time-aware. 
-	This paper seeks to investigate a class of what we call weighted mixed distance functions, $d_{\alpha}$, generalising the three distances defined in \cite{CR22} and solve the alignment problem for a subset of the same. 
+	This paper seeks to investigate a class of timed distances that we call weighted mixed distance functions or $d_{\alpha}$, parametrised by $\alpha$, the ratio of different costs of types of timed edit moves. 
+	In doing so, we generalise the three distances defined in \cite{CR22} and in this paper solve the alignment problem for a much more general class of metrics. 
+These generalised weighted mixed distances allow users to decide what types of corrections in the observed behaviour should cost more to fix, as sometimes changing an event locally is the more viable option, while in other use cases it might be more likely that shifts in local events necessary cause consequent events to reflect the same shift. 
 	
 %	\subsection{Timed Alignments}
 	
-	\begin{example} Consider a model of composing and sending an email, where the intervals signify allowed durations between the current event and its immediate predecessor, depicted below with input and output places marked with an $i$ and an $o$ : 
+	\begin{example} Consider a model of composing and sending an email, where the intervals signify allowed durations between the current event and its immediate predecessor, depicted below with input and output places marked with an $i$ and an $o$: 
 		
-		\adjustbox{scale = 0.9}{
+		\adjustbox{center, scale = 0.8}{
 			\begin{tikzcd}
-				\eye_i & {\overset{[1,1]}{\fbox{dispatch}}} & \bigcirc & {\overset{[5, 5]}{\fbox{sent}}} & \bigcirc_o \\
-				{\underset{[1, \infty]}{\fbox{draft}}} & {\underset{[0,5]}{\fbox{unsend}}} & {}
+				\eye_i & {\overset{[1,1]}{\fbox{\textrm{dispatch}}}} & \bigcirc & {\overset{[5, 5]}{\fbox{\textrm{sent}}}} & \bigcirc_o \\
+				{\underset{[1, \infty]}{\fbox{\textrm{draft}}}} & {\underset{[0,5]}{\fbox{\textrm{unsend}}}} & {}
 				\arrow[curve={height=-12pt}, from=2-1, to=1-1]
 				\arrow[curve={height=-12pt}, from=1-1, to=2-1]
 				\arrow[from=1-1, to=1-2]
@@ -164,32 +159,33 @@ As for process models, there are ways to use existing process mining notation to
 				\arrow[from=2-2, to=1-1]
 			\end{tikzcd}
 		}
+		
 
-		One process trace is $(draft, 5)(dispatch, 6)(sent, 11)$, which depicts drafting the message in 5 units and then dispatching it, and having it send successfully. An example of an observed trace which does not conform to the process above would be $(draft, 3)(draft, 5)(dispatch, 7)(dispatch, 7)(sent, 12)$. Clearly, there is an extraneous letter here, as the same message cannot be dispatched twice, and the timestamps for dispatch and sending come too late. One possible optimally close process trace for this observation is $(draft, 3)(draft,6)(dispatch, 7)(sent, 12)$, which deletes the extra $dispatch$, and extends the second $draft$ event by a unit, allowing the rest of the trace to thereby be in time. 
+		One process trace is $(\textrm{draft}, 5)(\textrm{dispatch}, 6)(\textrm{sent}, 11)$, which depicts drafting the message in 5 units and then dispatching it, and having it send successfully. An example of an observed trace that does not conform to the process above would be $(\textrm{draft}, 3)(\textrm{draft}, 5)(\textrm{dispatch}, 7)(\textrm{dispatch}, 7)(\textrm{sent}, 12)$. 
+		Clearly, there is an extraneous letter here, as the same message cannot be dispatched twice, and the timestamps for dispatch and sending come too late. 
+		One possible optimally close process trace for this observation is $(\textrm{draft}, 3)(\textrm{draft},6)(\textrm{dispatch}, 7)(\textrm{sent}, 12)$, which deletes the extra dispatch event, and extends the second draft event by a unit, allowing the rest of the trace to thereby be in time. 
 	\end{example}
-	
-	In \cite{CR22} we posed the general alignment problem, which formalised the notion of aligning timed traces to timed process models.  %Time Petri nets offer both a graphical means by which to represent concurrent systems, but their semantics also allow one to express complex time constraints. 
+	Here we recall the general alignment problem, posed in \cite{CR22}, which formalised the notion of aligning timed traces to timed process models.  %Time Petri nets offer both a graphical means by which to represent concurrent systems, but their semantics also allow one to express complex time constraints. 
 	
 	\begin{definition}[The General Alignment Problem]
-		Given a process model $N$ denoted by a Time Petri Net and an observed timed trace $\sigma$ we wish to find a timed word $\gamma \in \mathcal{L}(N)$ such that $d(\sigma, \gamma) = \min_{x \in \mathcal{L}(N)} d(\sigma, x)$ for some distance function $d$ on timed words. 
+		Given a process model $N$ denoted by a time Petri Net and an observed timed trace $\sigma$ we wish to find a timed word $\gamma \in \mathcal{L}(N)$ such that $d(\sigma, \gamma) = \min_{x \in \mathcal{L}(N)} d(\sigma, x)$ for some distance function $d$ on timed words. 
 	\end{definition}
 	
-	In this paper, we restrict ourselves to the study of the alignment problem on a simpler model for time-aware processes, ones that we define as sequential process models. 
-	These lose the ability to express parallel events the way time Petri nets can, but retain the ability to reason about time constraints on the durations between any two consecutive events. 
-	In addition, we focus on a generalisation of the mixed moves distance $d_N$ defined in \cite{CR22}, that is, a distance where edits can either stay local to a given event or propagate partially forward into the event's causal future. 
-	The last assumption we make is that the untimed part of the observed trace conforms to the process, i.e, the only part that requires aligning is the timestamps. 
+	In this paper, we restrict ourselves to the study of the alignment problem to a specific class of time Petri nets, ones that we define as sequential process models. 
+	These lose the ability to express concurrent events the way time Petri nets can, but retain the ability to reason about time constraints on the durations between any two consecutive events. 
+	%In addition, we study a generalisation of the distances over timed words defined in \cite{CR22}, thereby considering distances where for differing costs, edits can either stay local to a given event or propagate partially forward into the event's causal future. 
+	The last assumption we make is that the untimed part of the observed trace conforms to the process, i.e., the only part that requires aligning is the timestamps. 
 	This allows us to focus on the timing aspect of the problem, although once this is solved we can easily adapt existing untimed alignment methods like those described in \cite{Adriansyah2014AligningOA} or \cite{BCC21} to align words with both action labels and timestamps that need editing. 
-	This brings us to the following formal problem : 
+	This brings us to the following formal problem: 
 	
 	\begin{definition}[The Purely Timed Alignment Problem for Sequential Process Models]
-		Given a sequential process model $N$ denoted by a Time Petri Net and an observed timed trace $(w, \sigma)$, such that $w \in Untime(\mathcal{L}(N))$ we wish to find a valid timestamp sequence $\gamma$ such that $d(\sigma, \gamma) = \min_{x \in \mathcal{L}(N)} d(\sigma, x)$.
+		Given a sequential process model $N$ denoted by a time Petri Net and an observed timed trace $(w, \sigma)$, such that $w \in Untime(\mathcal{L}(N))$ we wish to find a valid timestamp sequence $\gamma$ such that $d(\sigma, \gamma) = \min_{x \in \mathcal{L}(N)} d(\sigma, x)$.
 	\end{definition}
 	
-	We informally look at an instance of the purely timed problem below : 
 	
 	\begin{example}
 	Consider the process model $N_1$: 
-
+	
 	\adjustbox{scale = 0.9}{
 		\begin{tikzcd}
 			&{}&& {}&&{} & \\
@@ -207,16 +203,16 @@ As for process models, there are ways to use existing process mining notation to
 	}
 
 Say we observed the trace $(u_1, \sigma_1) = (d, 4)(e, 6)(f, 6)$ that did not fit the model, and we wished to analyse how best to modify them to fit them back into the model. 
-The untimed part is already aligned, and in order to make the timestamps fit we can simply edit the timestamp of $d$ to give the following process trace $(v_1, \gamma_1) = (d, 4)(e, 6)(f, 6)$. 
+The untimed part is already aligned, and in order to make the timestamps fit we can edit the timestamp of $d$ to give $(v_1, \gamma_1) = (d, 3)(e, 6)(f, 6)$. 
 	
 	
 	\end{example}
-	In sections \ref{2} and \ref{3} of this paper we will focus on the problem of computing the distance function $d_1$ and in section \ref{4}, we return to the problem of aligning sequential process models to observed traces. 
+	In sections \ref{2} and \ref{3} of this paper we will focus on the problem of computing a particular case of our mixed distances when costs are equal, $d_1$ and in section \ref{4}, we return to the problem of aligning sequential process models to observed traces. 
 	In subsection \ref{2.5} we also show that computing and aligning $d_{\alpha}$ for $\alpha \geq 2$ can be reduced to the delay only case, which was solved in \cite{CR22}. 
-	We present linear time algorithms for both computing $d_N$ and solving the alignment problem in this setting..  
-	The full proofs for all of the results stated here can be found at \cite{arxivmix}. 
+	We present linear time algorithms for both computing $d_1$ and solving the alignment problem in this setting. 
+	The full proofs for all of the results stated here can be found in \cite{arxivmix}. 
 
-	\section{Preliminaries : Edit Moves for Timed Words}
+	\section{Preliminaries: Edit Moves for Timed Words}
 	\label{2}
 	
 Inspired by Levenshtein's edit distance, we view the definition of these distances as an exercise in cost minimisation over some set of transformations between words. 
@@ -231,54 +227,54 @@ Inspired by Levenshtein's edit distance, we view the definition of these distanc
 		
 		Consider aligning the timed traces $(4, 8, 11)$ and $(3, 7, 10)$. 
 		When trying to compare these firing sequences, we can view it as before, as all of the timestamps firing later than they should, and so editing one by one, getting an aligning cost of 3. 
-		Howver, this cascading chain of errors can  also be fixed if the first event is moved back to fire at 4, and all the relative relationships between it and its successors are preserved. 
-		This views the second and third tasks as being dependent on when the first ends, which makes sense, because they are causally linked in the model. 
-		This means, the switch from the timestamp series $(4, 8, 11)$ to $(3, 7, 10)$ can be viewed as only a cost 1 edit in this sense. 
-		This viewpoint is of practical use, as if a delay at the beginning caused the whole process to occur too late, the important thing to fix is just the delay at the beginning and the rest of the process will now conform to the model as needed. 
+		However, this cascading chain of errors can  also be fixed if the first event is moved back to fire at 3, and all the relative relationships between it and its successors are preserved. 
+		This views the second two tasks as being dependent on when the first ends, which makes sense, because they are causally linked in the model. 
+		Hence the switch from the timestamp series $(4, 8, 11)$ to $(3, 7, 10)$ can be viewed as only a cost 1 edit. 
+		This viewpoint is of practical use, as if a delay at the beginning caused the whole process to occur too late, the important thing to fix is the delay at the beginning and the rest of the process will follow suit. 
 	\end{example}
 	
 	Based on the above example, we naturally arrived at two types of moves in \cite{CR22}.  
 	We define a \textit{stamp move} as a move that translates the timing function only at a point, i.e., that edits a particular element of the timestamp series $\tau$. 
-	Calculating $d_t$ between two traces can be viewed as a cost minimization process in aligning the traces using only stamp moves. 
+	Calculating $d_t$ between two traces can be viewed as a cost minimisation process in aligning the traces using only stamp moves. 
 	
 	\begin{definition}[Stamp Move]
-		Given a timing function $\gamma : \{1, \dots n\} \to \mathbb{R}$, formally, we define this as : 
+		Given a timing function $\gamma: \{1, \dots n\} \to \mathbb{R}$, formally, we define this as: 
 		
-		$\forall x \in \mathbb{R}, i \leq n : stamp(\gamma, x, i) =\gamma' $ where
-		$$\forall i \leq n : \gamma'(j)  = \begin{cases}
+		$\forall x \in \mathbb{R}, i \leq n: stamp(\gamma, x, i) =\gamma' $ where
+		$$\forall i \leq n: \gamma'(j)  = \begin{cases}
 			\gamma(j) + x & j = i \\
 			\gamma(j)& otherwise
 		\end{cases}$$
 		
 	\end{definition}
-	The cost of a stamp move as defined above is equal to the stamp cost per unit times the magnitude of the move, i.e., $c_s \cdot |x|$. 
+	We define the cost of such a stamp move as the stamp cost per unit ($c_s$) times the magnitude of the move, i.e., $c_s \cdot |x|$. 
 
-	The next type of move we describe is the more novel and interesting \textit{delay move}. 
-	By formulating this type of edit move, we seek to leverage the structure of the process model itself, by reflecting the causal relationships between events. 
+	The next type of move we describe is the more interesting \textit{delay move}. 
+	By formulating this type of edit move, we seek to leverage the structure of the process model itself, by reflecting the causal relationships between events, yielding:
 	% A stamp move is purely local, in that when a stamp edit occurs at $e$ its immediate successor events shift their relationship with $e$, thereby ensuring that the change in $e$'s timestamp does not derail the rest of the system. 
 	% On the other hand, any delay move at $e$ will preserve relative relationships in the future, at the cost of shifting the timestamp of every causal descendent of $e$ by the same amount. 
-	This brings us to the following definition : 
+
 	
 	\begin{definition}[Delay Move]
-		Given a timing function $\gamma : \{1, \dots n\} \to \mathbb{R}$, formally, we define this as : 
+		Given a timing function $\gamma: \{1, \dots n\} \to \mathbb{R}$, formally, we define this as: 
 		
-		$\forall x \in \mathbb{R}, i \leq n : stamp(\gamma, x, i) =\gamma' $ where
-		$$\forall i \leq n : \gamma'(j)  = \begin{cases}
+		$\forall x \in \mathbb{R}, i \leq n: delay(\gamma, x, i) =\gamma' $ where
+		$$\forall i \leq n: \gamma'(j)  = \begin{cases}
 			\gamma(j) + x & j \geq  i \\
 			\gamma(j)& otherwise
 		\end{cases}$$
 		
 	\end{definition}
 	
-	The cost of a delay move as above is equal to the delay cost per unit times the magnitude of the move, i.e., $c_d \cdot |x|$. 
-The cost of a sequence of moves is the sum of the costs of the moves. Armed with these definitions, upto scaling, all the distances we can build from these depend upon the ratio of stamp cost to delay cost, giving rise to a general class of weighted mixed distances. 
-	\begin{definition}[Weighted mixed distance : $d_{\alpha}$]
-		Let us assume that we always have $c_d \cdot c_s \neq 0$. Given any two timing functions $\tau_1, \tau_2$ over the same causal process $(CN, p)$ and $\alpha \in \mathbb{R}^+ \cup \{\infty\}$, we define the $\alpha$ weighted mixed distance $d_{\alpha}$ as follows 
+	We define the cost of this delay move as the delay cost per unit ($c_d$) times the magnitude of the move, i.e., $c_d \cdot |x|$. 
+The cost of a sequence of moves is the sum of the costs of the moves. Armed with these definitions, upto scaling, all the distances we can build from these depend solely upon the ratio of stamp cost to delay cost, giving: 
+	\begin{definition}[Weighted mixed distance: $d_{\alpha}$]
+		Given  $c_s, c_d \in \mathbb{R}^+ \cup \{\infty\}$ and assuming that we always have $c_d \cdot c_s \neq 0$, for any two timing functions $\tau_1, \tau_2$ over the same causal process $(CN, p)$ and $\alpha \in \mathbb{R}^+ \cup \{\infty\}$, we define the $\alpha$ weighted mixed distance $d_{\alpha}$ as follows 
 		\small	$$d_{\alpha}(\tau_1, \tau_2) = \min \{cost(m) | \frac{c_s}{c_d} = \alpha \textrm{ and } {m \in (Stamp \cup Delay)^*}, {m(\tau_1) = \tau_2}\}$$
 		
 	\end{definition}
 	
-	From this definition, we can recover the stamp only ($d_t$), delay only ($d_{\theta}$) and evenly mixed ($d_N$) distances defined in \cite{CR22} as natural special cases:
+	From this definition, we can recover the stamp only ($d_t$), delay only ($d_{\theta}$) and evenly mixed ($d_N$) distances defined in \cite{CR22} as natural special cases, where we discount a type of move from the possible move set conceptually by setting its cost to $\infty$:
 		
 	$d_0(\tau_1, \tau_2) = d_t(\tau_1, \tau_2) = \min \{cost(m) | {m \in Stamp^*}, {m(\tau_1) = \tau_2}\}$
 
@@ -291,16 +287,16 @@ The cost of a sequence of moves is the sum of the costs of the moves. Armed with
 	\begin{example}\label{stamptoy}
 		Let us try to align the observed trace $(0, 3, 4)$ to the process trace $(0.5, 2.5, 3.5)$
 		
-		The best $d_0$ alignment has cost 1.5, with stamp moves editing each position. 
+		The best $d_0$ alignment has cost 1.5, with stamp moves editing each position, so $0.5$ cost for each of three edits. 
 		
-		The best $d_{\infty}$ alignment is cost 1.5, as it requires a 0.5 delay edit at the first place to push the 0 forward to a 0.5, and then another 1 delay at the second position to pull the rest of the trace from $(3,4)$ back to $(2,3)$. 
+		The best $d_{\infty}$ alignment is cost 1.5, as it requires a 0.5 delay edit at the first place to push the 0 forward to a 0.5, and then another -1 delay at the second position to pull the rest of the trace back from $(3.5,4.5)$ back to $(2.5,3.5)$. 
 		
-		Now we consider $d_1$. 
-		In sequential models, the cascading effect of a delay is always to the right, so assuming moves commute, we can proceed left to right. 
-		Our first move will have to incur a minimum cost of $0.5$ as we try to align $(0,3,4)$ to our process trace at the first position.
-		If any part of this initial move was a delay, we would push the second component even further away from $2.5$ than it already was, and if any of the delay were negative, then it seems to counter the effect of the stamp, so let us say the first move was pure stamp. 
-		Moving on to move two, which will again incur a minimum cost of $0.5$. 
-		If the stamp part of this move were positive, it would leave the third component further off from the goal $3.5$ than if all of the move was delay, and so a pure delay move seems best here. 
+		Now, $d_1$. 
+		In sequential models, the cascading effect of a delay is not affected by the order of moves, we can align timestamps left to right. 
+		Our first move must incur a minimum cost of $0.5$ as we try to align $(0,3,4)$ to our process trace at the first position.
+		If any part of this initial move was a delay, we would push the second component even further away from $2.5$ than it already was, and if any of the delay were negative, then it seems to counter the effect of the stamp part, so we should only use stamp here. 
+		For move two, we again incur a minimum cost of $0.5$. 
+		If the stamp part of this move were positive, it would leave the third component further off from the goal $3.5$ than if the whole move used delay, and so a pure delay move seems best. 
 		This gives a cost 1 alignment, $(0.5, 0, 1)(0, 0.5, 2)$. 
 		All the intuitive reasoning given above will be justified in subsequent sections, and in fact distance 1 is the best we can do here even in the mixed case. 
 	\end{example}
@@ -309,27 +305,27 @@ The cost of a sequence of moves is the sum of the costs of the moves. Armed with
 \subsection{Notation and Setup}
 	Given the nonconstructive nature of the definition of $d_{\alpha}$, it is not clear how one can efficiently calculate the distance between two fixed timed traces, as a minimal cost sequence of moves is not obvious. 
 	%As before, we first study the problem over sequential causal processes, as these make analysing the effects of moves significantly simpler. 
-	Before we propose an algorithm that does calculate minimal cost for sequential timed traces, we first define a few properties that seem to characterise classes of well formed minimal cost runs, and then prove that these properties both improve cost, and are satisfied solely by the run calculated by the algorithm we provide. 
+	Before we propose an algorithm that does calculate the minimal cost for sequential timed traces, we first define a few properties that seem to characterise classes of well formed minimal cost runs, and then prove that these properties both improve the cost, and are satisfied solely by the run calculated by the algorithm we provide. 
 	We start with some convenient notation for a common combination of the previously defined moves. 
 	
 	\begin{definition}[Mixed Move]
-		We define \textit{mixed moves}, that denote doing a stamp move and a delay move at the same position in the word. 
-		We define their effect as : $(s, d, e)(\gamma) = stamp(delay(\gamma, d, e), s, e)$
+		We define \textit{mixed moves}, which denote doing a stamp move and a delay move at the same position in the word. 
+		We define their effect as: $(s, d, e)(\gamma) = stamp(delay(\gamma, d, e), s, e)$
 		Let the set of all mixed moves be $Moves$. 
 	\end{definition}
 	
-	Given any move $m \in Moves$ we define the function $cost_{\alpha} : Moves \to \mathbb{R}^+$ that returns the cost of the move.  
+	Given any move $m \in Moves$ we define the function $cost_{\alpha}: Moves \to \mathbb{R}^+$ that returns the cost of the move.  
 	The cost of a mixed move $(s, d, e)$ is the sum of the cost of the stamp and delay moves it's made up of, $c_s\cdot|s| + c_d \cdot|d|$.
 	By default by $cost((s, d, e))$ we are refering to the evenly mixed cost $cost_1((s, d, e)) = |s| + |d|$. 
 We say a sequence of moves $m_1m_2\dots m_n = m \in Moves^*$ \textit{aligns} $\tau_1$ to $\tau_2$ if $m(\tau_1) = m_n(\dots (m_2(m_1(\tau_1))\dots) = \tau_2$. 
 	
  Now, we look at a new way to represent timing functions. 
  %With delay edits, which constitute a new way of thinking about how a time-series can be transformed, comes a new perspective with which we can view timing functions over causal processes. 
-	There is of course the standard definition, $\tau : \{1, \dots n\} \to \mathbb{R}^+$ that assigns to each event a timestamp that records exactly when the event occurs. 
-	Instead, thinking along the lines of delays and durations between events occuring, we define a way by which to view a timed word not in terms of its absolute timestamps, but by the delays between relevant timestamps. 
+	There is of course the standard definition, $\tau: \{1, \dots n\} \to \mathbb{R}^+$ that assigns to each event a timestamp that records exactly when the event occurs. 
+	Instead, thinking along the lines of delays and durations between events occurring, we define a way by which to view a timed word not in terms of its absolute timestamps, but by the delays between relevant timestamps. 
 	
 	\begin{definition}[Flow Function]
-		Given a (not necessarily valid) time sequence,  $\tau : \{1, \dots n\} \to \mathbb{R}^+$, we first define the \textit{flow} function of $\tau$, $f_{\tau} : \{1, \dots n\} \to \mathbb{R}^+$ such that 
+		Given a (not necessarily valid) time sequence,  $\tau: \{1, \dots n\} \to \mathbb{R}^+$, we first define the \textit{flow} function of $\tau$, $f_{\tau}: \{1, \dots n\} \to \mathbb{R}^+$ such that 
 		$$f_{\tau}(i) = \begin{cases} 
 			\tau(i) & i = 1\\
 			\tau(i) - \tau(i-1) &i > 1\\
@@ -347,9 +343,9 @@ We say a sequence of moves $m_1m_2\dots m_n = m \in Moves^*$ \textit{aligns} $\t
 	As defined, $f_\tau$ produces exactly the time durations that the guards of each transition in the model checks, i.e. the clock function values during the run.
 	Hence, we see that if a word is in the language of the model, then its $f$ function maps events to values that lie within the constraint that the event's corresponding transition demands. 
 	%This condition is unfortunately not sufficient though, due to urgency concerns, but it is quite close to the exact condition necessary for a word to be in the language of a time Petri net. 
-	Also note that given the underlying causal process and the resulting $f_\tau$, we can reconstruct $\tau$ quite straightforwardly as $\forall i \leq n : \tau(i) = \sum_{j \leq i} f_\tau(j)$. 
+	Also note that given the underlying causal process and the resulting $f_\tau$, we can reconstruct $\tau$ quite straightforwardly as $\forall i \leq n: \tau(i) = \sum_{j \leq i} f_\tau(j)$. 
 	
-	The following lemma characterises how moves look in flow function notation, highlight how they are both relatively "local" in effect now :
+	The following lemma characterises how moves look in flow function notation, highlighting how they are both relatively "local" in effect now:
 	
 	\begin{lemma}\label{FlowFuncTrans}
 		Given a flow function $f_{\tau_1}$ and a mixed move $(s, d, i)$, the consequence of performing the move is the flow function defined below, where $\tau_2 = (s, d, i)\tau_1$. 
@@ -373,14 +369,14 @@ We say a sequence of moves $m_1m_2\dots m_n = m \in Moves^*$ \textit{aligns} $\t
 	%The first property captures the fact that we can order our moves in a sequence that goes from left to right or right to left along the positions in the sequential trace. 
 	
 	\begin{definition}[Chronology]
-		A sequence of moves aligning $\gamma$ to $\sigma$ is said to be \textit{chronological} if for all positions $i < j \leq n = |\gamma|$, all the moves at position $i$ are performed before any move at position $j$ and exactly one mixed move (where one or both components may be zero) takes place at each position, that is $\rho \in Moves^*$ is chronological iff  $\forall i \in \{1, 2, \dots n\},  \exists s_i, d_i \in \mathbb{R} : \rho = (s_1, d_1, 1)(s_2, d_2, 2)\dots (s_n, d_n, n) $. 
-		Such that $\forall i \in \{1, 2, \dots n\} : \sigma_i = \gamma_i + s_i + \sum_{j=1}^{i} d_j$. 
+		A sequence of moves aligning $\gamma$ to $\sigma$ is said to be \textit{chronological} if for all positions $i < j \leq n = |\gamma|$, all the moves at position $i$ are performed before any move at position $j$ and exactly one mixed move (where one or both components may be zero) takes place at each position, that is $\rho \in Moves^*$ is chronological iff  $\forall i \in \{1, 2, \dots n\},  \exists s_i, d_i \in \mathbb{R}: \rho = (s_1, d_1, 1)(s_2, d_2, 2)\dots (s_n, d_n, n) $. 
+		Such that $\forall i \in \{1, 2, \dots n\}: \sigma_i = \gamma_i + s_i + \sum_{j=1}^{i} d_j$. 
 		
 	\end{definition}
 	
 	\begin{definition}[Reverse Chronology]
-		A sequence of moves aligning $\gamma$ to $\sigma$ is said to be \textit{reverse chronological} if for all positions $i < j \leq n = |\gamma|$, all the moves at position $i$ are performed after any move at position $j$ and exactly one mixed move (where one or both components may be zero) takes place at each position, that is $\rho \in Moves^*$ is chronological iff  $\forall i \in \{1, 2, \dots n\},  \exists s_i, d_i \in \mathbb{R} :  \rho = (s_n, d_n, n)(s_{n-1}, d_{n-1}, n-1)\dots (s_1, d_1, 1) $. 
-		Such that $\forall i \in \{1, 2, \dots n\} : \sigma_i = \gamma_i + s_i + \sum_{j=1}^{i} d_j$. 
+		A sequence of moves aligning $\gamma$ to $\sigma$ is said to be \textit{reverse chronological} if for all positions $i < j \leq n = |\gamma|$, all the moves at position $i$ are performed after any move at position $j$ and exactly one mixed move (where one or both components may be zero) takes place at each position, that is $\rho \in Moves^*$ is chronological iff  $\forall i \in \{1, 2, \dots n\},  \exists s_i, d_i \in \mathbb{R}:  \rho = (s_n, d_n, n)(s_{n-1}, d_{n-1}, n-1)\dots (s_1, d_1, 1) $. 
+		Such that $\forall i \in \{1, 2, \dots n\}: \sigma_i = \gamma_i + s_i + \sum_{j=1}^{i} d_j$. 
 	\end{definition}
 	
 	% Clearly, all chronological sequences have a one to one correspondence with reverse chronological sequences with exactly the same cost, the map between the two being simply reversing the sequence of moves. 
@@ -391,18 +387,18 @@ We say a sequence of moves $m_1m_2\dots m_n = m \in Moves^*$ \textit{aligns} $\t
 	% But the upshot is, in a reverse chronological sequence of moves, the prefix of the sequence that stops at the ith event, combined with the stamp component of the mixed move at position (i-1), completely aligns the flow function for the suffix starting at position i. 
 	% Reverse chronological runs do not have an equivalent partial completion property in the timing function setting, but due to how local the moves end up being in the flow function setting, we obtain it here. 
 	
-	% \textbf{Note : } For simplicity, we always assume the move played on the last position of a trace henceforth is a pure delay. Even if part of it were stamp, it would not affect the flow or timing representation any differently, so this is safe to assume. 
+	% \textbf{Note: } For simplicity, we always assume the move played on the last position of a trace henceforth is a pure delay. Even if part of it were stamp, it would not affect the flow or timing representation any differently, so this is safe to assume. 
 	
 	\begin{example}
 		
-		Given $\gamma = (1, 1, 2, 4, 5)$ and $\sigma = (1, 2, 2.5, 4.2, 5)$, an example of a cost 5.3 non-chronological sequence of evenly mixed moves aligning them is as shown : 
+		Given $\gamma = (1, 1, 2, 4, 5)$ and $\sigma = (1, 2, 2.5, 4.2, 5)$, an example of a cost 5.3 non-chronological sequence of evenly mixed moves aligning them is as shown: 
 		 $\gamma \xmapsto{(-1, 0, 1)} (0, 1, 2, 4, 5) \xmapsto{(0, 2, 1)} (2, 3, 4, 6, 7) \xmapsto{(0, -1, 1)} (1, 2, 3, 5, 6) \xmapsto{(0.3, -0.8, 3)} (1, 2, 2.5, 4.2, 5.2) \xmapsto{(0, -0.2, 5)} \sigma$
 
-		There is an improved cost 3.3 reverse chronological sequence of moves obtained by reordering the above sequence and combining moves at the same position : $\gamma \xmapsto{(0, -0.2, 5)} (1, 1, 2, 4, 4.8) \xmapsto{(0, 0, 4)} (1, 1, 2, 4, 4.8) \xmapsto{(0.3, -0.8, 3)}(1, 1, 1.5, 3.2, 4)\xmapsto{(0, 0, 2)} (1, 1, 1.5, 3.2, 4)\xmapsto{(-1, 1, 1)} \sigma $. 
+		There is an improved cost 3.3 reverse chronological sequence of moves obtained by reordering the above sequence and combining moves at the same position: $\gamma \xmapsto{(0, -0.2, 5)} (1, 1, 2, 4, 4.8) \xmapsto{(0, 0, 4)} (1, 1, 2, 4, 4.8) \xmapsto{(0.3, -0.8, 3)}(1, 1, 1.5, 3.2, 4)\xmapsto{(0, 0, 2)} (1, 1, 1.5, 3.2, 4)\xmapsto{(-1, 1, 1)} \sigma $. 
 		
 	\end{example}
 	
-	% As the above example suggests, we claim : 
+	% As the above example suggests, we claim: 
 	
 	% \begin{lemma}\label{linescommute} For all $\alpha \in \mathbb{R}^+ \cup \{\infty\}$ there is a minimal cost sequence of $\alpha$ weighted mixed moves aligning any two sequential timed traces that is chronological/reverse chronological. 
 	% \end{lemma}
@@ -420,18 +416,18 @@ We say a sequence of moves $m_1m_2\dots m_n = m \in Moves^*$ \textit{aligns} $\t
 	
 	\begin{example}The previous example (that was a cost 3.3 evenly mixed run, recall) can hence be further improved to become a reverse chronological co-operative cost 1.7 run as follows (on flow vector): 
 		%$$\gamma \xmapsto{(0, 0, 1)} (1, 1, 2, 4, 5) \xmapsto{(1, 0, 2)} (1, 2, 2, 4, 5) \xmapsto{(0.5, 0, 3)} (1, 2, 2.5, 4, 5) \xmapsto{(0.2, 0, 4)} (1, 2, 2.5, 4.2, 5) \xmapsto{(0, 0, 5)} \sigma $$
-$f_\gamma \xmapsto{(0, 0, 5)} (1, 0, 1, 2, 1) \xmapsto{(0.2, 0, 4)} (1, 0, 1, 2.2, 0.8) \xmapsto{(0.5, 0, 3)}(1, 0, 1.5, 1.7, 0.8) \xmapsto{(1, 0, 2)} (1, 1, 1.5, 1.7, 0.8) \xmapsto{(0, 0, 1)} f_\sigma $. 
+$f_\gamma \xmapsto{(0, 0, 5)} (1, 0, 1, 2, 1) \xmapsto{(0.2, 0, 4)} (1, 0, 1, 2.2, 0.8) \xmapsto{(0.5, 0, 3)}(1, 0, 1.5, 1.7, 0.8) \xmapsto{(1, 0, 2)} (1, 1, 0.5, 1.7, 0.8) \xmapsto{(0, 0, 1)} f_\sigma $. 
 		
 	\end{example}
 	
-	Once again, one can always convert a an evenly mixed non-cooperative run into an equivalent cooperative one with cheaper cost, and in fact this holds for a large number $d_{\alpha}$ as well. 
+	Once again, one can always convert an evenly mixed non-cooperative run into an equivalent cooperative one with cheaper cost, and in fact this holds for a large number $d_{\alpha}$ as well. 
 	
 	% \begin{lemma}\label{linescoop} For all $\alpha \geq 2 \vee \alpha = 1$, there is a cooperative minimal cost chronological (or reverse chronological) sequence of $\alpha$ weighted mixed moves aligning any two sequential timed traces. 
 	% \end{lemma}
 	
 	For the rest of this subsection assume we are always aligning using evenly mixed distance $d_1$. 
 	% Similarly we have \emph{cross co-operation} which states that a stamp move $s$ at a location should ideally have opposite sign to the delay $d$ at the next position, as its contribution to the next flow component is going to be $-s$. 
-	% This leads us to the following definition : 
+	% This leads us to the following definition: 
 	
 	% \begin{definition}[Cross Co-operation]
 	% 	A reverse chronological run ${m = (0, d_n, n) \dots (s_1, d_1, 1)}$ is said to be cross co-operative if no stamp component has the same sign as the delay component of the move played at the next position, that is, $\forall i < n : s_i \cdot d_{i+1} \leq 0$. 
@@ -474,8 +470,8 @@ $f_\gamma \xmapsto{(0, 0, 5)} (1, 0, 1, 2, 1) \xmapsto{(0.2, 0, 4)} (1, 0, 1, 2.
 	%Note that any stable run is also cross co-operative. 
 	
 		\begin{example}
-		The earlier cost 1.7 example can be even further improved to be stable and have cost 1.5, thereby giving us the following :
-	$f_\gamma \xmapsto{(0, -0.2, 5)} (1, 0, 1, 2, 0.8) \xmapsto{(0, -0.3, 4)} (1, 0, 1, 1.7, 0.8) \xmapsto{(0, 0, 3)} (1, 0, 1, 1.7, 0.8) \xmapsto{(0.5, 0.5, 2)} (1, 1, 1.5, 1.7, 0.8) \xmapsto{(0, 0, 1)} \sigma $
+		The earlier cost 1.7 example can be even further improved to be stable and have cost 1.5, thereby giving us the following:
+	$f_\gamma \xmapsto{(0, -0.2, 5)} (1, 0, 1, 2, 0.8) \xmapsto{(0, -0.3, 4)} (1, 0, 1, 1.7, 0.8) \xmapsto{(0, 0, 3)} (1, 0, 1, 1.7, 0.8) \xmapsto{(0.5, 0.5, 2)} (1, 1, 0.5, 1.7, 0.8) \xmapsto{(0, 0, 1)} \sigma $
 		
 	\end{example}
 	
@@ -500,8 +496,8 @@ $f_\gamma \xmapsto{(0, 0, 5)} (1, 0, 1, 2, 1) \xmapsto{(0.2, 0, 4)} (1, 0, 1, 2.
 			\caption{$d_1$ Computation Algorithm}
 			\label{MixBackwardsAlgo}
 			\begin{algorithmic}
-				\State \textbf{Input : }  $\sigma$, $\gamma$
-				\State \textbf{Output : }  $d_1(\gamma, \sigma)$
+				\State \textbf{Input: }  $\sigma$, $\gamma$
+				\State \textbf{Output: }  $d_1(\gamma, \sigma)$
 				\State $cost \gets 0$
 				\State $i \gets n$
 				\While {$i > 1$}
@@ -548,8 +544,8 @@ $f_\gamma \xmapsto{(0, 0, 5)} (1, 0, 1, 2, 1) \xmapsto{(0.2, 0, 4)} (1, 0, 1, 2.
 
 \subsection{Computing and aligning $d_{\alpha}$ for $\alpha \geq 2$}\label{2.5}
 A surprising fact is that for this entire class of distances, we get our distance computation and alignment algorithms almost for free. 
-Recall that by Lemmas \ref{linescommute} and \ref{linescoop}, whenever the cost of the stamp move is at least twice as much as the cost of the delay move, any sequence of $\alpha$ weighted mixed moves can be converted to one with lesser or equal cost. 
-In fact, in this case, any sequence of such moves can be converted to a delay-only sequence of moves with the cost improving at most. Hence, assuming $c_d = 1$ and $c_s = \alpha$ (which up to scaling changes nothing), we have the following lemma : 
+Since both chronology and co-operation both improve cost when computing $d_{\alpha}$, whenever the cost of the stamp move is at least twice as much as the cost of the delay move, any sequence of $\alpha$ weighted mixed moves can be converted to one with lesser or equal cost. 
+In fact, in this case, any sequence of such moves can be converted to a delay-only sequence of moves with the cost improving at most. Hence, assuming $c_d = 1$ and $c_s = \alpha$ (which up to scaling changes nothing), we have the following lemma: 
 
 \begin{lemma}\label{doubleisdelay} When $\alpha \geq 2$ for any sequence of $\alpha$ weighted mixed moves aligning any two sequential timed traces, there is a sequence of delay only moves that aligns the same two traces, and has at most equal cost. 
 	
@@ -561,18 +557,33 @@ As a consequence of this lemma, both distance computation and alignment for this
 
 \begin{definition}[Sequential Process Models]
 We define a sequential process model $N$ of length $n$ to be a sequence of intervals $\{[a_i, b_i] | a_i \in \mathbb{R}, b_i \in \mathbb{R} \cup \{\infty\}, i \leq n\}$. 
-In addition, we define its language $\mathcal{L}(N)$ as follows : $\{(t_1, \dots t_n) | \forall i \leq n : t_i - t_{i-1} \in [a_i, b_i]\}$ where $t_0 = 0$. 
+In addition, we define its language $\mathcal{L}(N)$ as follows: $\{(t_1, \dots t_n) | \forall i \leq n: t_i - t_{i-1} \in [a_i, b_i]\}$ where $t_0 = 0$. 
 
-We depict them as follows : $\eye \longrightarrow \underset{[a_1, b_1]}{\square} \longrightarrow \bigcirc \longrightarrow \underset{[a_2,b_2]}{\square}  \dots  \underset{[a_n, b_n]}{\square} \longrightarrow \bigcirc$. 
+We depict them as follows: $\eye \longrightarrow \underset{[a_1, b_1]}{\square} \longrightarrow \bigcirc \longrightarrow \underset{[a_2,b_2]}{\square}  \dots  \underset{[a_n, b_n]}{\square} \longrightarrow \bigcirc$. 
 \end{definition}
 
+\begin{figure}[!t]
+	\removelatexerror
+	\begin{algorithm}[H]
+	\caption{$d_1$ Alignment Algorithm}
+	\label{MixAlignAlgo}
+	\begin{algorithmic}
+		\State \textbf{Input: }  $\sigma$, $N$
+		\State \textbf{Output: }  $\gamma = \argmin_{x \in \mathcal{L}(N)} d_1(x, \sigma)$
+		\For{$i <\in \{1, \dots, n\}$}
+		\State $(a,b) \gets (Eft(t_i), Lft(t_i))$
+		\State $f_{\gamma}(i)= \argmin_{x \in [a, b]} {|x - f_\sigma(i)|} $
+		\State $i + + $
+		\EndFor
+	\end{algorithmic}
+	\end{algorithm}
+	\end{figure}
+	
 \begin{example}\label{mixedmoveex}
 Consider the below underlying sequential process model, and a new observed trace $\sigma = (3, 4, 5) \not \in \mathcal{L}(N)$. 
 $$\eye \longrightarrow \underset{[0,1]}{\square} \longrightarrow \bigcirc \longrightarrow \underset{[2,2]}{\square} \longrightarrow \bigcirc \longrightarrow \underset{[1,1]}{\square} \longrightarrow \bigcirc$$
 The best $d_0$ alignment for the example in the diagram below is $\gamma = (1,3,4)$ with minimum cost $d_0(\sigma, \gamma) = 4$. 
-
 The best $d_{\infty}$ alignment for the example in the diagram below is also $\gamma = (1,3,4)$, but this time with minimum cost $d_{\infty}(\sigma, \gamma) = 3$, evidenced by the move sequence $(delay(-2, 1)delay(+1, 2))$. 
-
 And lastly, the best $d_1$ alignment for the example in the diagram below is also $\gamma = (1,3,4)$, the sequence of moves being simply one stamp and one delay move at the start, $m = stamp(-1, 1)delay(-1, 1)$, and now with minimum cost $d_1(\sigma, \gamma) = 2 < \min \{d_0(\sigma, \gamma), d_\infty(\sigma, \gamma)\}$. 
 \end{example}
 
@@ -581,26 +592,10 @@ And lastly, the best $d_1$ alignment for the example in the diagram below is als
 
 This of course means that we have a linear time algorithm for aligning sequential processes under $d_1$, by locally choosing the best flow vector as shown in Algorithm \ref{MixAlignAlgo}. This, incidentally, is exactly the aligning word obtained by the algorithm developed for delay-only distance, $d_\theta$ in \cite{CR22}.  
 
-\begin{figure}[!t]
-\removelatexerror
-\begin{algorithm}[H]
-\caption{$d_1$ Alignment Algorithm}
-\label{MixAlignAlgo}
-\begin{algorithmic}
-	\State \textbf{Input : }  $\sigma$, $N$
-	\State \textbf{Output : }  $\gamma = \argmin_{x \in \mathcal{L}(N)} d_1(x, \sigma)$
-	\For{$i <\in \{1, \dots, n\}$}
-	\State $(a,b) \gets (Eft(t_i), Lft(t_i))$
-	\State $f_{\gamma}(i)= \argmin_{x \in [a, b]} {|x - f_\sigma(i)|} $
-	\State $i + + $
-	\EndFor
-\end{algorithmic}
-\end{algorithm}
-\end{figure}
 
 \section{Implementation}
 
-We have implemented the $d_1$ computation algorithm and the $d_1$ alignment algorithm for sequential process models in python, available at \url{https://github.com/NehaRino/TimedAlignments}. Both algorithms have linear time complexity, and so, they have efficient running times, as evidenced by the table below :\\
+We have implemented the $d_1$ computation algorithm and the $d_1$ alignment algorithm for sequential process models in python, available at \url{https://github.com/NehaRino/TimedAlignments}. Both algorithms have linear time complexity, and so, they have efficient running times, as evidenced by the table below:\\
 \centerline{
 \begin{tabular}{|c| c|}
 	\hline
@@ -622,8 +617,8 @@ In this paper, we studied the alignment problem for timed processes using the we
  We also proved that for $\alpha \geq 2$, this reduces to the already solved delay-only case, which has a linear algorithm.
  As far as we know, this (along with \cite{CR22}) is the first step in conformance checking for time-aware process mining, 
 and much further work can be inspired from this point. 
-Firstly, we have only solved the mixed distance alignment problem for a subset of all possible mixed distances $d_{\alpha}$, and that too only over sequential process models, which are rather structurally restricted and it would be interesting to see how to broaden the scope of these methods to larger classes of process models, such as branching process models or even general time Petri nets. 
-Secondly, further investigation in the general timed alignment problem is necessary, as our proposed approach here is rather rudimentary and can certainly be improved. 
+Firstly, we have only solved the mixed distance alignment problem for a subset of all possible mixed distances $d_{\alpha}$, and that too only over sequential process models, which are rather structurally restricted. As seen in this paper, even over sequential process models the problem is subtle, and while considering models that branch outwards might retain our method's efficiency, we suspect models with synchronisation between different events in particular would be tougher to tackle. 
+It is essential to develop practical techniques for more complex classes of models, which will provide the foundation needed to consider extensions of time Petri nets with data or resources.  Secondly, further investigation in the general timed alignment problem is necessary, as our proposed approach here is rather rudimentary and can certainly be improved. 
 Lastly, there are a number of other conformance artefacts that can be set and studied in the timed setting, such as anti-alignments \cite{CBC21}, and it would be very interesting to better develop all such conformance checking methods in a manner that accounts for timed process models.
 
 
