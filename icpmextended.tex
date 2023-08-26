@@ -524,7 +524,8 @@ Throughout we use the term \textit{valid execution} to distinguish it from fault
 		\end{figure} 
 
 
-		If $ct$ were shifted to fire at 3 instead, the whole run would execute without a hitch. This sort of local, almost typographical error can often happen in systems, and it is the simplest kind to fix.  
+		If $ct$ were shifted to fire at 3 instead, the whole run would execute without a hitch. (Note that we allow timestamps to be out of order when representing timed words, so long as the overall partial order imposed by the process model is preserved).
+		This sort of local, almost typographical error can often happen in systems, and it is the simplest kind to fix.  
 		
 		There is, however, another way to look at it.
 		A closest valid timing function would try to preserve the positions of $reg$ and  $ec$ but the moment it tries to fire $ct$, $\sigma$ runs early. 
