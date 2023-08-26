@@ -190,7 +190,7 @@ The function $SI : T \rightarrow \mathbb{Q}^+ \times (\mathbb{Q}^+ \cup \{\infty
     The set of all enabled transitions at a marking $M$ is denoted by \textit{Enabled(M)}. 
 
 
-    A \textit{state} of a TPN $N = (P, T, F, SI, \Sigma, \lambda, M_0, M_f)$ is a pair $S = (M, I)$, where $M$ is a marking of $N$ and $I : Enabled(M) \rightarrow \mathbb{R^+}$ is called the \textit{clock function}. Every enabled transition hence has an implicit clock, measuring how long it has been since its most recent enabling. The initial state is $(M_0, \mathbf{0})$, where $\mathbf{0} $ is the zero function. 
+    A \textit{state} of a TPN $N = (P, T, F, SI, \Sigma, \lambda, M_0, M_f)$ is a pair $S = (M, I)$, where $M$ is a marking of $N$ and $I : Enabled(M) \rightarrow \mathbb{R}^+$ is called the \textit{clock function}. Every enabled transition hence has an implicit clock, measuring how long it has been since its most recent enabling. The initial state is $(M_0, \mathbf{0})$, where $\mathbf{0} $ is the zero function. 
     
     A transition $t$ can fire from state $S = (M, I)$ after a delay of $\theta \in \mathbb{R}^+$ post enabling 
     if $t$ is enabled at $M$, and $I(t) + \theta \in [Eft(t), Lft(t)]$ and for
@@ -232,9 +232,9 @@ Throughout we use the term \textit{valid execution} to distinguish it from fault
         \adjustbox{scale = 0.6}{
             
             \begin{tikzcd}
-                & {} & \Huge\bigcirc & {\fbox{ec}} & \Huge\bigcirc & {} && {\fbox{pay}} \\
-                \Huge\bigcirc & {\fbox{reg}} && {\fbox{et}} && {\fbox{dec}} & \Huge\bigcirc & {} & \Huge\bigcirc \\
-                && \Huge\bigcirc & {\fbox{{ct}}} & \Huge\bigcirc &&& {\fbox{rej}}
+                & {} & \Huge\bigcirc & {\fbox{\strut ec}} & \Huge\bigcirc & {} && {\fbox{\strut pay}} \\
+                \Huge\bigcirc & {\fbox{\strut reg}} && {\fbox{\strut et}} && {\fbox{\strut dec}} & \Huge\bigcirc & {} & \Huge\bigcirc \\
+                && \Huge\bigcirc & {\fbox{\strut{ct}}} & \Huge\bigcirc &&& {\fbox{\strut rej}}
                 \arrow["{[0, 1]}"{description, pos=0.2}, shift left=3, draw=white, from=2-2, to=1-2]
                 \arrow[""{name=0, anchor=center, inner sep=0}, "{[2,2]}"{description, pos=0.1}, draw=white, from=2-4, to=1-4]
                 \arrow["{[2,2]}"{description, pos=0.1}, draw=white, from=3-4, to=2-4]
@@ -286,8 +286,9 @@ Throughout we use the term \textit{valid execution} to distinguish it from fault
     \end{definition}
 %   \todo[inline]{Example of a CP here?}
     Using $p$, elements of $CN$ are identified with their corresponding \emph{originals} in the TPN, and as a result, any causal process corresponds uniquely to a run of its sequence of actions (an untimed run) on the untimed version of a given TPN (the underlying Petri net when the static interval function is ignored). 
-    
-    \begin{definition}[Timing Function]\label{tau} A \textit{timing function} $\tau : E \rightarrow \mathbb{R}$ is a function from events of a causal process into time values. 
+    We will often label events in a causal process with the labels of their corresponding transitions in the original TPN. 
+
+    \begin{definition}[Timing Function]\label{tau} A \textit{timing function} $\tau : E \rightarrow \mathbb{R^+}$ is a function from events of a causal process into time values. 
     \end{definition}
 
     When the underlying causal process is sequential, we can represent timing functions as a nondecreasing timestamp series, by projecting onto the timestamp component of any timed trace. 
@@ -309,8 +310,8 @@ Throughout we use the term \textit{valid execution} to distinguish it from fault
         We now construct the causal process of this execution, and see that it is indeed branching, as the very first transition, $reg$, itself has two post-places, which violates the no branching condition $e \in E : |e \pre | \leq  1$. 
         \adjustbox{scale = 0.8}{
             \begin{tikzcd}
-                \bigcirc & {\fbox{reg}} & \bigcirc & {\fbox{ec}} & \bigcirc & {\fbox{rej}} & \bigcirc \\
-                &\bigcirc& {\fbox{ct}} & \bigcirc & {\fbox{dec}} & \bigcirc
+                \bigcirc & {\fbox{\strut reg}} & \bigcirc & {\fbox{\strut ec}} & \bigcirc & {\fbox{\strut rej}} & \bigcirc \\
+                &\bigcirc& {\fbox{\strut ct}} & \bigcirc & {\fbox{\strut dec}} & \bigcirc
                 \arrow[from=1-1, to=1-2]
                 \arrow[from=1-2, to=1-3]
                 \arrow[from=1-2, to=2-2]
@@ -332,7 +333,7 @@ Throughout we use the term \textit{valid execution} to distinguish it from fault
                     
             \adjustbox{scale = 0.6}{
                 \begin{tikzcd}
-                    \Huge\bigcirc & {\fbox{reg}} & \Huge\bigcirc & {\fbox{check}} & \Huge\bigcirc & {\fbox{dec}} & \Huge\bigcirc & {\fbox{pay}} & \Huge\bigcirc 
+                    \Huge\bigcirc & {\fbox{\strut reg}} & \Huge\bigcirc & {\fbox{\strut check}} & \Huge\bigcirc & {\fbox{\strut dec}} & \Huge\bigcirc & {\fbox{\strut pay}} & \Huge\bigcirc 
                     \arrow[from=1-1, to=1-2]
                     \arrow[from=1-2, to=1-3]
                     \arrow[from=1-3, to=1-4]
@@ -376,11 +377,8 @@ Throughout we use the term \textit{valid execution} to distinguish it from fault
 	
 	In sections \ref{sec:alignmentpb}, \ref{3} and \ref{4} of this paper, we will ignore the action labels of the words, i.e we assume the word $\sigma$ we wish to align comes with a valid causal process $(CN, p)$ of the model, and seek to find timing functions on said causal process that are both valid, and minimize distance to $\sigma$ under the metric of choice. 
 	
-	We shall revisit the general timed alignment problem in section \ref{align}, and show how our methods 
-	%for solving the purely timed alignment problem 
-	can be adapted using existing techniques to provide approaches for solving the general 
-	%timed alignment 
-	problem. 
+	We shall return to the general timed alignment problem in section \ref{align}, and briefly discuss some ways our methods can be combined with existing (untimed) alignment techniques to provide initial approaches to the general timed alignment problem. 
+	These initial approaches have clear limitations, but they provide a first step towards addressing the general timed alignment problem. 
 	
 	\subsection{Edit Moves on Timing Functions}
 	Now we come to the problem of comparing two timing functions over the same causal process, and quantifying how close they are to each other. 
@@ -398,8 +396,10 @@ Throughout we use the term \textit{valid execution} to distinguish it from fault
 		One candidate for the closest valid execution would be $\gamma = (reg, 1)\cdot  (ct, 3)  \cdot (ec, 2) \cdot (dec, 6) \cdot (rej, 6)$, and it feels reasonable to say that the cost for aligning $\sigma$ to this $\gamma$ is 1. 
 		A way to arrive at this conclusion is by noticing that on trying to execute $\sigma$'s firing sequence only the guard for $ct$ fails. If $ct$ were shifted to fire at 3 instead, the whole run would execute without a hitch. This sort of local, almost typographical error can often happen in systems, and it is the simplest kind to fix.  
 		
-		There is, however, another way to look at it. A closest valid timing function would try to preserve the positions of $reg$ and  $ec$ but the moment it tries to fire $ct$, $\sigma$ runs early. By pushing $ct$ forward, it should take longer for the decision to be made and the rejection to happen, as those events depended on the checking of the ticket being done first. 
-		This causes a cascading chain of errors where if $ct$ is moved forward to fire at 3, to preserve the relative relationships between $ct$ and its successors, we get the trace $\gamma' = (reg, 1)\cdot  (ct, 3)  \cdot (ec, 2) \cdot (dec, 7) \cdot (rej, 7)$, and in this sense, $\gamma'$ is closer to $\sigma$ as it preserves more relative gaps. As we just knocked one event a little later by 1 unit, we can view this as a cost 1 edit too.  
+		There is, however, another way to look at it. A closest valid timing function would try to preserve the positions of $reg$ and  $ec$ but the moment it tries to fire $ct$, $\sigma$ runs early. 
+		By pushing $ct$ forward, it should take longer for the decision to be made and the rejection to happen, as those events depended on the checking of the ticket being done first. 
+		This causes a cascading chain of errors where if $ct$ is moved forward to fire at 3, to preserve the relative relationships between $ct$ and its successors, we get the trace $\gamma' = (reg, 1)\cdot  (ct, 3)  \cdot (ec, 2) \cdot (dec, 7) \cdot (rej, 7)$, and in this sense, $\gamma'$ is closer to $\sigma$ as it preserves more relative gaps. 
+		As we just knocked one event a little later by 1 unit, we can view this as a cost 1 edit too.  
 		%, if we assume $e$ and $f$ only care about the relative durations or delays between activities
 	
 		This is a slightly more complex type of error, but it reflects the real life fact of cascading errors, and hence is an important type of edit to consider when diagnosing such cascading faults. 
@@ -410,7 +410,7 @@ Throughout we use the term \textit{valid execution} to distinguish it from fault
 	We define a \textit{stamp move} as a move that translates the timing function only at a point, i.e., that edits a single element of the timing function $\tau$. 
 	
 	\begin{definition}[Stamp Move]
-		Given a timing function $\gamma : E \to \mathbb{R}$, formally, we define this as : 
+		Given a timing function $\gamma : E \to \mathbb{R}^+$, formally, we define this as : 
 		
 		$\forall x \in \mathbb{R}, e \in E : stamp(\gamma, x, e) =\gamma' $ where
 		$$\forall e' \in E : \gamma'(e')  = \begin{cases}
@@ -425,7 +425,7 @@ Throughout we use the term \textit{valid execution} to distinguish it from fault
 	If an event $e'$ is $G$-reachable from another, say $e$, that means $e$ is strictly in the causal history of $e'$ so changing $e$'s timestamp should have consequences for all of its causal descendents, while leaving any causally unrelated (non-$G$-reachable) events undisturbed. 
 	Hence, a delay move at $e$ will preserve relative relationships between timestamps in the future, at the cost of shifting the timestamp of every causal descendent of $e$  (such as $e'$) by the same amount. 
 	\begin{definition}[Delay Move]
-		Given a timing function $\gamma : E \to \mathbb{R}^n$, we define a delay move applied to it as follows : 
+		Given a timing function $\gamma : E \to \mathbb{R}^+$, we define a delay move applied to it as follows : 
 		
 		$\forall x \in \mathbb{R}, e \in E : delay(\gamma, x, e) = \gamma'$ where 
 		$$\forall e' \in E : \gamma'(e') = \begin{cases}
@@ -468,7 +468,7 @@ Throughout we use the term \textit{valid execution} to distinguish it from fault
 			\adjustbox{scale = 0.6}{
 				\begin{tikzcd}
 					& {} && {} && {} &&{} \\
-					\Huge\bigcirc & {\fbox{reg}} & \Huge\bigcirc & {\fbox{check}} & \Huge\bigcirc & {\fbox{dec}} & \Huge\bigcirc & {\fbox{pay}} & \Huge\bigcirc 
+					\Huge\bigcirc & {\fbox{\strut reg}} & \Huge\bigcirc & {\fbox{\strut check}} & \Huge\bigcirc & {\fbox{\strut dec}} & \Huge\bigcirc & {\fbox{\strut pay}} & \Huge\bigcirc 
 					\arrow["{[0, 1]}"{description, pos=0.2}, draw=white, from=2-2, to=1-2]
 					\arrow["{[0,1]}"{description, pos=0.2}, draw=white, from=2-8, to=1-8]
 					\arrow[from=2-1, to=2-2]
@@ -531,31 +531,39 @@ Throughout we use the term \textit{valid execution} to distinguish it from fault
           The total cost for the two delay moves is 6.
 		  
 	\section{Results and Algorithm : Stamp Edits}\label{3}
+
+	In this section, we focus on studying the distance function $d_t$. Hence, we present a useful lemma regarding an alternative equivalent definition of $d_t$, an upper bound on the complexity of solving the purely timed alignment under $d_t$ for bounded TPNs, and a faster algorithm for solving it for a restricted subclass of TPNs. 
 	\begin{lemma}[Stamp only distance : $d_t$]\label{manhattan}
 		
 		
-		$d_t$ as defined above is equivalent to the \textit{Manhattan distance} or \textit{taxicab distance} between two points of $\mathbb{R}^n$, where $|E| = n$, say $\mathbf{t} = (t_1, t_2, \dots t_n) $ and $\mathbf{s} = (s_1, s_2, \dots s_n)$, defined as $$d_t(\mathbf{t}, \mathbf{s}) = \sum_{i = 1}^{n} |t_i - s_i|$$
+		$d_t$ as defined above is equivalent to the \textit{Manhattan distance} or \textit{taxicab distance} between two points of $\mathbb{R}^n$, where $|E| = n$, say $\mathbf{t} = (t_1, t_2, \dots t_n) $ and $\mathbf{s} = (s_1, s_2, \dots s_n)$, defined as $$d_{\textrm{taxicab}}(\mathbf{t}, \mathbf{s}) = \sum_{i = 1}^{n} |t_i - s_i|$$
 	\end{lemma}
 		\begin{proof}
-		Given a causal process $CN = (B, E, G)$ and two timing functions (not necessarily constituting valid timings) $\tau_1, \tau_2$, let $$d_t(\tau_1, \tau_2) = \sum_{e \in E} |\tau_1(e) - \tau_2(e)|$$
-		This is both achievable by stamp only moves by doing the corresponding $\tau_1(e) - \tau_2(e)$ stamp move to the second word, and is the least cost any such stamp only path can take as Manhattan distance obeys the triangle inequality, and every stamp move results in a word at exactly the same Manhattan distance from its predecessor as the cost of said stamp move. 
+		Given a causal process $CN = (B, E, G)$ and two timing functions (not necessarily constituting valid timings) $\tau_1, \tau_2$, let $$d_{\textrm{taxicab}}(\tau_1, \tau_2) = \sum_{e \in E} |\tau_1(e) - \tau_2(e)|$$
 		
+		It can be deduced that $d_t \leq d_{\textrm{taxicab}}$ as the sequence of stamp only moves consisting of the corresponding $\tau_1(e) - \tau_2(e)$ stamp move at each event edits the first word into the second word. 
+		
+		On the other hand, the least cost any stamp only path that edits the first trace into the second requires is $d_{\textrm{taxicab}}$, due to the triangle inequality, and because every individual stamp move results in a word at exactly the same taxicab distance from its predecessor as the cost of said stamp move. 
+		Hence, we can conclude that $$d_t(\mathbf{t}, \mathbf{s}) = \sum_{i = 1}^{n} |t_i - s_i|.$$
 	\end{proof}
 
 	
 	
-	This lemma also allows us to restate the alignment problem for $d_t$, as we see below. 
+	This lemma also allows us to encode the purely timed alignment problem for $d_t$ as a linear programming problem, as we see below. 
 	
 	\subsection{Casting Alignment as a Linear Programming Problem}\label{lpp}
 	The alignment problem in the stamp-only setting can be viewed as a problem of convex optimization, minimizing the stamp only cost from a fixed observed trace $\sigma$, which by Lemma \ref{manhattan} is $cost(\tau|_i) = \sum_{j = 1}^{i} |\tau_j - \sigma_j|$ over the set of valid timestamp series $\tau$ for the model $N$. 
 	What remains is to show that the space of valid runs of the model is a convex set, as shown in \cite{BM82}. 
-	%In this paper, the concept of a firing domain is proposed, that is, at each configuration of the time Petri net, the set of valid time intervals in which a transition enabled at that configuration can fire. Using these firing domains, states are grouped into state classes,which are sets of states with clock functions in the same firing domain, and for bounded time Petri nets there are finitely many such state classes. 
-	%Calculating equivalence classes of the same, successively, till we find final configurations, gives a characterisation of the solution set of all valid timestamp series, and this is proved to be of the following form, which is a set of constraints defining a convex set. 
+	In this paper, the concept of a firing domain is proposed, that is, at each configuration of the time Petri net, the set of valid time intervals in which a transition enabled at that configuration can fire. 
+	Using these firing domains, states are grouped into state classes,which are sets of states with clock functions in the same firing domain, and for bounded time Petri nets there are finitely many such state classes. 
+	Calculating equivalence classes of the same, successively, till we find final configurations, gives a characterisation of the solution set of all valid timestamp series, and this is proved to be of the following form, which is a set of constraints defining a convex set. 
 	
 	Hence, we claim that using an efficient encoding of the target function using the firing domain formulation described above, the problem can be cast as a linear programming problem, and LPP solvers can solve this in good time in practice.  
 	
 	\begin{theorem}\label{convexset}
-		Given a bounded TPN $N$, an observed trace $\sigma$, and its causal process $CN = (B, E, G)$, the alignment problem can be viewed as seeking the vector $(\gamma_1, \gamma_2, \dots \gamma_{|E|})$ that minimizes the quantity $\sum_{e \in E} |\gamma_e - \sigma_e|$ over the set $\gamma \in \mathcal{L}(N)$ which can be cast as a linear programming problem. %, i.e, $$\underset{\alpha - \beta \in \mathcal{C}, \alpha, \beta \geq 0}{\mathsf{minimize}} \hspace{0.5em} \alpha + \beta  $$
+		Given a bounded TPN $N$, an observed trace $\sigma$, and its causal process $CN = (B, E, G)$, the purely timed alignment problem seeks the vector $(\gamma_1, \gamma_2, \dots \gamma_{|E|})$ that minimizes the quantity $\sum_{e \in E} |\gamma_e - \sigma_e|$ over the set $\gamma \in \mathcal{L}(N)$. 
+		
+		This can be cast as a linear programming problem, i.e, we can effectively construct the convex set $\mathcal{C}$ such that the following optimization problem is equivalent to solving the purely timed alignment problem. $$\underset{\alpha - \beta \in \mathcal{C}, \alpha, \beta \geq 0}{\mathsf{minimize}} \hspace{0.5em} \alpha + \beta  $$
 		
 		%	Where $\mathcal{C}$ is a convex set. 
 	\end{theorem}
@@ -813,7 +821,7 @@ hence, we have proved that the $d_t$ alignment problem for bounded TPNs can be e
 				\adjustbox{scale = 0.6}{
 					\begin{tikzcd}
 						& {} && {} && {} &&{} \\
-						\Huge\bigcirc & {\fbox{reg}} & \Huge\bigcirc & {\fbox{check}} & \Huge\bigcirc & {\fbox{dec}} & \Huge\bigcirc & {\fbox{pay}} & \Huge\bigcirc 
+						\Huge\bigcirc & {\fbox{\strut reg}} & \Huge\bigcirc & {\fbox{\strut check}} & \Huge\bigcirc & {\fbox{\strut dec}} & \Huge\bigcirc & {\fbox{\strut pay}} & \Huge\bigcirc 
 						\arrow["{[0, 1]}"{description, pos=0.2}, draw=white, from=2-2, to=1-2]
 						\arrow["{[0,1]}"{description, pos=0.2}, draw=white, from=2-8, to=1-8]
 						\arrow[from=2-1, to=2-2]
@@ -840,7 +848,7 @@ hence, we have proved that the $d_t$ alignment problem for bounded TPNs can be e
 			\adjustbox{scale = 0.6}{
 				\begin{tikzcd}
 					& {} && {} && {} &&{} \\
-					\Huge\bigcirc & {\fbox{reg}} & \Huge\bigcirc & {\fbox{check}} & \Huge\bigcirc & {\fbox{dec}} & \Huge\bigcirc & {\fbox{pay}} & \Huge\bigcirc 
+					\Huge\bigcirc & {\fbox{\strut reg}} & \Huge\bigcirc & {\fbox{\strut check}} & \Huge\bigcirc & {\fbox{\strut dec}} & \Huge\bigcirc & {\fbox{\strut pay}} & \Huge\bigcirc 
 					\arrow["{[0, 5]}"{description, pos=0.2}, draw=white, from=2-2, to=1-2]
 					\arrow["{[0,0]}"{description, pos=0.2}, draw=white, from=2-8, to=1-8]
 					\arrow[from=2-1, to=2-2]
@@ -928,9 +936,9 @@ hence, we have proved that the $d_t$ alignment problem for bounded TPNs can be e
                 \begin{figure}
 \adjustbox{scale=0.6}{
 \begin{tikzcd}
-	& {} & \Huge\bigcirc & {\fbox{ec}} & \Huge\bigcirc & {} && {\fbox{pay}} \\
-	\Huge\bigcirc & {\fbox{reg}} && {\fbox{et}} && {\fbox{dec}} & \Huge\bigcirc & {} & \Huge\bigcirc \\
-	&& \Huge\bigcirc & {\fbox{{ct}}} & \Huge\bigcirc &&& {\fbox{rej}}
+	& {} & \Huge\bigcirc & {\fbox{\strut ec}} & \Huge\bigcirc & {} && {\fbox{\strut pay}} \\
+	\Huge\bigcirc & {\fbox{\strut reg}} && {\fbox{\strut et}} && {\fbox{\strut dec}} & \Huge\bigcirc & {} & \Huge\bigcirc \\
+	&& \Huge\bigcirc & {\fbox{\strut {ct}}} & \Huge\bigcirc &&& {\fbox{\strut rej}}
 	\arrow["{1 \rightarrow 1}"{description, pos=0.2}, shift left=3, draw=white, from=2-2, to=1-2]
 	\arrow[""{name=0, anchor=center, inner sep=0}, "{1 \rightarrow 2}"{description, pos=0.1}, draw=white, from=2-4, to=1-4]
 	\arrow["{4 \rightarrow 2}"{description, pos=0.1}, draw=white, from=3-4, to=2-4]
@@ -1115,14 +1123,16 @@ Note that for extended free choice time petri nets, in order to check for the va
 		As a result, one approach for solving the general timed alignment problem would be to begin by completely ignoring the timed aspect, and aligning only the action labels of the word $w$ and the process model $N$ (now reduced to the underlying untimed Petri net) using the $\mathbb{A}^*$ algorithm\cite{Adriansyah2014AligningOA}, which can be used to get a valid control flow, that is, a valid causal process. This, for us, is an untimed word $w'$ which can then be given a timing function based on that of $w$, %preserving timestamps wherever possible and 
 		repeating or deleting timestamps for any insertion or deletion moves. This yields a valid causal process and a potentially invalid timing function over it, which is then cast as a purely timed alignment problem. 
 		
-		This approach is quite naive, as it may have a tendency to exaggerate the importance of action label errors. For example, consider the following scenario : 
+		This approach is quite naive, as it has a tendency to exaggerate the importance of action label errors. 
+		Implicitly, it is best for minimising the pair consisting of action edit costs and time edit costs, in lexicographic order, and as such would prefer even small improvements to the action edit cost at the price of a much greater timestamp cost. 
+		For example, consider the following scenario : 
 		
 		\begin{example}
 			Consider the following net $N_3$: \\
 			\adjustbox{scale=0.8}{
 				\begin{tikzcd}
-					\eye & {\fbox{a}} & \bigcirc & {\fbox{a}} & \bigcirc & {\fbox{a}} &\bigcirc \\
-					& {\fbox{b}} & \bigcirc & {\fbox{a}} & \bigcirc & {\fbox{a}} \\
+					\eye & {\fbox{\strut a}} & \bigcirc & {\fbox{\strut a}} & \bigcirc & {\fbox{\strut a}} &\bigcirc \\
+					& {\fbox{\strut b}} & \bigcirc & {\fbox{\strut a}} & \bigcirc & {\fbox{\strut a}} \\
 					\arrow[from=1-1, to=1-2]
 					\arrow[curve={height=12pt}, from=1-1, to=2-2]
 					\arrow[from=1-2, to=1-3]
@@ -1154,7 +1164,9 @@ Note that for extended free choice time petri nets, in order to check for the va
          %         Thomas: It does not solve the problem in Example 2. Depending
           %        on the cost we assign to action edits, one or the other
            %       alignment will be preferred. This is quite fair, I think. There is not even much to say about it.}
-		The issue here is the tradeoff between timestamp edits and action label edits. A better approach would assign one cost $c_A$ to action edits and another $c_T$ to time edits, and seek to minimise their sum. A potential fix to our previous idea would be to essentially retain the above approach, but instead of just doing it for the best untimed alignment, take a selection of good untimed alignments (up to some allowable threshold), and try to align timestamps for each untimed candidate, and then minimise the total cost over this set. This alleviates some of the bias towards preserving action labels by allowing for small action deviations in case the timestamp alignment proves particularly cost efficient, but this is still a naive approach to the wider problem, and we hope to find better solutions in the future. 
+		The issue here is the tradeoff between timestamp edits and action label edits. 
+		A better approach would assign one cost $c_A$ to action edits and another $c_T$ to time edits, and seek to minimise their sum. 
+		A potential fix to our previous idea would be to essentially retain the above approach, but instead of just doing it for the best untimed alignment, take a selection of good untimed alignments (up to some allowable threshold), and try to align timestamps for each untimed candidate, and then minimise the total cost over this set. This alleviates some of the bias towards preserving action labels by allowing for small action deviations in case the timestamp alignment proves particularly cost efficient, but this is still a naive approach to the wider problem, and we hope to find better solutions in the future. 
 		
 		\section{Related Work}\label{relwork}
 
@@ -1162,7 +1174,7 @@ Note that for extended free choice time petri nets, in order to check for the va
 		Two of these distances are notably very similar to our stamp and delay based distances, and much like in our setting, the distance between two words is only defined when they action sequences match up exactly. 
 		In \cite{CIM14}, a notion of edit distance for timed words is introduced, which similar to our approach for solving the general timed alignment problem, given two timed words, first tries to edit the untimed parts to match optimally, and then proceeds to edit their timestamps using stamp-like edits, yielding not a real value as the distance but a pair of values, the first component being the action sequence's edit distance and the latter being the stamp distance on the transformed timing sequences. 
 		In \cite{AsarinBD18}, the distance function finds the maximal timing deviation between any two events that correspond to the same action, and is closely related to the Hausdorff distance between point-sets. 
-		The latter two allow for differences in the number and placement of actions in the word, while the first work pointedly does not. 
+		The latter two allow for differences in the number and placement of actions in the word, while the first work does not. 
 		An important way we deviate from all of these distances, is the way $d_{\theta}$ reflects the causal dependencies of the model. 
 		As we operate within the domain of process mining, an important goal in the field is to leverage the insight that process models provide about the systems they represent. 
 		Whether we are measuring the fitness of the model, trying to repair the model, or trying to determine how to best replay a faulty trace on a process model we trust, using the fact that the causal order imposed by the model would make errors cascade forward allows us to better study the model, and all of its causal implications, when computing the alignment. 
@@ -1173,7 +1185,7 @@ Note that for extended free choice time petri nets, in order to check for the va
 A popular method used for discrete time series is Dynamic Time Warping \cite{DTW}, which is a notion of edit distance over finite (possibly unequal length) sequences of real numbers, where the cost is minimised over a many-one matching between the timed sequences. 
 Another is the Geometric Edit Distance \cite{GEdit}, which is similar to Dynamic Time Warping but it assumes the real sequences are matched using a one-one function, and if any points are missed out, each missing point incurs a constant additional cost. 
 As actions do not have a nontrivial notion of distance between them, the best way of applying these to our setting is to consider timestamp sequences indexed by their position in the word. 
-In this case, Dynamic Time Warping seems to compute distances between traces assuming that one word is a stutter of another, while Geometric Edit Distance will allow for deleting some events (possibly ones whose actions do not match), and both of these alternatives seem to yield distance measures that require specialised modelling preferences. 
+In this case, Dynamic Time Warping seems to compute distances between traces assuming that one word is a stutter of another, while Geometric Edit Distance will allow for deleting some events (possibly ones whose actions do not match), and both of these alternatives seem to yield distance measures whose meaning in the model are unclear. 
 These distances also have more continuous counterparts such as the Skorohod distance \cite{skorokhod1956limit} and the Fr\'echet distance \cite{frechet1906quelques}, but we restrict ourselves to the case of discrete timed event sequences. 
 
 		% We have implemented the stamp only alignment algorithm in Python, available at \url{https://github.com/NehaRino/TimedAlignments}. This algorithm is quadratic in time complexity, and runs well in practice, as seen below 
