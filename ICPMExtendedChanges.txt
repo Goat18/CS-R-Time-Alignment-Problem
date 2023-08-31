@@ -1,21 +1,23 @@
-Here is a summary of the changes made to the extended journal version of the Timed Alignments paper. 
+We thank the reviewers for the careful reading and useful suggestions. Based on these, we have prepared a major revision of our paper.
 
-1. The abstract, the introduction, the conclusion, and the title of section 7 have been edited to better reflect the actual contributions and focus of our paper. 
+Here is a summary of the changes made to the extended journal version of the Timed Alignments paper.
 
-2. The introduction now clearly states that this is an extension of the existing conference version, and the changes in this paper have been highlighted. 
+1. The abstract, the introduction, the conclusion, and the title of section 7 have been edited to better reflect the actual contributions and focus of our paper.
 
-3. The introduction also clearly argues why the classes of models we have solved the purely timed alignment for (namely bounded and extended free choice TPNs) are practical, and not too structurally restricted. Boundedness is essential for most properties about TPNs to be decidable at all, and extended free choice only excludes TPNs that exhibit a behaviour known as confusion (see Aura and Lilius' article on Time Processes for Time Petri Nets) which is not considered a desirable property for process models to begin with, as it lets causally unrelated transitions affect each others' firing times. 
+2. The introduction now clearly states that this is an extension of the existing conference version, and the changes in this paper have been highlighted.
 
-4. The preliminaries have been edited to be easier to grasp, and typographical errors have been addressed. 
+3. The introduction also clearly argues why the classes of models we have solved the purely timed alignment for (namely bounded and extended free choice TPNs) are practical, and not too structurally restricted. Boundedness is essential for most properties about TPNs to be decidable at all, and extended free choice only excludes TPNs that exhibit a behaviour known as confusion (see Aura and Lilius' article on Time Processes for Time Petri Nets) which is not considered a desirable property for process models to begin with, as it lets causally unrelated transitions affect each others' firing times.
 
-5. The implementation section has been removed. 
+4. The preliminaries have been edited to be easier to grasp, and typographical errors have been addressed.
 
-6. A related work section has been added, which details several other approaches to distances for timed words, and alignments over time-series. 
+5. The implementation section has been removed.
+
+6. A related work section has been added, which details several other approaches to distances for timed words, and alignments over time-series.
 
 7. Language has been adjusted throughout to address most of the ambiguities mentioned. Some comments did not seem to apply to the draft that was submitted (we could find no instance when \lambda was used to denote a timing function, for instance)
 
-8. Improved the running examples to provide more context for the design choices, and better readability. Examples have been made larger, repeated closer to each instance of usage, and given clear captions. 
+8. Improved the running examples to provide more context for the design choices, and better readability. Examples have been made larger, repeated closer to each instance of usage, and given clear captions.
 
-9. It has been suggested that we rely on examples too much for design choices. We have four types of examples in the paper, the first being simply an illustration of a formal definition or an execution of an algorithm we defined, in order to help the reader's conceptual understanding, including examples 1,2,3,6,7,10 and 11. The second type is used to provide witnesses to behaviours that show a limitation of a particular approach, and hence suggest that a different solution might be necessary at times (hence, these types of examples need not generalise to all scenarios), including examples 4 and 12. The third type of example, example 5, seeks to provide intuition as to why we chose to consider the edit moves we did. This was a design choice that was backed up by its clear conceptual meaning and relevance to practical settings. Beyond a point, this choice is slightly arbitrary, but as evidenced by the fact that in the article Robust Timed Automata by Gupta, Henzinger and Jagadeesan, the first two metrics used also similarly stamp and delay based, these edit moves are some of the simplest and most practical ones to consider for timed sequences. 
+9. It has been suggested that we rely on examples too much for design choices. We have four types of examples in the paper, the first being simply an illustration of a formal definition or an execution of an algorithm we defined, in order to help the reader's conceptual understanding, including examples 1,2,3,6,7,10 and 11. The second type is used to provide witnesses to behaviours that show a limitation of a particular approach, and hence suggest that a different solution might be necessary at times (hence, these types of examples need not generalise to all scenarios), including examples 4 and 12. The third type of example, example 5, seeks to provide intuition as to why we chose to consider the edit moves we did. This was a design choice that was backed up by its clear conceptual meaning and relevance to practical settings. Beyond a point, this choice is slightly arbitrary, but as evidenced by the fact that in the article Robust Timed Automata by Gupta, Henzinger and Jagadeesan, the first two metrics used also similarly stamp and delay based, these edit moves are some of the simplest and most practical ones to consider for timed sequences.
 
-10. We also take care to point out here that our method for bounded TPNs for aligning under $d_t$ encodes it as a linear programming problem, not an integer linear programming problem. The latter has a much higher complexity (NP rather than P) and is hence much less efficient than our approach. 
+10. We also take care to point out here that our method for bounded TPNs for aligning under $d_t$ encodes it as a linear programming problem, not an integer linear programming problem. The latter has a much higher complexity (NP rather than P) and is hence much less efficient than our approach.
