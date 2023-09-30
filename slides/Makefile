@@ -1,5 +1,5 @@
 figs = 
-nom = demo
+nom = slideswithmixedmoves
 
 view : ${nom}.pdf
 	atril ${nom}.pdf
