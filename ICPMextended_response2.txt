@@ -1,0 +1,302 @@
+Dear editor,
+
+We thank the reviewers for the careful reading and useful suggestions. Based on these, we have prepared a major revision of our paper.
+
+> Two of three reviewers are in doubt that the contribution (when compared 
+> to the original conference paper) is large enough. The two critical 
+> reviewers point out the strong assumptions as well as the small delta 
+> when compared to the conference paper. Moreover, they both mention the 
+> poor / missing evaluation. Moreover, one reviewer points out that a 
+> related work section is missing and that the formalization is of low 
+> quality. It is clear that these issues require substantial rework. At 
+> the same time both critical reviewers make concrete suggestions on how 
+> to re-scope the paper and develop the paper into an acceptable form. 
+> Both suggestions are possible ways forward but will require considerable 
+> work. If the authors are up to make the required changes, they should - 
+> apart from addressing the suggested improvements - carefully look at the 
+> two proposals made and choose one of the directions forward.
+
+Here is a summary of the changes made to the extended journal version of the Timed Alignments paper.
+
+1. The abstract, the introduction, the conclusion, and the title of section 7 have been edited to better reflect the actual contributions and focus of our paper.
+
+2. The introduction now clearly states that this is an extension of the existing conference version, and the changes in this paper have been highlighted.
+
+3. The introduction also clearly argues why the classes of models we have solved the purely timed alignment for (namely bounded and extended free choice TPNs) are practical, and not too structurally restricted. Boundedness is essential for most properties about TPNs to be decidable at all, and extended free choice only excludes TPNs that exhibit a behaviour known as confusion (see Aura and Lilius' article [18] on Time Processes for Time Petri Nets) which is not considered a desirable property for process models to begin with, as it lets causally unrelated transitions affect each others' firing times.
+
+4. The preliminaries have been edited to be easier to grasp, and typographical errors have been addressed.
+
+5. The implementation section has been reinserted.
+
+6. A related work section has been added, which details several other approaches to distances for timed words, and alignments over time-series.
+
+7. Language has been adjusted throughout to address most of the ambiguities mentioned. Some comments did not seem to apply to the draft that was submitted (we could find no instance when \lambda was used to denote a timing function, for instance)
+
+8. Improved the running examples to provide more context for the design choices, and better readability. Examples have been made larger, repeated closer to each instance of usage, and given clear captions.
+
+9. It has been suggested that we rely on examples too much for design choices. We have four types of examples in the paper, the first being simply an illustration of a formal definition or an execution of an algorithm we defined, in order to help the reader's conceptual understanding, including examples 1,2,3,6,7,10 and 11. The second type is used to provide witnesses to behaviours that show a limitation of a particular approach, and hence suggest that a different solution might be necessary at times (hence, these types of examples need not generalise to all scenarios), including examples 4 and 12. The third type of example, example 5, seeks to provide intuition as to why we chose to consider the edit moves we did. This was a design choice that was backed up by its clear conceptual meaning and relevance to practical settings. Beyond a point, this choice is slightly arbitrary, but as evidenced by the fact that in the article Robust Timed Automata by Gupta, Henzinger and Jagadeesan, the first two metrics used also similarly stamp and delay based, these edit moves are some of the simplest and most practical ones to consider for timed sequences.
+
+10. We also take care to point out here that our method for bounded TPNs for aligning under $d_t$ encodes it as a linear programming problem, not an integer linear programming problem. The latter has a much higher complexity (NP rather than P) and is hence much less efficient than our approach.
+
+> 
+> Reviewer 1: The paper describes an interesting problem: How to detect 
+> issues with timing in event logs and models with time information. 
+> Traditionally in process mining, time is ignored for the alignment 
+> problem (or only considered to impose a (partial) ordering on the event 
+> in the log). In that respect this work is new.
+> 
+> The formalities and algorithms presented are sound. The authors focus on 
+> the context where the control flow is fitting the model, i.e. there are 
+> no traditional log-moves or model-moves. They then introduce the stamp 
+> move changing the timestamp of a single event (but potentially putting 
+> the timestamp outside of the causal ordering of the trace imposed by the 
+> model) and the delay move, which ensures that the change of timestamp 
+> cascades down to future, causally dependent events.
+> 
+> 
+> The complexity of the techniques presented is clearly explained, with it 
+> being exponential for the general case (ILP) and quadratic for the 
+> sequential model case.
+> 
+> For the Information Systems journal, the work could do with a bit more 
+> examples. A small running example is presented, but adding some figures 
+> explaining the idea of the delay move and the stamp move can help the 
+> general reader to understand the concepts more easily. Figures that are 
+> there are very tiny and unlabeled. The figure in Example 3 is wrong 
+> (it's a dead run?) as reg should have two output places.
+Examples have been made larger, repeated closer to each instance of usage, and given clear captions.
+> 
+> I recommend the authors to really provide a running example with a more 
+> prominent place in the paper. Explain the concepts with the running 
+> example in readable figures with their own captions.
+We improved the running examples to provide more context for the design choices, and better readability.
+> 
+> 
+> 
+> 
+> Reviewer 2: The paper introduces a method to align a trace with 
+> timestamps to a timed Petri net, which is an existing formalism that 
+> annotates transitions with time constraints on firing since its 
+> enabling. This is an interesting area of research in process mining, and 
+> the problem of checking conformance on such models has the potential to 
+> lead to foundational insights, as well as practical applicability. The 
+> paper has a solid motivation, well-written introduction and introduces 
+> an alignment technique for fitting traces on sequential models.
+> 
+> Positive points:
+> - interesting, relevant problem
+> - well motivated
+> - algorithm described in depth
+> 
+> Weak points:
+> - the formalizations are of low quality
+> - actual contribution is quite limited, compared to suggestive title, 
+> abstract and introduction: technique only works on a structural subclass 
+> of Petri nets, and only on fitting traces.
+> - the end of the paper seems rather unpolished
+> - examples are overused as justifications for design decisions
+> - related work is missing: given that the problem is reduced to a purely 
+> numeric domain, there must have been some non-process-mining research 
+> that may be helpful, for instance on time series
+> - if the paper is an extension of a conference paper, this should be 
+> clearly described in the introduction, with a summary of the conceptual 
+> changes. Reading over the conference paper, the main reservations I have 
+> with this extended version are present in the conference paper as well, 
+> so it is unclear to me whether the conceptual extension is large enough.
+> 
+> In order for the paper to be acceptable for publication, I would suggest 
+> to reduce the claimed scope to the actual contribution (that is, drop 
+> Section VI and update the title, abstract, introduction and conclusion, 
+> to mention the limitations of the technique much earlier on, to add a 
+> related work section, and to add an evaluation.
+The abstract, the introduction, the conclusion, and the title of section 7 have been edited to better reflect the actual contributions and focus of our paper.
+A related work section has been added, which details several other approaches to distances for timed words, and alignments over time-series.
+The implementation section has been reinserted.
+> 
+> Other comments:
+> 
+> The outline doesn't mention section 2.
+corrected
+> 
+> Def 2: \mathcal{Q}+ is not defined
+corrected
+> 
+> Def 2: "labelled" typically refers to a net that allows unlabeled 
+> transitions. Choosing \lambda as a total function is uncommon; the paper 
+> should mention that silent transitions are not supported.
+This is now clearly mentioned.
+> 
+> Def 3: \mathcal{R} -> \mathcal{R}^+
+corrected
+> 
+> Def 3: Is w a timed word (formula) or a word (text)?
+w is a timed word. This is clearly mentioned now.
+> 
+> Def 3: (t_0..t_n) is in T*, not in (T, R)*
+corrected
+> 
+> Def 3 mentions the symbol L twice
+corrected
+> 
+> Def 2 describes that if two transitions A, B are in parallel, then 
+> firing A will not reset the clock of B. However, if a transition C is 
+> part of a length-1-loop, that is, can be fired an arbitrary number of 
+> times, then is the clock reset for each execution? Intuitively, I would 
+> say the clock should be reset, but Def 2 doesn't seem to do that.
+It is reset, indeed. This semantics is formalized after Def 2; in your case, we have I'(C) = 0 because C \not\in Enabled(M').
+> 
+> Def 4: it is unclear what a "net" is. Is a "graph" meant?
+We do not define a "net", we define a "causal net" as a special graph.
+> 
+> Def 4: it would make sense to add a formal typing of G, B and E, similar 
+> to Def. 2.
+We formalized how the type of G relates to B and E.
+> 
+> Let .. is -> Let .. be
+corrected
+> 
+> Def 5: p is a mapping from the sets of B and E to P and T. That means 
+> that p can be applied to elements of B, but not to B itself. As such, 
+> p(B) and p(E) are undefined.
+We used the classical notation f(X) = {f(x) | x \in X} in order to avoid heavier
+notations. We could of course write differently if really needed.
+> 
+> Def 5: what is meant with "the restriction ... is a bijection"?
+This is again classical, see [Winskel86] that we now cite.
+> 
+> Def 5: Supp(M_0) is undefined.
+corrected
+> 
+> "untimed run" is not defined.
+corrected
+> 
+> Def 7: should R be R+?
+corrected
+> 
+> SII.A: it feels rather strange to have a subsection after more than a 
+> full page of definitions.
+We removed the subsection.
+> 
+> After Example 2, there is an illustration of a causal process (?), 
+> however where the text mentions that "reg has two post-places", in the 
+> illustration, there is only one post-place for reg.
+corrected
+> 
+> A bit of a technicality, but as the net is labelled and the causal 
+> process is not: how is the label "reg" obtained in the example?
+The labeling of the causal net is obtained through the homomorphism form the
+causal net to the TPN. We explained this.
+> 
+> In the CN after Examples 2 and 3, the transitions are not well aligned 
+> and have different heights. A \strut in Tikz could solve this.
+corrected
+> 
+> The terminology "valid execution" is confusing: it is either an 
+> execution, or it is not. The paper does not distinguish between valid 
+> and invalid executions, so the term "valid" is not necessary.
+We clarified this after Def 3: Throughout we use the term "valid execution" to
+distinguish it from faulty executions of the time Petri net. This is because we
+are studying alignments, and as a result studying how a non-fitting trace
+diverges in its "execution" from what is required by the time Petri net is our
+central concern.
+> 
+> The reasoning in Example 4 is convincing for an example, however does 
+> not carry forward to the more general case. A better motivation needs to 
+> be given for this approach.
+> 
+> Just before III.A there is a forward look, however also the current 
+> section III is presented as "in the future".
+> 
+> Example 5: in all of the repaired traces, the timestamps are out of 
+> order. The paper should explain why this does not pose a problem with 
+> respect to the recorded order of events.
+> 
+> In general, one should be careful to derive generic statements from 
+> examples: the example suggests a certain conceptual approach, however an 
+> example does not show that this is a good or preferred approach, and it 
+> also does not show that the approach covers all cases. Careful 
+> argumentation and reasoning is what is expected in a scientific paper 
+> instead of examples 4, 5, and 7. For instance, it seems extremely 
+> unlikely that from a given event on, all subsequent causal events had 
+> the same error in their recorded time (delay move). Furthermore, why 
+> introduce two types of moves and then immediately in a "natural" way 
+> define distance measures in which they are not used?
+> 
+> Similarly, examples do not belong in the proof of a lemma.
+> 
+> Timing functions are sometimes denoted with \lambda, and sometimes with 
+> \tau.
+> 
+> A bit of textual introduction for Section IV would help the reader.
+> 
+> The proof of Lemma 2 starts with "the way we see this is as follows". 
+> This phrasing contradicts the function of a proof. Also, as a first 
+> step, d_t is defined in a different way than in Def 12, which is highly 
+> confusing.
+> 
+> Theorem 3 shows some nice clever engineering, however the theorem does 
+> not follow from the proof. It could be better phrased as a definition. 
+> In the final math line, what is C?
+> 
+> "This bound": no bound was mentioned.
+> 
+>  From Section IV.B, I got lost.
+> 
+> Section VI is not the end of the paper I was hoping for. A sketch of an 
+> approach is described vaguely, and it is completely unclear how this 
+> algorithm works, what its weaknesses are, and how it would perform in 
+> practice. As this is the suggested core contribution of the paper called 
+> "timed alignments", this should be the most solid part of the paper. 
+> Rather, the paper underdelivers on its promises. Furthermore, another 
+> limitation on model and traces is added casually. The applicability of 
+> the technique should be clear from the abstract, not on the last page.
+> 
+> Section VII does not add much value. For instance, it is unclear how the 
+> experiment was performed, or how the implementation could be used.
+> 
+> 
+> Reviewer 3: The paper is verbatim equal to the paper of the conference. 
+> Since I was reviewer for the conference as well, I report here my 
+> review. In addition to that, the paper, in my opinion is to be rejected 
+> since I do not see any additional content wrt. the conference paper.
+> 
+> The paper addresses the complex topic of timed alignments, i.e., 
+> proposes an approach for aligning a timed trace (including pairs of 
+> activities and timestamps) and a Labeled Time Petri net.
+> 
+> The paper is well written. I appreciated the fact that the authors 
+> provide several examples that allow the reader to understand the 
+> different notions provided in the paper.
+> 
+> However, considering also the fact that the problem has a very high 
+> complexity, the solution is rather limited. The authors had to put 
+> strong assumptions to solve the problem efficiently and I am not totally 
+> convinced that the solution provided is of practical utility. First of 
+> all, a first assumption is that the trace to be aligned is compliant 
+> with the Petri net in terms of control flow. Starting from this 
+> assumption the alignment problem can be solved by using Linear 
+> Programming. However, as one can expect, when the Petri net contains 
+> parallel branches, the problem becomes difficult to deal with. 
+> Therefore, the authors are forced to add an additional (strong) 
+> assumption, i.e., the assumption that the model is sequential.
+> 
+> Although I am not totally convinced about the practical usage of the 
+> proposed solution under these assumptions (the authors should put a 
+> little bit more effort in motivate the usefulness of their solution), in 
+> my opinion, the contribution could still be valid if the focus of the 
+> paper is in the definition of the problem. To this aim, I think that the 
+> authors can merge the problem presented in this paper with the 
+> properties provided in paper 29 that I have also reviewed.
+> 
+> The combination of the two papers could provide a sufficient 
+> contribution in terms of characterization of the problem and of the 
+> desiderata of the solution.
+> 
+> An additional issue I have found in this paper is also that the 
+> evaluation is extremely poor. It consist of a table reporting some 
+> execution times but the experimental setting is not clear and, in the 
+> way it is presented, it does not say much about the scalability of the 
+> approach. If the paper becomes focused on the theoretical definition of 
+> the problem, this issue becomes less significant, although it is still 
+> required that the authors provide more details about the experimental 
+> setting.
