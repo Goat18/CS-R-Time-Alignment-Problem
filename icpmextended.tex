@@ -168,7 +168,7 @@ We also provide a section on related works about distances over timed words and 
     
  We organise this paper as follows. We begin with defining timed words, time Petri nets, and the semantics of the execution of time Petri nets in section \ref{preliminaries}. Then, we proceed to section \ref{sec:alignmentpb}, where we formally set the alignment problem and its purely timed version, which assumes that the trace to be aligned needs no edits to its actions, only its timestamps. We then propose three different distance functions over sequences of timestamps. 
    In section \ref{lpp}, we present the encoding of the purely timed alignment problem under $d_t$, as a linear programming problem, and in section \ref{mcg} we present our direct, quadratic time algorithm in the case of a structurally restricted class of models (sequential causal processes).
-    Then, in section \ref{4} we study purely timed alignment under $d_\theta$ and provide a linear time algorithm for computing the same for all extended free choice time Petri nets. We return to discussing how our method can complement traditional untimed alignment techniques to provide an approach for solving the general timed alignment problem and the limitations of the same in section \ref{align}.  We discuss related works in section \ref{relwork} and conclude in section \ref{conc}. 
+    Then, in section \ref{4} we study purely timed alignment under $d_\theta$ and provide a linear time algorithm for computing the same for all extended free choice time Petri nets. We return to discussing how our method can complement traditional untimed alignment techniques to provide an approach for solving the general timed alignment problem and the limitations of the same in section \ref{align}. Section~\ref{implementation} reports on our implementation. We discuss related works in section \ref{relwork} and conclude in section \ref{conc}. 
 
 	
 	\section{Preliminaries}\label{preliminaries}
@@ -184,8 +184,8 @@ We also provide a section on related works about distances over timed words and 
 
     The timed process model we use here is a labelled time Petri net. 
     
-    \begin{definition}[Labeled Time Petri Net] \label{tpn} A labeled \textit{time Petri net} (or TPN) is a tuple $N = (P, T, F, SI, \Sigma, \lambda, M_0, M_f)$. 
-Here $P, T$ are disjoint sets of places and transitions respectively,  and $F \subseteq (P \times T) \cup (T \times P)$ is the flow relation that relates transitions to the places it takes tokens from and returns tokens to. 
+    \begin{definition}[Labeled Time Petri Net] \label{tpn} A labeled \textit{time Petri net} (or TPN) is a tuple $N = (P, T, F, SI, \Sigma, \lambda,\linebreak M_0, M_f)$.
+Here $P$, $T$ are disjoint sets of places and transitions respectively,  and $F \subseteq (P \times T) \cup (T \times P)$ is the flow relation that relates transitions to the places it takes tokens from and returns tokens to. 
 The function $SI : T \rightarrow \mathbb{Q}^+ \times (\mathbb{Q}^+ \cup \{\infty\})$ is the static interval function which assigns to each transition an earliest and latest firing time, i.e.,  $SI(t) = (Eft(t), Lft(t))$ is a pair of positive rational numbers, the second of which might be infinity, such that $Eft$ stands for the earliest firing time, and $Lft$ for latest firing time. We use the function $\lambda : T \rightarrow \Sigma$ to label our transitions with actions from the action set $\Sigma$, and note that we do not consider silent transitions in this work (i.e. $\lambda$ is a total function). We let $ M_0 , M_f: P \to \mathbb{N}$ are the initial and final markings, that denote the initial and final configurations of tokens in the time Petri net. % of $N$. 
     \end{definition}
     
@@ -226,7 +226,7 @@ $M''$ as in the untimed case (subtracting one token from each preplace, and addi
 
     
     \begin{definition}[Language of a TPN]
-        A timed word $w = ((a_0, \tau_0), (a_1, \tau_1), \dots (a_n, \tau_n)) \in (\Sigma \times \mathbb{R}^+)^*$ is in the language $\mathcal{L}(N)$ of the labelled TPN $N$ if there is a valid execution of the model such that there exists a sequence of transitions $(t_0, t_1 \dots t_n) \in (T)^*$ satisfying $(\lambda(t_0),\lambda( t_1), \dots,\lambda (t_n)) = w $, such that when they fire at the times ($\tau_0, \tau_1 \dots \tau_n$), they transform the initial state into a final one, that is, there exists some clock function $I$ on $M_f$, $(M_0, \mathbf{0}) [t_0, t_1, \dots t_n\rangle (M_f, I)$, where each $t_i$ is fireable at $\tau_i$. 
+        A timed word $w = ((a_0, \tau_0), (a_1, \tau_1), \dots (a_n, \tau_n)) \in (\Sigma \times \mathbb{R}^+)^*$ is in the language $\mathcal{L}(N)$ of the labelled TPN $N$ if there is a valid execution of the model such that there exists a sequence of transitions $(t_0, t_1 \dots t_n) \in T^*$ satisfying $(\lambda(t_0),\lambda( t_1), \dots,\lambda (t_n)) = w $, such that when they fire at the times ($\tau_0, \tau_1 \dots \tau_n$), they transform the initial state into a final one, that is, there exists some clock function $I$ on $M_f$, $(M_0, \mathbf{0}) [t_0, t_1, \dots t_n\rangle (M_f, I)$, where each $t_i$ is fireable at $\tau_i$. 
     \end{definition}
     
 Throughout we use the term \textit{valid execution} to distinguish it from faulty executions of the time Petri net. This is because we are studying alignments, and as a result studying how a non-fitting trace diverges in its ``execution'' from what is required by the time Petri net is our central concern. 
@@ -278,19 +278,22 @@ Throughout we use the term \textit{valid execution} to distinguish it from fault
     \end{example}
     
     Now we will build some vocabulary to help us talk about individual executions of timed words on TPNs, that take the form of branching paths. Much like runs of finite automata, causal processes are a way to unroll an execution of a Petri net, each element of $B$ being a copy of a place being visited by a token (so the same place if revisited will have multiple copies in $B$) and $E$ is the analogous object for copies of transitions fired in the original net. The partial order $G$ captures the copies of flow arcs in the original net, and hence it captures the causal relationships between different transitions and places during an execution. 
-    These correspond to runs in nondeterministic automata, but in this setting every configuration is a set of token-filled places, so to represent a particular execution we use what we define below as causal processes. 
-    
+    These correspond to runs in nondeterministic automata, but in this setting every configuration is a set of token-filled places, so to represent a particular execution we use what we define below as causal processes.
+
+    We reuse classical definitions \cite{Winskel86}.
     \begin{definition}[Causal Net] \label{cn}
         A \textit{causal net} $CN = (B, E, G)$ is a finite, acyclic graph where 
-     $B$ (conditions) and $E$ (events) comprise the vertices, $G$ denotes the edges (i.e., $G \subseteq (B \times E \cup E \times B)$) and $\forall b \in B : |b \pre| \leq 1 \wedge | \pre b| \leq 1$. . 
+     $B$ (conditions) and $E$ (events) comprise the vertices, $G$ denotes the edges (i.e., $G \subseteq (B \times E \cup E \times B)$) and $\forall b \in B : |b \pre| \leq 1 \wedge | \pre b| \leq 1$.
     \end{definition}
     
     This is meant to represent an unfolded run of the original Petri net, such that every time a place is revisited, it is copied afresh to ensure that the execution only ever moves forward. 
     Multiple elements of $B$ or $E$ map to the same element in $P$ or $T$ respectively, a notion that is expressed via the map $p$ defined below. Let $Min(CN)$ be the set of vertices of $CN$ that are minimal under the $G$ pre-ordering
     
     \begin{definition}[Homomorphism] \label{hom}  Let $N$ be a TPN with place set $P$ and transition set $T$, and ${CN = (B, E, G)}$ be a causal net. 
-        A mapping $p : B \cup E \rightarrow P \cup T$ is a \textit{homomorphism} if $p(B) \subseteq P$,  $p(E) \subseteq T$ and $\forall e \in E$ the map $p$ when restricted to $\pre e$ is a bijection between $\pre e$ and $\pre p(e)$, and similarly, $p$ when restricted to $e \pre $ is a bijection between $e \pre $ and $p(e) \pre $,  and lastly, $p$ when restricted to $Min(CN)$ is also a bijection between the sets of places $Min(CN)$ and $Supp(M_0)$, where $Supp(M_0)$ is the support of the marking function $M_0$. 
+        A mapping $p : B \cup E \rightarrow P \cup T$ is a \textit{homomorphism} if $p(B) \subseteq P$,  $p(E) \subseteq T$ and $\forall e \in E$ the map $p$ when restricted to $\pre e$ is a bijection between $\pre e$ and $\pre p(e)$, and similarly, $p$ when restricted to $e \pre $ is a bijection between $e \pre $ and $p(e) \pre $, and lastly, $p$ when restricted to $Min(CN)$ is also a bijection between the sets of places $Min(CN)$ and $Supp(M_0)$, where $Supp(M_0)$ is the support of the marking function $M_0$.
     \end{definition}
+    Such homomorphism naturally induces a labeling of the events: \(\lambda(e) = \lambda(p(e))\).
+    In figures we use this labeling to identify the homomorphism.
     
     \begin{definition}[Causal Process]\label{cp} A \textit{causal process} of a TPN is a pair $(CN, p)$ where $CN$ is a causal net and $p$ is a homomorphism from $CN$ to $TPN$. 
     \end{definition}
@@ -1271,6 +1274,20 @@ Note that for extended free choice time petri nets, in order to check for the va
 
 		\begin{remark} Note that Algorithm \ref{DelayAlgo} runs through the events of the causal process $E$ exactly once, and each time runs through the set of currently enabled transitions, and the total set of transitions, and hence its time complexity is linear in the size of the input $|CN|$, and the size of the transition set, i.e, $O(|E||T|)$. 
 		\end{remark}
+
+                \section{Implementation}\label{implementation}
+                We have implemented the stamp only alignment algorithm in Python, available at \url{https://github.com/NehaRino/TimedAlignments}. This algorithm is quadratic in time complexity, and runs well in practice, as seen below
+		\centerline{
+			\begin{tabular}{|c|c|c|c|}
+				\hline
+				Trace Length & 10 & 100 & 1000\\
+				\hline
+				Running Time (seconds) & 0.001 & 0.1 & 9.8 \\ 
+				\hline
+			\end{tabular}
+		}
+\todo[inline]{Thomas: Neha, could you insert the configuration on which you ran the experiments, (Processor, frequency, RAM)?}
+
 		\section{General Timed Alignment Problem: Approaches and Limitations} \label{align}
 		
 		Now that we have provided methods to tackle the purely timed alignment problem for two metrics, we return to the general timed alignment problem. As our examples throughout have reflected, the purely timed alignment problem does not so much ignore the action labels as assume that they do  not need editing. 
@@ -1341,18 +1358,6 @@ Another is the Geometric Edit Distance \cite{GEdit}, which is similar to Dynamic
 As actions do not have a nontrivial notion of distance between them, the best way of applying these to our setting is to consider timestamp sequences indexed by their position in the word. 
 In this case, Dynamic Time Warping seems to compute distances between traces assuming that one word is a stutter of another, while Geometric Edit Distance will allow for deleting some events (possibly ones whose actions do not match), and both of these alternatives seem to yield distance measures whose meaning in the model are unclear. 
 These distances also have more continuous counterparts such as the Skorohod distance \cite{skorokhod1956limit} and the Fr\'echet distance \cite{frechet1906quelques}, but we restrict ourselves to the case of discrete timed event sequences. 
-
-		% We have implemented the stamp only alignment algorithm in Python, available at \url{https://github.com/NehaRino/TimedAlignments}. This algorithm is quadratic in time complexity, and runs well in practice, as seen below 
-		% \centerline{
-		% 	\begin{tabular}{|c|c|c|c|}
-		% 		\hline
-		% 		Trace Length & 10 & 100 & 1000\\
-		% 		\hline
-		% 		Running Time (seconds) & 0.001 & 0.1 & 9.8 \\ 
-		% 		\hline
-		% 	\end{tabular}
-		% }
-		
 
 		
 		\section{Perspectives and Conclusion}\label{conc}
