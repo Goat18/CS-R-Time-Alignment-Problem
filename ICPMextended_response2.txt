@@ -203,13 +203,16 @@ central concern.
 > The reasoning in Example 4 is convincing for an example, however does 
 > not carry forward to the more general case. A better motivation needs to 
 > be given for this approach.
+We inserted a discussion after the example.
 > 
 > Just before III.A there is a forward look, however also the current 
 > section III is presented as "in the future".
+We rewrote this part.
 > 
 > Example 5: in all of the repaired traces, the timestamps are out of 
 > order. The paper should explain why this does not pose a problem with 
 > respect to the recorded order of events.
+We added a note about this in Example 5.
 > 
 > In general, one should be careful to derive generic statements from 
 > examples: the example suggests a certain conceptual approach, however an 
@@ -223,22 +226,28 @@ central concern.
 > define distance measures in which they are not used?
 > 
 > Similarly, examples do not belong in the proof of a lemma.
+corrected
 > 
 > Timing functions are sometimes denoted with \lambda, and sometimes with 
 > \tau.
+corrected
 > 
 > A bit of textual introduction for Section IV would help the reader.
+done
 > 
 > The proof of Lemma 2 starts with "the way we see this is as follows". 
 > This phrasing contradicts the function of a proof. Also, as a first 
 > step, d_t is defined in a different way than in Def 12, which is highly 
 > confusing.
+corrected
 > 
 > Theorem 3 shows some nice clever engineering, however the theorem does 
 > not follow from the proof. It could be better phrased as a definition. 
 > In the final math line, what is C?
+We rewrote this.
 > 
 > "This bound": no bound was mentioned.
+corrected
 > 
 >  From Section IV.B, I got lost.
 > 

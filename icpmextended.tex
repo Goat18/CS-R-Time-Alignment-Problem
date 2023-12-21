@@ -109,6 +109,7 @@
 		Conformance checking, Alignments, Timestamps, Time Petri nets
 	\end{IEEEkeywords}
 	
+        \todo[inline]{correct broken bib refs}
 	\section{Introduction} 
 	%\subsection{Conformance Checking and Alignments} 
     Process mining studies vast systems through their event logs, and seeks to extract meaningful ways to model the underlying patterns or processes that govern the behaviour of the system in order to better understand it, or predict its future behaviour \cite{A16}.
@@ -140,7 +141,7 @@
 The problem of calculating alignments has been extensively studied \cite{Adriansyah2014AligningOA,BCC21} in this untimed setting
 where one assumes that an event log is a list of words over a finite alphabet (the set of possible action labels), which can be compared using Levenshtein's edit distance or variants.
 For time-aware conformance checking, one requires a notion of distance over timed words, enabling us to measure how close two timed process traces are. 
-Distances over timed words have been explored before, such as in \cite{AsarinBD18} and \cite{CIM14}, both of which have in common the notion of capturing the maximal difference between the timestamps attached to the same action label. 
+Distances over timed words have been explored before, such as in \cite{ABD18} and \cite{CIM14}, both of which have in common the notion of capturing the maximal difference between the timestamps attached to the same action label. 
 Earlier, \cite{alldistHenz} explored similar notions of absolute and relative errors but on traces whose event interdependencies are not linked to any model (see section \ref{relwork} for a more detailed discussion about alternative notions of distance). 
 %% \todo[inline]{Neha: I added another reference to work on timed distances here}
 In this paper, we provide three distinct distance functions that can reflect information about multiple timestamp discrepancies between timed words, and using them, we pose and solve the alignment problem for time-aware processes.
@@ -1344,7 +1345,7 @@ Note that for extended free choice time petri nets, in order to check for the va
 		There are a number of existing definitions of distance functions over timed words, such as the six topologically equivalent definitions listed in \cite{alldistHenz}. 
 		Two of these distances are notably very similar to our stamp and delay based distances, and much like in our setting, the distance between two words is only defined when the action sequences match up exactly. 
 		In \cite{CIM14}, a notion of edit distance for timed words is introduced; similarly to our approach for solving the general timed alignment problem, given two timed words, it first tries to edit the untimed parts to match optimally, and then proceeds to edit their timestamps using stamp-like edits, yielding not a real value as the distance but a pair of values, the first component being the action sequence's edit distance and the latter being the stamp distance on the transformed timing sequences. 
-		In \cite{AsarinBD18}, the distance function finds the maximal timing deviation between any two events that correspond to the same action, and is closely related to the Hausdorff distance between point-sets. 
+		In \cite{ABD18}, the distance function finds the maximal timing deviation between any two events that correspond to the same action, and is closely related to the Hausdorff distance between point-sets. 
 		The latter two allow for differences in the number and placement of actions in the word, while the first work does not. 
 		An important way we deviate from all of these distances, is the way $d_{\theta}$ reflects the causal dependencies of the model. 
 		As we operate within the domain of process mining, an important goal in the field is to leverage the insight that process models provide about the systems they represent. 
@@ -1375,7 +1376,7 @@ These distances also have more continuous counterparts such as the Skorohod dist
 		Lastly, there are a number of other conformance artefacts that can be defined and studied in the timed setting, such as anti-alignments \cite{CBC21}, and one can better develop all such conformance checking methods to account for timed process models.
 		%%mention g-algo specifically?
 		\bibliographystyle{IEEEtran}
-		\bibliography{Conformanceieee}
+		\bibliography{icpmextended}
 
 	
 
@@ -1383,10 +1384,3 @@ These distances also have more continuous counterparts such as the Skorohod dist
 	
 	
 \end{document}
-
-
-
-
-
-
-
