@@ -1276,7 +1276,9 @@ Note that for extended free choice time petri nets, in order to check for the va
 		\end{remark}
 
                 \section{Implementation}\label{implementation}
-                We have implemented the stamp only alignment algorithm in Python, available at \url{https://github.com/NehaRino/TimedAlignments}. This algorithm is quadratic in time complexity, and runs well in practice, as seen below
+                We have implemented the stamp only alignment algorithm in Python, available at \url{https://github.com/NehaRino/TimedAlignments}. 
+				This algorithm is quadratic in time complexity, and was seen to run well in practice when tested on an Apple M1 chip with 8 cores, running at 3.2 GHz, 8GB RAM machine, as seen below. 
+
 		\centerline{
 			\begin{tabular}{|c|c|c|c|}
 				\hline
@@ -1286,7 +1288,8 @@ Note that for extended free choice time petri nets, in order to check for the va
 				\hline
 			\end{tabular}
 		}
-\todo[inline]{Thomas: Neha, could you insert the configuration on which you ran the experiments, (Processor, frequency, RAM)?}
+		
+%\todo[inline]{Thomas: Neha, could you insert the configuration on which you ran the experiments, (Processor, frequency, RAM)?}
 
 		\section{General Timed Alignment Problem: Approaches and Limitations} \label{align}
 		
