@@ -145,8 +145,8 @@ These generalised weighted mixed distances allow users to decide what types of c
         
         \adjustbox{center, scale = 0.8}{
             \begin{tikzcd}
-                \eye_i & {\overset{[1,1]}{\fbox{\textrm{dispatch}}}} & \bigcirc & {\overset{[5, 5]}{\fbox{\textrm{sent}}}} & \bigcirc_o \\
-                {\underset{[1, \infty]}{\fbox{\textrm{draft}}}} & {\underset{[0,5]}{\fbox{\textrm{unsend}}}} & {}
+                \eye_i & {\overset{[1,\infty]}{\fbox{\textrm{dispatch}}}} & \bigcirc & {\overset{[5, 5]}{\fbox{\textrm{sent}}}} & \bigcirc_o \\
+                {\underset{[1, \infty]}{\fbox{\textrm{save draft}}}} & {\underset{[0,5]}{\fbox{\textrm{unsend}}}} & {}
                 \arrow[curve={height=-12pt}, from=2-1, to=1-1]
                 \arrow[curve={height=-12pt}, from=1-1, to=2-1]
                 \arrow[from=1-1, to=1-2]
@@ -161,9 +161,10 @@ These generalised weighted mixed distances allow users to decide what types of c
         }
         
 
-        One process trace is $(\textrm{draft}, 5)(\textrm{dispatch}, 6)(\textrm{sent}, 11)$, which depicts drafting the message in 5 units and then dispatching it, and having it send successfully. An example of an observed trace that does not conform to the process above would be $(\textrm{draft}, 3)(\textrm{draft}, 5)(\textrm{dispatch}, 7)(\textrm{dispatch}, 7)(\textrm{sent}, 12)$. 
+        One process trace is $(\textrm{save draft}, 5)(\textrm{dispatch}, 6)(\textrm{sent}, 11)$, which depicts drafting the message in 5 units and then dispatching it, and having it send successfully.
+        An example of an observed trace that does not conform to the process above would be $(\textrm{save draft}, 3)(\textrm{draft}, 5)(\textrm{dispatch}, 7)(\textrm{dispatch}, 7)(\textrm{sent}, 12)$. 
         Clearly, there is an extraneous letter here, as the same message cannot be dispatched twice, and the timestamps for dispatch and sending come too late. 
-        One possible optimally close process trace for this observation is $(\textrm{draft}, 3)(\textrm{draft},6)(\textrm{dispatch}, 7)(\textrm{sent}, 12)$, which deletes the extra dispatch event and extends the second draft event by a unit, allowing the rest of the trace to thereby be in time. 
+        One possible optimally close process trace for this observation is $(\textrm{save draft}, 3)(\textrm{save draft},6)(\textrm{dispatch}, 7)(\textrm{sent}, 12)$, which deletes the extra dispatch event and extends the second draft event by a unit, allowing the rest of the trace to thereby be in time. 
     \end{example}
     Here we recall the general alignment problem, posed in \cite{CR22}, which formalised the notion of aligning timed traces to timed process models.  %Time Petri nets offer both a graphical means by which to represent concurrent systems, but their semantics also allow one to express complex time constraints. 
     
@@ -356,7 +357,9 @@ We say a sequence of moves $m_1m_2\dots m_n = m \in Moves^*$ \textit{aligns} $\t
         $$
         
     \end{lemma}
-    
+     \begin{proof}
+        This follows immediately from the definitions of a move and a flow function. 
+     \end{proof}
     
     In order to compute the mixed distance between two timed traces, we wish to cull down the space of possible sequences of moves that transform the two words to each other to some move sequences that still capture all the behaviours we're interested in. 
     Hence, we introduce the following properties, which are designed intuitively to be sequences of moves that still perform the same effective transformations, and generally lower the cost of the transformation as well, by choosing moves wisely to avoid inefficiency. 
@@ -364,9 +367,9 @@ We say a sequence of moves $m_1m_2\dots m_n = m \in Moves^*$ \textit{aligns} $\t
     The second, co-operation, represents the fact that doing an unnecessarily expensive move in the moment will not give unintuitive future gains, and we can show this holds for all $d_{\alpha}$ where $\alpha \geq 2$. 
     The final property, stability, pinpoints exactly at what point the optimal move for the evenly mixed distance, $d_1$ is. 
     
-    %\subsubsection{Chronology}
+    \subsection{Chronology}
 
-    %The first property captures the fact that we can order our moves in a sequence that goes from left to right or right to left along the positions in the sequential trace. 
+    The first property captures the fact that we can order our moves in a sequence that goes from left to right or right to left along the positions in the sequential trace. 
     
     \begin{definition}[Chronology]
         A sequence of moves aligning $\gamma$ to $\sigma$ is said to be \textit{chronological} if for all positions $i < j \leq n = |\gamma|$, all the moves at position $i$ are performed before any move at position $j$ and exactly one mixed move (where one or both components may be zero) takes place at each position, that is $\rho \in Moves^*$ is chronological iff  $\forall i \in \{1, 2, \dots n\},  \exists s_i, d_i \in \mathbb{R}: \rho = (s_1, d_1, 1)(s_2, d_2, 2)\dots (s_n, d_n, n) $. 
@@ -379,15 +382,15 @@ We say a sequence of moves $m_1m_2\dots m_n = m \in Moves^*$ \textit{aligns} $\t
         Such that $\forall i \in \{1, 2, \dots n\}: \sigma_i = \gamma_i + s_i + \sum_{j=1}^{i} d_j$. 
     \end{definition}
     
-    % Clearly, all chronological sequences have a one to one correspondence with reverse chronological sequences with exactly the same cost, the map between the two being simply reversing the sequence of moves. 
-    % In addition, in the flow function representation, the notions of chronology and reverse chronology are still somewhat preserved. 
-    % A mixed move affects both the duration before and all those after the event the move is applied at, so the order in which they happen does indeed stay chronological or reverse chronological as the case may be. 
-    % The only point of nuance here is that of course, a prefix of a sequence of say chronological moves no longer has the property of having completely aligned the word up to the i-th element of the flow vector while leaving the rest unchanged, as the last edit move may have perturbed the (i+1)st element. 
+    Clearly, all chronological sequences have a one to one correspondence with reverse chronological sequences with exactly the same cost, the map between the two being simply reversing the sequence of moves. 
+    In addition, in the flow function representation, the notions of chronology and reverse chronology are still somewhat preserved. 
+    A mixed move affects both the duration before and all those after the event the move is applied at, so the order in which they happen does indeed stay chronological or reverse chronological as the case may be. 
+    The only point of nuance here is that of course, a prefix of a sequence of say chronological moves no longer has the property of having completely aligned the word up to the i-th element of the flow vector while leaving the rest unchanged, as the last edit move may have perturbed the (i+1)st element. 
     
-    % But the upshot is, in a reverse chronological sequence of moves, the prefix of the sequence that stops at the ith event, combined with the stamp component of the mixed move at position (i-1), completely aligns the flow function for the suffix starting at position i. 
-    % Reverse chronological runs do not have an equivalent partial completion property in the timing function setting, but due to how local the moves end up being in the flow function setting, we obtain it here. 
+    But the upshot is, in a reverse chronological sequence of moves, the prefix of the sequence that stops at the ith event, combined with the stamp component of the mixed move at position (i-1), completely aligns the flow function for the suffix starting at position i. 
+    Reverse chronological runs do not have an equivalent partial completion property in the timing function setting, but due to how local the moves end up being in the flow function setting, we obtain it here. 
     
-    % \textbf{Note: } For simplicity, we always assume the move played on the last position of a trace henceforth is a pure delay. Even if part of it were stamp, it would not affect the flow or timing representation any differently, so this is safe to assume. 
+    \textbf{Note: } For simplicity, we always assume the move played on the last position of a trace henceforth is a pure delay. Even if part of it were stamp, it would not affect the flow or timing representation any differently, so this is safe to assume. 
     
     \begin{example}
         
@@ -398,12 +401,42 @@ We say a sequence of moves $m_1m_2\dots m_n = m \in Moves^*$ \textit{aligns} $\t
         
     \end{example}
     
-    % As the above example suggests, we claim: 
+    As the above example suggests, we claim: 
     
-    % \begin{lemma}\label{linescommute} For all $\alpha \in \mathbb{R}^+ \cup \{\infty\}$ there is a minimal cost sequence of $\alpha$ weighted mixed moves aligning any two sequential timed traces that is chronological/reverse chronological. 
-    % \end{lemma}
+    \begin{lemma}\label{linescommute} For all $\alpha \in \mathbb{R}^+ \cup \{\infty\}$ there is a minimal cost sequence of $\alpha$ weighted mixed moves aligning any two sequential timed traces that is chronological/reverse chronological. 
+    \end{lemma}
+
+
+\begin{proof}
+    We assume that there is at least one mixed move at each position, adding zero moves as needed. We first observe the following: 
+    $$\forall  i < j : (s, d, i)(s', d', j)(\gamma) = \gamma' = (s', d', j)(s, d, i)(\gamma)$$
+    Where $$\forall 1 \leq k \leq n : \gamma'_k = \begin{cases}
+    \gamma_k & k <i \\
+    \gamma_k + s + d & k = i \\
+    \gamma_k + d & i < k < j \\
+    \gamma_k + s' + d + d' & k = j \\
+    \gamma_k + d + d' & k > j
+    \end{cases}$$
+    That is, on sequential timed traces, mixed moves are commutative. 
+    Clearly permuting the moves of a run does not change its cost, so we can assume any sequence of moves to be in increasing order of positions without loss of generality.
     
-%   \subsubsection{Co-operation}
+    Now we can write $m'$ as follows : 
+    $$m' = (s_{11}, d_{11}, 1)\dots (s_{ij}, d_{ij}, i)\dots(s_{nk_n}, d_{nk_n}, n)$$ 
+    
+    Where for each $i$, $k_i \geq 1$ is the number of mixed moves at position $i$. 
+    $$cost(m') = \sum_{i = i}^{n} (\sum_{j = 1}^{k_i} c_s\cdot|s_{ij}| + c_d \cdot|d_{ij}|)$$ 
+    
+    Define $s_i = \sum_{j = 1}^{k_i} s_{ij}$, $d_i =\sum_{j = 1}^{k_i} d_{ij}$, giving us the chronological run $$m = (s_1, d_1, 1)\dots (s_i, d_i, i)\dots (s_n, d_n, n)$$
+    
+    Now, by the triangle inequality we know that : 
+    $$\forall i : \sum_{j = 1}^{k_i} c_s \cdot|s_{ij}| + c_d \cdot|d_{ij}| \geq c_s \cdot| \sum_{j = 1}^{k_i} s_{ij} | + c_d \cdot| \sum_{j = 1}^{k_i} d_{ij} | = cost(s_i, d_i, i) $$
+    
+    Thereby giving us that $$cost(m) \leq cost(m')$$ 
+    
+    As for the reverse chronological sequence, by commutativity we can simply reverse $m$ and obtain $m_R$, a reverse chronological sequence of moves that does the same transformation and as reversing the sequence preserves cost, $$cost(m_R) = cost(m) \leq cost(m')$$ 
+    \end{proof}
+    
+  \subsection{Co-operation}
     
     \begin{definition}[Co-operation]
         A mixed move is said to be co-operative if its delay edit and stamp edit are in the same direction, that is, 
@@ -422,36 +455,100 @@ $f_\gamma \xmapsto{(0, 0, 5)} (1, 0, 1, 2, 1) \xmapsto{(0.2, 0, 4)} (1, 0, 1, 2.
     
     Once again, one can always convert an evenly mixed non-cooperative run into an equivalent cooperative one with a smaller cost, and in fact, this holds for a large number $d_{\alpha}$ as well. 
     
-    % \begin{lemma}\label{linescoop} For all $\alpha \geq 2 \vee \alpha = 1$, there is a cooperative minimal cost chronological (or reverse chronological) sequence of $\alpha$ weighted mixed moves aligning any two sequential timed traces. 
-    % \end{lemma}
-    
+    \begin{lemma}\label{linescoop} For all $\alpha \geq 2 \vee \alpha = 1$, there is a cooperative minimal cost chronological (or reverse chronological) sequence of $\alpha$ weighted mixed moves aligning any two sequential timed traces. 
+    \end{lemma}
+    \begin{proof}
+        Given any minimal cost sequence of moves aligning $\gamma$ to $\sigma$, by Lemma \ref{linescommute} we know that there is a chronological sequence that is also minimal cost, call it $m$. 
+        
+        Assume $|\gamma| = |\sigma| = n$. 
+        
+        We proceed by induction on the first index $k$ at which $m' = (s_1, d_1, 1)\dots(s_n, d_n, n)$ uses a non co-operative move. 
+        The idea is to start by replacing $m'$ with a sequence whose first move is cooperative (with perhaps minor changes in the future but no changes to the past) that is overall at most as expensive. 
+        Then, by gradually keep replacing moves as one goes along, since we do not affect past moves, eventually we have a completely cooperative sequence. 
+        \textbf{Extreme case} : $k = n$.
+        
+        This gives us $$s_n d_n < 0 \implies |s_n + d_n| < |s_n| + |d_n|$$ 
+        $$\textrm{Then } m = m'|_{n-1}(0, s_n + d_n, n)$$ costs less than $m'$, aligns the words and is co-operative. 
+        
+        \textbf{Induction hypothesis} : Suppose we've demonstrated that there is a sequence of moves $m''$ that aligns $\gamma$ to $\sigma$, is co-operative for the first $0 \leq k-1 < n-1$ steps, is non co-operative at step $k$ and $cost(m'') \leq cost(m)$
+        
+        \textbf{Claim} : There is a sequence of moves $m$ that aligns $\gamma$ to $\sigma$, is co-operative for at least the first $k$ steps and $$cost(m) \leq cost(m'') \leq cost(m')$$
+        
+        \textbf{Proof} : Let $m'' = (s_1, d_1, 1)\dots(s_n, d_n, n)$. 
+        
+        We first define $m_i = m''|_{k-1}$, the initial $k-1$ length sequence of moves, and $m_f = (s_{k+2}, d_{k+2}, k+2)\dots (s_n, d_n, n)$, the final sequence of moves post the moves at positions $k$ and $k+1$. 
+        Hence we have that $$m'' = m_i(s_k, d_k, k)(s_{k+1}, d_{k+1}, k+1)m_f$$
+        Recall that upto scaling it is sufficient to assume that $c_s = \alpha$ and $c_d = 1$. 
+        
+        We know that $s_kd_k < 0$. 
+        This implies one of two possibilities : 
+        
+        \textbf{Case 1} : $|d_k + s_k| = |d_k| - |s_k|$
+        
+        We define the following aligning, chronological run that is co-operative up to (and including) the $k$th step : 
+        $$m = m_i( 0, d_k + s_k, k)( s_{k+1}, d_{k+1} - s_k, k+1)m_f$$
+        $$cost(m'') - cost(m)  $$$$ = (\alpha \cdot |s_{k+1}| + |d_{k+1}| + \alpha \cdot |s_k| + |d_k|) - ( | d_k + s_k| + \alpha \cdot | s_{k+1}| + | d_{k+1} - s_k |) $$ 
+        $$\geq \alpha \cdot (|s_{k+1} - |s_{k+1}|) + (|d_{k+1}| - |d_{k+1}|)+ (\alpha \cdot|s_k| + |d_k|  -| d_k + s_k|  - |s_k |) = (\alpha |s_k|)  \geq 0$$ 
+        
+        \textbf{Case 2} : $|d_k + s_k| = |s_k| - |d_k|$
+        
+        When $\alpha \geq 2$, we can define the same aligning, chronological run that is co-operative up to (and including) the $k$th step : 
+        $$m = m_i( 0,d_k + s_k,  k)( s_{k+1}, -s_k + d_{k+1}, k+1)m_f$$
+        $$cost(m'') - cost(m) $$$$= \alpha \cdot |s_{k+1}| + |d_{k+1}| + \alpha \cdot |s_k| + |d_k| - (|s_k + d_k | + \alpha \cdot| s_{k+1}| + | d_{k+1} - s_k |) $$
+        $$\geq \alpha \cdot |s_k| + |d_k| - (|s_k| - |d_k| + |s_k|) = (\alpha - 2)\cdot |s_k| \geq 0$$
+        
+        On the other hand, when $\alpha = 1$, we define the following aligning, chronological run that is co-operative up to (and including) the $k$th step : 
+        $$m = m_i( d_k + s_k, 0, k)( s_{k+1}, d_k + d_{k+1}, k+1)m_f$$
+        $$cost(m'') - cost(m) $$$$= |s_{k+1}| + |d_{k+1}| + |s_k| + |d_k| - (|s_k + d_k | + | s_{k+1}| + | d_{k+1} + d_k |) $$
+        $$\geq |d_{k+1}| + |s_k| + |d_k| - (|s_k + d_k | + | d_{k+1}| + |d_k |) \geq 0$$
+        
+        By induction we can hence conclude that there is a chronological sequence of moves $m$ that is co-operative throughout and has lower cost than $m'$, i.e., if $m'$ is minimal cost so is $m$.  
+        
+        Now, $m_R$ is also co-operative throughout as co-operation is a property of the individual moves constituting the sequence, and $m_R$ has exactly the same moves just in the reverse order, so there is also a reverse chronological minimal cost sequence of moves aligning $\gamma$ to $\sigma$. 
+        
+        \end{proof}
     For the rest of this subsection assume we are always aligning using evenly mixed distance $d_1$. 
-    % Similarly we have \emph{cross co-operation} which states that a stamp move $s$ at a location should ideally have opposite sign to the delay $d$ at the next position, as its contribution to the next flow component is going to be $-s$. 
-    % This leads us to the following definition: 
+    Similarly we have \emph{cross co-operation} which states that a stamp move $s$ at a location should ideally have opposite sign to the delay $d$ at the next position, as its contribution to the next flow component is going to be $-s$. 
+    This leads us to the following definition: 
     
-    % \begin{definition}[Cross Co-operation]
-    %   A reverse chronological run ${m = (0, d_n, n) \dots (s_1, d_1, 1)}$ is said to be cross co-operative if no stamp component has the same sign as the delay component of the move played at the next position, that is, $\forall i < n : s_i \cdot d_{i+1} \leq 0$. 
-    % \end{definition}
+    \begin{definition}[Cross Co-operation]
+      A reverse chronological run ${m = (0, d_n, n) \dots (s_1, d_1, 1)}$ is said to be cross co-operative if no stamp component has the same sign as the delay component of the move played at the next position, that is, $\forall i < n : s_i \cdot d_{i+1} \leq 0$. 
+    \end{definition}
     
-    %Much like co-operation above, cross co-operation can be used to improve the cost of a run, as seen in the next lemma. 
+    Much like co-operation above, cross co-operation can be used to improve the cost of a run, as seen in the next lemma. 
     
-    % \begin{lemma}\label{crosscoop}
-    %   For every reverse chronological co-operative evenly mixed run $m'$ aligning $\gamma$ to $\sigma$, there is a reverse chronological, co-operative and cross co-operative run $m$ aligning $\gamma$ to $\sigma$ such that $cost(m) \leq cost(m')$. 
-    % \end{lemma}
+    \begin{lemma}\label{crosscoop}
+      For every reverse chronological co-operative evenly mixed run $m'$ aligning $\gamma$ to $\sigma$, there is a reverse chronological, co-operative and cross co-operative run $m$ aligning $\gamma$ to $\sigma$ such that $cost(m) \leq cost(m')$. 
+    \end{lemma}
 
-%   \subsubsection{Stability}
+    \begin{proof}
+        Say $m' = (0, d'_n, n) \dots (s'_1, d'_1, 1)$. 
+        Let $i$ be an index at which the stamp move is not cross co-operative, i.e., $s_i \cdot d_{i+1} > 0$. 
+        
+        Consider a run $m''$ that is identical to $m'$, except for the moves it plays at positions $i$ and $i+1$.   
+        
+        Let $m''$ perform the move $(0, d_i + s_i, i)$ at position $i$ and $(s_{i+1}, d_{i+1} - s_{i}, i+1)$ for the move at position $i+1$ if $|s_i| < |d_i|$ and $(s_i - d_{i-1}, d_i + d_{i+1}, i)$ at position $i$ and $(s_{i+1}, 0, i+1)$ for the move at position $i+1$ otherwise. 
+        
+        Clearly, the appropriate one of either of these is cross co-operative at position $i$, while also staying co-operative and reverse chronologically aligning $\gamma$ to $\sigma$, and costs $\min(|s_i|, |d_{i-1}|)$ less that $m'$. 
+        
+        Doing this procedure for at most $n$ times will result in a run with every stamp move being cross co-operative and with lower cost than $m'$, that is, our required $m$. 
+        \end{proof}
+  \subsection{Stability}
     
 
 
-    % The final property we define will be largely used for reverse chronological runs on flow function representations, and it is the last improvement one can make on the cost of a sequence of moves as after enforcing this property, the sequence of moves that results is unique. 
-    % We prefer the flow representation for our current needs because when dealing with reverse chronological models, the flow function still retains the notion of partially aligning suffixes of the traces as we go along, provides a very useful constraint. 
-    % Moreover, we define stability in terms of flow values rather than timestamp values because the effects of mixed moves on flow vectors can be studied locally, while timestamp series get perturbed throughout their length by individual moves, and hence trying to optimise for the effect of a single mixed move involves too many variables. 
-%   Until further notice, consider any co-operative run to be reverse chronological, and definitions and algorithms will favour aligning flow functions rather than timing functions. 
-    %It is quite clear to see that completely aligning a flow function is equivalent to completely aligning its timing function, so this is acceptable. 
+    The final property we define will be largely used for reverse chronological runs on flow function representations, and it is the last improvement one can make on the cost of a sequence of moves as after enforcing this property, the sequence of moves that results is unique. 
+    We prefer the flow representation for our current needs because when dealing with reverse chronological models, the flow function still retains the notion of partially aligning suffixes of the traces as we go along, provides a very useful constraint. 
+    
+    Moreover, we define stability in terms of flow values rather than timestamp values because the effects of mixed moves on flow vectors can be studied locally, while timestamp series get perturbed throughout their length by individual moves, and hence trying to optimise for the effect of a single mixed move involves too many variables. 
+  Until further notice, consider any co-operative run to be reverse chronological, and definitions and algorithms will favour aligning flow functions rather than timing functions. 
+    
+  It is quite clear to see that completely aligning a flow function is equivalent to completely aligning its timing function, so this is acceptable. 
     The notion of co-operation and reverse chronology leaves only one degree of freedom so to speak in our choice of aligning moves, that is, the ratio of stamp to delay at any given position, and this optimal ratio is what stability pinpoints. % Once the stamp components of a sequence of moves has been decided, the delay components are predetermined to align the flow function from right to left. 
-    % Now, at any point, a delay move only affects one flow component and adds to the cost of one mixed move.
-    % A stamp move also only adds to the cost of one mixed move, but it has the ability to affect two flow components, hence it is natural to want to choose stamp moves in a manner that corrects both the flow components it belongs to to the best of its abilities, thereby extracting as much use as possible from as little cost, and leaving the rest up to the delay component to correct. 
-    % It is this reasoning that brings us to the property we define below as stability, which denotes this prudent choice of $s$. 
+    Now, at any point, a delay move only affects one flow component and adds to the cost of one mixed move.
+    A stamp move also only adds to the cost of one mixed move, but it has the ability to affect two flow components, hence it is natural to want to choose stamp moves in a manner that corrects both the flow components it belongs to to the best of its abilities, thereby extracting as much use as possible from as little cost, and leaving the rest up to the delay component to correct. 
+    
+    It is this reasoning that brings us to the property we define below as stability, which denotes this prudent choice of $s$. 
     
     \begin{definition}[Stability]
         In a reverse chronological, co-operative sequence of moves, let  ${m_i = (s, d, i)}$ be a co-operative move seeking to correct the partially aligned flow function $f_\gamma = (f_\gamma(1), \dots f_\gamma(i), f_\gamma(i+1), f_\sigma(i+2) \dots f_\sigma(n))$ (the result of the run of $m$ all the way up to and including the last stamp move) to $f_\sigma = (f_\sigma(1), f_\sigma(2), \dots f_\sigma(n))$. 
@@ -467,7 +564,7 @@ $f_\gamma \xmapsto{(0, 0, 5)} (1, 0, 1, 2, 1) \xmapsto{(0.2, 0, 4)} (1, 0, 1, 2.
     \end{definition}
     
     A co-operative sequence of moves is said to be \textit{stable} if each of its moves is stable.
-    %Note that any stable run is also cross co-operative. 
+    Note that any stable run is also cross co-operative. 
     
         \begin{example}
         The earlier cost 1.7 example can be even further improved to be stable and have cost 1.5, thereby giving us the following:
@@ -477,15 +574,121 @@ $f_\gamma \xmapsto{(0, 0, 5)} (1, 0, 1, 2, 1) \xmapsto{(0.2, 0, 4)} (1, 0, 1, 2.
     
     As the running example suggests, a stable chronological run (or reverse chronological run) is unique, but moreover, we claim that stability, co-operation, and chronology improve the cost of the sequence of moves.  
     
-    % \begin{lemma}\label{stableunique} The stable, co-operative, reverse chronological sequence of moves aligning any two sequential timed traces is unique. 
-    % \end{lemma}
+    \begin{lemma}\label{stableunique} The stable, co-operative, reverse chronological sequence of moves aligning any two sequential timed traces is unique. 
+    \end{lemma}
     
-%   \proof{
-%       This is clear, as given a partially aligned flow trace the choice of $s$ to make the next move stable as defined above is deterministic, and the corresponding delay moves are determined by reverse chronology and co-operation. 
-% }
+  \proof{
+      This is clear, as given a partially aligned flow trace the choice of $s$ to make the next move stable as defined above is deterministic, and the corresponding delay moves are determined by reverse chronology and co-operation. 
+}
     
     \begin{lemma}\label{stablebest} There is a stable minimal cost sequence of moves aligning any two sequential timed traces. 
     \end{lemma}
+
+    Before we proceed with the proof of this result, we prove a small technical lemma that will help us in the proof of Lemma \ref{stablebest}. The motivation behind the following result is essentially that the mixed distance $d_N$ respect an intuitive notion of closeness, once two words have been aligned up till the penultimate place, the one whose last duration since firing lands it closer to the desired target will naturally be the easier one to align. 
+Put another way, if two words, aligning to a target word, are identical to each other in all respects but the last timestamp, then the one whose last flow value is closer to the desired target flow value, is the word that is over closer to the target under $d_N$ between the two. 
+
+\begin{lemma}\label{cooplast}
+Given two timing functions $$\gamma^x = (\gamma_1, \gamma_2, \dots \gamma_{n-1}, \gamma_{n-1} + x)$$ $$\gamma^y = (\gamma_1, \gamma_2, \dots \gamma_{n-1}, \gamma_{n-1} + y)$$ Both aligning to $\sigma = (\sigma_1, \dots, \sigma_n)$, such that $|x - (\sigma_n - \sigma_{n-1})| \leq |y - (\sigma_n - \sigma_{n-1})|$ then $$d_N(\sigma, \gamma^x) \leq d_N(\sigma, \gamma^y)$$ 
+\end{lemma}
+
+\begin{proof}
+Consider any run $m^y$ aligning $\gamma^y$ to $\sigma$. 
+We claim there is a run $m^x$ aligning $\gamma^x$ to $\sigma$ such that $cost(m^x) \leq cost(m^y)$. 
+
+This proves the above lemma as then the minimal cost run aligning $\gamma^x$ to $\sigma$ would have cost at most $m^x$ corresponding to the minimal cost run aligning $\gamma^y$ to $\sigma$, so $$d_N(\sigma, \gamma^x) \leq d_N(\sigma, \gamma^y)$$
+
+Now, we can assume without loss of generality by Lemmas \ref{linescommute} and \ref{linescoop}  that $m^y$ is chronological and co-operative, say $m^y = (s_1, d_1, 1) \dots (0, d_n, n)$. 
+
+We construct $m^x = (s_1, d_1, 1)(s_2, d_2, 2)\dots (s'_{n-1}, d'_{n-1}, n-1)(0, d'_n, n)$ differing at most at the last two mixed moves. 
+As $m^x|_{n-2} = m^y|_{n-2}$ we can also conclude that $s_{n-1} + d_{n-1} = s'_{n-1} + d'_{n-1}$ by chronology, so with co-operation we can conclude that $cost(m^y) - cost(m^x) = |d_n| - |d'_n|$. 
+
+Hence, the problem is reduced to proving that whatever the choice of $d_n$, there is a choice of $d'_n$ that fully aligns $\gamma^x$ and has atmost equal magnitude. 
+
+Now, $|d_n| = |\sigma_{n-1} + y - \sigma_n|$ as $m^y|_{n-1}$ fully corrected up till the penultimate place, and similarly $|d'_n| = |\sigma_{n-1} + x - \sigma_n|$, hence, by definitions of $x$ and $y$, we have the result. 
+
+\end{proof}
+
+
+Now, we can proceed with the proof of Lemma \ref{stablebest}. 
+\begin{proof}
+
+Suppose we seek to align the sequential timed trace $\gamma$ to $\sigma$, and consider a minimal cost, reverse chronological, co-operative and cross co-operative sequence of moves $m'$ that aligns $\gamma$ to $\sigma$. 
+We know $m'$ exists by Lemmas \ref{linescoop} and \ref{crosscoop}. 
+On the other hand, consider the unique stable, co-operative, reverse chronological sequence of moves $m$ that aligns $\gamma$ to $\sigma$, that exists by Lemma \ref{stableunique}. 
+
+We proceed by way of induction. 
+In the base case of words of length 1, the claim is clearly true as the minimal cost aligning move would just be the minimum delay move, which is also the unique stable run. 
+For words of length 2, i.e., $\gamma_1\gamma_2$ aligning to $\sigma_1\sigma_2$, a reverse chronological co-operative run on the flow function is of the following form : $$m' : f_\gamma \xmapsto{(0,d_2)} (f_\gamma(1), f_\gamma(2) + d_2)$$$$ \xmapsto{(s_1,d_1)} (f_\gamma(1) + s_1 + d_1, f_\gamma(2) - s_1 + d_1) = f_\sigma$$
+
+By reverse chronology and co-operation, we have the following equation : 
+$$cost(m') = |d_2| + |s_1 + d_1| = |f_\sigma(2) - f_\gamma(2) + s_1| + |f_\sigma(1) - f_\gamma(1)|$$
+
+Clearly the only variable in the cost is the value of $s_1$, and the stable run $m$ is the run that precisely minimises the value $|f_\sigma(2) - f_\gamma(2) + s_1|$ while maintaining co-operation, so the claim holds. 
+
+Now, let the length of $\gamma$ be $n > 2$, and suppose the claim holds for all words of length less than $n$. 
+We claim that $cost(m) \leq cost(m')$. 
+
+The two runs must diverge at some point, as otherwise their cost is equal and the claim is obvious. There are only two main cases of interest : 
+
+\textbf{Case 1: } The first move is the same, but the second moves are different (i.e the mixed move played at the second right-most position of the trace). 
+
+\textbf{Case 2: }The first moves of the two sequences $m$ and $m'$ (i.e the delay played on the right-most position of the trace) are different. 
+
+
+
+If the first move where the sequences diverge are later, say at some position $i$ in the trace, then we can restrict our attention to the $i+1$ length prefix of the word and the appropriate truncations of $m$ and $m'$, and by induction hypothesis we are done. 
+So, we focus on the above cases henceforth. 
+
+
+\textbf{Case 1: } Let $m = (0, d_n, n)(s_{n-1}, d_{n-1}, n-1) \dots (s_1, d_1, 1)$ and 
+
+$m' = (0, d'_n, n)(s'_{n-1}, d'_{n-1}, n-1) \dots (s'_1, d'_1, 1)$ 
+
+As both these runs are reverse chronological, we obtain the following equalities: $$\forall i > 1 : s_i + d_i - s_{i-1} = f_\sigma(i) - f_\gamma(i) = s'_i + d'_i + s'_{i-1}$$ 
+Setting $i$ to $n$ gives $d_n - s_{n-1} = d'_n - s'_{n-1} = f_\sigma(n) - f_\gamma(n)$, which implies that  since $d_n = d'_n$, $s_{n-1} = s'_{n-1}$. 
+
+Now consider $\gamma_s = (s_{n-1}, 0, n-1)\gamma|_{n-1}$, and 
+
+$m_s = (0, d_{n-1}, n-1)(s_{n-2}, d_{n-2}, n-2)\dots (s_1, d_1, 1)$ and 
+
+$m'_s = (0, d'_{n-1}, n-1)(s'_{n-2}, d'_{n-2}, n-2)\dots (s_1, d_1, 1)$. 
+
+Clearly $m_s$ is the stable run aligning $\gamma_s$ to $\sigma|_{n-1}$ and $m'_s$ is another reverse chronological co-operative aligning sequence, and $$cost(m) = |d_n| + |s_{n-1}| + cost(m_s)$$ $$cost(m') = |d'_n| + |s'_{n-1}| + cost(m'_s)|$$ and by triangle inequality and the stability of $m$, $$|d_n| + |s_{n-1}| = |d_n - s_{n-1}| = |d'_n - s'_{n-1}| \leq |d'_n| + |s_{n-1}|$$ 
+Now, by induction hypothesis on $\gamma_s, m_s, m'_s$ (they're an instance of length $n-1$ words, case 2),  we deduce $cost(m_s) \leq cost(m'_s)$, by which we can conclude that $$cost(m) \leq cost(m')$$
+
+\textbf{Case 2:} Let $m = {(0, d_n, n)(s_{n-1}, d_{n-1}, n-1) \dots (s_1, d_1, 1)}$ and 
+$m' = (0, d'_n, n)(s'_{n-1}, d'_{n-1}, n-1) \dots (s'_1, d'_1, 1)$ 
+
+As both these runs are reverse chronological, we obtain the following equalities: $$\forall i > 1 : s_i + d_i - s_{i-1} = f_\sigma(i) - f_\gamma(i) = s'_i + d'_i + s'_{i-1}$$ 
+Setting $i$ to $n$ gives $d_n - s_{n-1} = d'_n - s'_{n-1} = f_\sigma(n) - f_\gamma(n)$, which implies that having performed the first delay and stamp move of each run, one gets the following :  
+
+$$f_\gamma \xmapsto{(0, d, n)(s, 0, n-1)} (f_\gamma(1), \dots f_\gamma(n-1) + s, f_\sigma(n))$$
+$$f_\gamma \xmapsto{(0, d', n)(s', 0, n-1)} (f_\gamma(1), \dots f_\gamma(n-1) + s', f_\sigma(n))$$
+Where $s = s_{n-1}$, $d = d_n$, $s' = s'_{n-1}$, and $d' = d'_n$. 
+
+Now, let $e_n = f_\sigma(n) - f_\gamma(n)$, and $e_{n-1} = f_\sigma(n-1) - f_\gamma(n-1)$
+Now, by stability of $m$, we have the following definition of $s$ : 
+$$s = \begin{cases}
+	0 & e_n\cdot e_{n-1} \geq 0 \\
+	e_{n-1} & \textrm{Else If }|e_{n-1}| < |e_n| \\
+	-e_n & \textrm{Otherwise}
+\end{cases}$$
+
+By the above definition, we see that $s = \argmin_{x \cdot (e_n - x) \geq 0} {|e_{n-1} - x|}$. 
+
+Now by cross co-operation, we know that $s' \cdot (e_n - s') \geq 0$, so this means $$|e_{n-1} - s| \leq |e_{n-1} - s'| $$$$\implies |f_\sigma(n-1) - (f_\gamma(n-1) + s)| \leq |f_\sigma(n-1) - (f_\gamma(n-1) + s')|$$
+
+Now, consider the words $\gamma_s = (\gamma_1, \dots \gamma_{n-2}, \gamma_{n-1} + s)$ and 
+$\gamma'_s = (\gamma_1, \dots \gamma_{n-2}, \gamma_{n-1} + s')$ both aligning to $\sigma|_{n-1}$. We can apply Lemma \ref{cooplast} to these, and deduce that $$d_N(\gamma_s, \sigma|_{n-1}) \leq d_N(\gamma'_s, \sigma|_{n-1})$$
+
+Now, by the induction hypothesis, as the rest of $m$ would have been the stable minimal cost run aligning $\gamma_s$ to $\sigma|_{n-1}$, along with stability of $m$, we have the following : 
+$$cost(m) = |s| + |d| + d_N(\gamma_s, \sigma|_{n-1})$$$$ \leq |d-s| + d_N(\gamma'_s, \sigma|_{n-1}) \leq cost(m')$$
+
+And hence we are done. 
+
+
+\end{proof}
+
     
     
     \subsection{Computing the evenly mixed distance $d_1$ on traces}\label{3}
@@ -531,16 +734,16 @@ $f_\gamma \xmapsto{(0, 0, 5)} (1, 0, 1, 2, 1) \xmapsto{(0.2, 0, 4)} (1, 0, 1, 2.
 \end{lemma}
 
 
-% \begin{proof}
-% This is clear by the definition of stability. 
-% \end{proof}
+\begin{proof}
+This is clear by the definition of stability. 
+\end{proof}
 
 \begin{theorem}\label{MixAlgoCorr} Algorithm \ref{MixBackwardsAlgo} is correct, that is, its result \textsf(cost) $ = d_1(\gamma, \sigma)$
 \end{theorem}
 
-% \begin{proof}
-% This holds as by Lemma \ref{mixwordalgostable} the algorithm calculates the unique stable sequence of aligning moves, and by Lemma \ref{stablebest} this must be the minimal cost sequence. 
-% \end{proof}
+\begin{proof}
+This holds as by Lemma \ref{mixwordalgostable} the algorithm calculates the unique stable sequence of aligning moves, and by Lemma \ref{stablebest} this must be the minimal cost sequence. 
+\end{proof}
 
 \subsection{Computing and aligning $d_{\alpha}$ for $\alpha \geq 2$}\label{2.5}
 A surprising fact is that for this entire class of distances, we get our distance computation and alignment algorithms almost for free. 
@@ -550,6 +753,22 @@ In fact, in this case, any sequence of such moves can be converted to a delay-on
 \begin{lemma}\label{doubleisdelay} When $\alpha \geq 2$ for any sequence of $\alpha$ weighted mixed moves aligning any two sequential timed traces, there is a sequence of delay only moves that aligns the same two traces, and has at most equal cost. 
     
 \end{lemma}
+
+
+\begin{proof}
+	Suppose $\alpha \geq 2$, and we have two sequential timed traces $\gamma$ and $\sigma$ such that we wish to align $\gamma$ to $\sigma$ using $\alpha$ weighted mixed moves. 
+	By Lemma \ref{linescoop} we know there exists a minimal cost chronological and co-operative sequence $m' = (s_1, d_1, 1) \dots (s_n, d_n, n)$ that aligns $\gamma$ to $\sigma$. 
+
+	Consider the chronological, co-operative sequence $m = (0, s_1 + d_1)(0, s_2 + d_2 - s_1)\dots(0, s_i + d_i - s_{i-1})\dots (0, s_n + d_n - s_{n-1})$. 
+	When one applies $m$ to $\gamma$, the effect on the $i$th timestamp in $\gamma$ is as follows $$m(\gamma)[i] = \gamma_i + \sum_{j = 2}^{i} (s_j + d_j - s_{j-1}) + s_1 + d_1 = \gamma_i + s_i + \sum_{j = 1}^{i} (d_j) = \sigma_i$$
+This is due to the assumption that $m'$ aligned $\gamma$ to $\sigma$ correctly.
+
+Hence, $m$ also aligns the traces correctly. Moreover, we can see that the cost of $m$ is at most that of $m'$ as shown below : 
+$$cost(m) = \sum_{i=2}^{n} (|s_i + d_i - s_{i-1}|) + |s_1 + d_1| \leq \sum_{i=1}^{n} (|d_i| + 2|s_i|) \leq \sum_{i=1}^{n} (|d_i| + \alpha \cdot|s_i|) = cost(m')$$
+
+Hence, any minimal cost aligning sequence of $\alpha$ weighted mixed moves has an equivalent delay-only sequence, so this entire class of languages behaves functionally identical to $d_{\infty}$. 
+\end{proof}
+
 
 As a consequence of this lemma, both distance computation and alignment for this large class of $d_{\alpha}$'s can be done using the naive greedy algorithm described in \cite{CR22}, which runs in linear time. 
 
@@ -590,6 +809,76 @@ And lastly, the best $d_1$ alignment for the example in the diagram below is als
 \begin{theorem}\label{MixAlign} Given a sequential process model $N$ of a time Petri Net $N$ and a sequential observed trace $\sigma$, the word $\gamma \in \mathcal{L}(N)$ such that $f_{\gamma}(i)= \underset{x \in [Eft(t_i), Lft(t_i)]} {\argmin}\hspace{0.5em} {|x - f_\sigma(i)|}$ also has the property $\gamma = \underset{x \in \mathcal{L}(N)}{\argmin} \hspace{0.5em}{d_1(x, \sigma)}$. 
 \end{theorem}
 
+
+\begin{proof}
+    As $(CN, p)$ is sequential, we can consider the event set $E$ to be totally ordered by $G$, giving us the list $\{e_1, e_2, \dots e_n\}$ and their respective static interval constraints $\forall i \leq n : SI(p(e_i)) = [a_i, b_i]$. In this setting, clearly, $$f_{\gamma}(i)= \argmin_{x \in [a_i, b_i]} {|x - f_\sigma(i)|}$$
+    
+    We claim that for all $\alpha \in \mathcal{L}(N)$ i.e $\forall \alpha : f_{\alpha}(i) \in [a_i, b_i]$, $$d_N(\sigma, \gamma) \leq d_N(\sigma, \alpha)$$
+    
+    By Theorem \ref{MixAlgoCorr} we shall henceforth implicitly equate the cost of the stable run aligning a word to the mixed moves distance to the word. 
+    Let $m, m'$ be the stable runs aligning $\gamma, \alpha$ respectively to $\sigma$, where: 
+    $$m = (0, d_n, n)(s_{n-1}, d_{n-1}, n-1) \dots (s_1, d_1, 1)$$  
+    $$m' = (0, d'_n, n)(s'_{n-1}, d'_{n-1}, n-1) \dots (s'_1, d'_1, 1)$$ 
+    
+    In addition, we know that $cost(m) = \sum_{i = 1}^{n} (|s_i| + |d_i|)$, and $cost(m') = \sum_{i = 1}^{n} (|s'_i| + |d'_i|)$. 
+    
+    We break the run up after each stamp move, but not delay move, at a particular position has been performed, as below: $$\forall i > 0 : c_i = |s_{i-1} + |d_i|, c'_i = |s'_{i-1}| + |d'_i|$$ Where we let $s_0 = s'_0 = 0$ for notation's sake. Clearly $cost(m) = \sum_{i = 1}^{n} c_i$ and $cost(m') = \sum_{i = 1}^{n} c'_i$
+    
+    We wish to prove that $$cost(m) \leq cost(m')$$ 
+    
+    In fact, we shall prove something stronger. We define the notion of the disadvantage of $m$, which denotes in effect the amount of distance it might have to catch up in aligning due to $m'$ having done a costlier move just prior. $$dis(i) = max(0, c'_i - c_i)$$
+    
+    Note of course, that each $c_i$, $c'_i$ and $dis(i)$ is nonnegative. 
+    
+    Now, we claim the following : $$\forall k > 0 : \sum_{i = k}^{n} c_i + dis(k) \leq \sum_{i=k}^{n} c'_i$$
+    If we prove this, we will be done, as the equation for $k=1$ proves that $m$ has overall lower cost than $m'$. 
+    
+    Let us proceed by induction on $n-k$. 
+    
+    For the base case, $k = n$, so the equation we seek is that $c_n + dis(n) \leq c'_n$, which is clear as $dis(n) = max(0, c'_n - c_n)$. 
+    
+    Now, say the claim holds for all $k > K$ for some $K < n$. We seek to now prove that $$c_K + \sum_{i = K+1}^{n} c_i + dis(K) \leq c'_K + \sum_{i = K+1}^{n} c'_i$$
+    
+    Now, if $c_K \leq c'_K$ this is clear as $c_K + dis(K) = max(c_K, c'_K)$. On the other hand, suppose $c_K > c'_K$. 
+    
+    By the induction hypothesis, we know that $$\sum_{i = K+1}^{n} c_i + dis(K+1) \leq \sum_{i = K+1}^{n} c'_i$$ So if we show that $c_K - c'_K \leq dis(K+1)$, we are done. 
+    
+    Now, by reverse chronology, co-operation and cross co-operation of $m$ and $m'$, and the definition of $\gamma$, we know the following inequality holds : $$|s_{K}| + c_K = |s_K + d_K - s_{K-1}| = |f_\sigma(K) - f_\gamma(K)|$$ $$ \leq |f_\sigma(K) - f_\alpha(K)| =  |s'_K + d'_K - s'_{K-1}| = |s'_{K}| + c'_K$$
+    
+    So, $c_K > c'_K \implies |s_K| < |s'_K|$, and moreover, $$c_K - c'_K \leq |s'_K - s_K|$$
+    
+    Now, by stability of $m$, we know that $s_K$ was defined as below : 
+    
+    $$s_K = \begin{cases}
+    0 & e_K \cdot e_{K+1} \geq 0 \\
+    e_K & \textrm{Else If } |e_K| < |e_{K+1}|\\
+    e_{K+1} & \textrm{Otherwise}
+    \end{cases}$$
+    
+    Where $e_K =  (f_\sigma(K) - f_\gamma(K))$ and $e_{K+1} = f_\sigma(K+1) - f_\gamma(K+1) - s_{K+1}$. 
+    
+    We proceed to analyse the possibilities based on the various possible stable choices of $s_K$ depending on the state of the run so far. 
+    
+    Suppose firstly that $s_K = 0$. There are a number of ways this could hold. By choice of $\gamma$, $$(f_\sigma(K) - f_\gamma(K))\cdot (f_\sigma(K+1) - f_\gamma(K+1)) > 0 $$$$ \implies (f_\sigma(K) - f_\alpha(K))\cdot (f_\sigma(K+1) - f_\alpha(K+1)) > 0 \implies s'_K = 0$$
+    
+    But $|s'_K| >|s_K| \geq 0 $ so this first subcase is not possible. 
+    
+    Secondly, if $$(f_\sigma(K) - f_\gamma(K)) = 0 \implies c_K = 0 > c'_K$$ Which is also not possible. 
+    
+    Thirdly, if $$(f_\sigma(K+1) - f_\gamma(K+1) - s_{K+1} = 0 \implies d_{K+1} = 0 $$
+    
+    Now, $d_{K+1} = 0 $ and $|s'_K| > |s_K|$ implies $$dis(K+1) = |s'_K| + |d'_{K+1}| - |s_K| \geq |s'_K|  - |s_K| \geq c_K - c'_K$$ So in this case the claim holds as needed. 
+    
+    Otherwise, suppose $s_K = f_\sigma(K) - f_\gamma(K)$. In this case, $c_K$ is once again equal to zero, which is not possible as by assumption $c_K > c'_K \geq 0$. 
+    
+    Now, the last possibility is that $s_K = f_\gamma(K+1) - f_\sigma(K+1) -s_{K+1}$. This means that once $s_K$ is played, the $K+1$ position is perfectly aligned, so $d_{K+1} = 0$. Once again, this means $$dis(K+1) = |s'_K| + |d'_{K+1}| - |s_K| \geq |s'_K|  - |s_K| \geq c_K - c'_K$$ So in this case also, the claim holds as needed. 
+    
+    Hence, we see that in every possible case, the claim holds for $k= K$ as well, so by induction we see that $$\sum_{i = 1}^{n} c_i + dis(K+1) \leq \sum_{i = 1}^{n} c'_i$$ From which we can conclude that $$cost(m) = \sum_{i = 1}^{n} c_i ) \leq \sum_{i = 1}^{n} c'_i = cost(m')$$
+    
+    Hence, the result holds, and $\gamma$ is an optimal word of $\mathcal{L}(N)$ to align $\sigma$ to. 
+    
+    \end{proof}
+
 This of course means that we have a linear time algorithm for aligning sequential processes under $d_1$, by locally choosing the best flow vector as shown in Algorithm \ref{MixAlignAlgo}. This, incidentally, is exactly the aligning word obtained by the algorithm developed for delay-only distance, $d_\theta$ in \cite{CR22}.  
 
 
@@ -617,6 +906,7 @@ In this paper, we studied the alignment problem for timed processes using the we
  We also proved that for $\alpha \geq 2$, this reduces to the already solved delay-only case, which has a linear algorithm.
  As far as we know, this (along with \cite{CR22}) is the first step in conformance checking for time-aware process mining, 
 and much further work can be inspired from this point. 
+\todo[inline]{Neha : Could you add the perspective about the ILP encoding here? I'm not sure I understand it well enough to write about it.}
 Firstly, we have only solved the mixed distance alignment problem for a subset of all possible mixed distances $d_{\alpha}$, and that too only over sequential process models, which are rather structurally restricted. As seen in this paper, even over sequential process models the problem is subtle, and while considering models that branch outwards might retain our method's efficiency, we suspect models with synchronisation between different events in particular would be tougher to tackle. 
 It is essential to develop practical techniques for more complex classes of models, which will provide the foundation needed to consider extensions of time Petri nets with data or resources.  Secondly, further investigation into the general timed alignment problem is necessary, as our proposed approach here is rather rudimentary and can certainly be improved. 
 Lastly, there are a number of other conformance artefacts that can be set and studied in the timed setting, such as anti-alignments \cite{CBC21}, and it would be very interesting to better develop all such conformance checking methods in a manner that accounts for timed process models.
