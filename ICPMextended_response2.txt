@@ -1,3 +1,59 @@
+> Dear Mr. Chatain,
+>
+> Thank you for submitting your manuscript to Information Systems.
+>
+> I have completed my evaluation of your manuscript. The reviewers recommend reconsideration of your manuscript following major revision. I invite you to resubmit your manuscript after addressing the comments below. Please resubmit your revised manuscript by Dec 27, 2023.
+>
+> When revising your manuscript, please consider all issues mentioned in the reviewers' comments carefully: please outline every change made in response to their comments and provide suitable rebuttals for any comments not addressed. Please note that your revised submission may need to be re-reviewed. 
+>
+> To submit your revised manuscript, please log in as an author at https://www.editorialmanager.com/infosys/, and navigate to the "Submissions Needing Revision" folder.  
+>
+> Research Elements (optional)
+> This journal encourages you to share research objects - including your raw data, methods, protocols, software, hardware and more – which support your original research article in a Research Elements journal. Research Elements are open access, multidisciplinary, peer-reviewed journals which make the objects associated with your research more discoverable, trustworthy and promote replicability and reproducibility. As open access journals, there may be an Article Publishing Charge if your paper is accepted for publication. Find out more about the Research Elements journals at https://www.elsevier.com/authors/tools-and-resources/research-elements-journals?dgcid=ec_em_research_elements_email.
+>
+>
+> Information Systems values your contribution and I look forward to receiving your revised manuscript.
+>
+> Kind regards,  
+> Gottfried Vossen  
+> Editor-in-Chief  
+>
+> Information Systems
+>
+> Editor and Reviewer comments:
+>
+>
+>
+> There is still major divergence between the three reviewers. Two of the reviewers acknowledge that the paper has been substantially improved when compared to the original version, while the other reviewer feels that the paper did not succeed in addressing the comments sufficiently. Both positive reviewers agree that it is a shame that the implementation has been removed from the paper and suggest to re-introduce the implementation. When it comes to the evaluation the authors decided - in response to the criticism and different from my AE recommendation - to remove the evaluation. The missing evaluation is both criticized by the most critical reviewer as well as one of the more positive reviewers.
+>
+> In line with Reviewer 1 and Reviewer 4 authors should 1) re-introduce and extend the implementation section, and 2) in response to Reviewer 2 and Reviewer 4 present some experimental results. Moreover, authors are asked to provide a detailed point to point response to the changes made and clear indications on which parts of the paper have been altered to accommodate the requested changes.
+>
+>
+> Reviewer 1: The paper is a huge improvement over the previous version. The examples help to understand the general problem and the solution provided, even though this is clearly preliminary work that still needs further investigation.
+>
+> The math in the paper is sound. What is lacking a bit is tool support. In the previous version, there were experiments and one of the reviewers commented on those. In this version, there is no reference to an implementation whatsoever, which is a shame. Experimentation is not required, but it would be good to have access to an implementation of this work in some shape or form, for example in ProM or PM4Pi.
+>
+>
+> Reviewer 2: Two reviewers strongly suggested to add an evaluation; the current revision still does not include one, without a justification of why this would not be necessary.
+>
+> The paragraph added to the introduction that describes the extension compared to the conference paper is a welcome addition, however the added extensions are all about adding details, which is more appropriate for a technical report, rather than a journal extension. Given the comments of reviewer 3 (and, to a lesser extent, reviewer 2), I conclude that the conference paper still has not been meaningfully extended.
+>
+> The authors could have made reviewing their revision a lot easier if they would have responded to the points raised by the reviewers. The response document describes only on a very high level what has been changed, however it is left as an exercise to the reviewers to cross-link the paper (without any marked changes), with the high-level responses to the editor (without any detail), the reviewer comments (without any response), and the original submission (as the numbering has changed). On top of that, some points are rebutted, however without making explicit of which comments the rebuttal considers, and what has been changed in the paper. Given the points mentioned before, I did not feel the urge to perform this exercise.
+>
+> In summary, the authors do not seem to not have been willing to change their paper materially based on the feedback of the reviewers. As such, I cannot recommend acceptance of this paper.
+>
+>
+> Reviewer 4: The paper discusses a very important topic in process mining: computing alignments but in the presence of time information (so not just considering only the control-flow). The paper, in a previous form, has been published at ICPM 2022.
+>
+> When reading the paper and the previous comments of the editor and reviewers with corresponding replies, I see that a substantial amount of work has been done with respect to the previous version of the work. Specifically, I see that the editor summarized two possible "ways forward," and indeed, the authors decided to follow one of them.
+>
+> I can see that the contribution and ideas did not fundamentally change with respect to the conference paper, but compared to the ICPM paper, the explanation is much more thorough, with several more (running-)examples and a more formal narrative. It is a pity that the authors decided to drop the implementation section; I would have personally preferred having the implementation part extended a bit (compared to the ICPM paper) with a more detailed description of the experiments (how these were run) and how the implementation can actually be used by someone else. The newly added related work section is also helpful in framing the work in the existing literature, both with respect to the time-series community and the discrete event sequences.
+>
+> All in all, it is clear to me that this is a high-quality paper. I would personally just invite authors to re-introduce the implementation section (in the current version of the paper, there is not even a link to the code, which was available in the ICPM paper), presenting some experiments (providing proper data regarding the model being aligned), how these have been computed (machine specs + avg time over five runs), and how the implementation can be used in new contexts. This would help clarify the complexity aspect discussed in theoretical terms in the paper.
+
+
+-------------
+
 Dear editor,
 
 We thank the reviewers for the careful reading and useful suggestions. Based on these, we have prepared a major revision of our paper.
@@ -262,6 +318,7 @@ corrected
 > 
 > Section VII does not add much value. For instance, it is unclear how the 
 > experiment was performed, or how the implementation could be used.
+We added information on how the experiment was conducted.
 > 
 > 
 > Reviewer 3: The paper is verbatim equal to the paper of the conference. 
@@ -309,3 +366,4 @@ corrected
 > the problem, this issue becomes less significant, although it is still 
 > required that the authors provide more details about the experimental 
 > setting.
+We added details about the experimental setting.
