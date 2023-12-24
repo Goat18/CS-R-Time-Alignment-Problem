@@ -87,7 +87,7 @@ Thomas Chatain\inst{2}\orcidID{0000-0002-1470-5074}}
 % If there are more than two authors, 'et al.' is used.
 %
 \institute{IRIF, ENS Paris-Saclay, CNRS, Université Paris-Saclay, France
-  \email{neha.rino@ens-paris-saclay.fr}
+  \email{Neha.Rino@warwick.ac.uk}
 \and
 LMF, ENS Paris-Saclay, CNRS, Université Paris-Saclay, Inria,
 Gif-sur-Yvette, France
@@ -884,7 +884,7 @@ This of course means that we have a linear time algorithm for aligning sequentia
 
 \section{Implementation}
 
-We have implemented the $d_1$ computation algorithm and the $d_1$ alignment algorithm for sequential process models in Python, available at \url{https://github.com/NehaRino/TimedAlignments}. Both algorithms have linear time complexity, and so, they have efficient running times, as evidenced by the table below:\\
+We have implemented the $d_1$ computation algorithm and the $d_1$ alignment algorithm for sequential process models in Python, available at \url{https://github.com/NehaRino/TimedAlignments}. Both algorithms have linear time complexity, and so, they have efficient running times, as evidenced by the table below, obtained on an Apple M1 chip with 8 cores, running at 3.2 GHz, 8GB RAM machine. \todo[inline]{Thomas: I copied this from the icpmextended paper. Can you confirm?}
 \centerline{
 \begin{tabular}{|c| c|}
     \hline
@@ -906,9 +906,11 @@ In this paper, we studied the alignment problem for timed processes using the we
  We also proved that for $\alpha \geq 2$, this reduces to the already solved delay-only case, which has a linear algorithm.
  As far as we know, this (along with \cite{CR22}) is the first step in conformance checking for time-aware process mining, 
 and much further work can be inspired from this point. 
-\todo[inline]{Neha : Could you add the perspective about the ILP encoding here? I'm not sure I understand it well enough to write about it.}
-Firstly, we have only solved the mixed distance alignment problem for a subset of all possible mixed distances $d_{\alpha}$, and that too only over sequential process models, which are rather structurally restricted. As seen in this paper, even over sequential process models the problem is subtle, and while considering models that branch outwards might retain our method's efficiency, we suspect models with synchronisation between different events in particular would be tougher to tackle. 
-It is essential to develop practical techniques for more complex classes of models, which will provide the foundation needed to consider extensions of time Petri nets with data or resources.  Secondly, further investigation into the general timed alignment problem is necessary, as our proposed approach here is rather rudimentary and can certainly be improved. 
+Firstly, we have only solved the mixed distance alignment problem for a subset of all possible mixed distances $d_{\alpha}$, and that too only over sequential process models, which are rather structurally restricted. As seen in this paper, even over sequential process models the problem is subtle, and while considering models that branch outwards might retain our method's efficiency, we suspect models with synchronisation between different events in particular would be tougher to tackle. A perspective in this direction would be to encode the purely timed alignment problem as an ILP problem, and use generic ILP solvers to get the alignments.
+
+It is also essential to develop practical techniques for more complex classes of models, which will provide the foundation needed to consider extensions of time Petri nets with data or resources.
+
+Secondly, further investigation into the general timed alignment problem is necessary, as our proposed approach here is rather rudimentary and can certainly be improved.
 Lastly, there are a number of other conformance artefacts that can be set and studied in the timed setting, such as anti-alignments \cite{CBC21}, and it would be very interesting to better develop all such conformance checking methods in a manner that accounts for timed process models.
 
 
