@@ -48,7 +48,8 @@ have liked to.
 > asked to provide a detailed point to point response to the changes made 
 > and clear indications on which parts of the paper have been altered to 
 > accommodate the requested changes.
-We have re-introduced the evaluation section and expanded it.
+We have re-introduced the evaluation section and given more details on the
+experiments.
 We also give a detailed point to point answer to the reviewers.
 > 
 > 
