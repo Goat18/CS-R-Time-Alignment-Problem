@@ -63,11 +63,13 @@ We also give a detailed point to point answer to the reviewers.
 > implementation whatsoever, which is a shame. Experimentation is not 
 > required, but it would be good to have access to an implementation of 
 > this work in some shape or form, for example in ProM or PM4Pi.
+We reinserted and developed the section about implementation and experiments.
 > 
 > 
 > Reviewer 2: Two reviewers strongly suggested to add an evaluation; the 
 > current revision still does not include one, without a justification of 
 > why this would not be necessary.
+We reinserted and developed the section about implementation and experiments.
 > 
 > The paragraph added to the introduction that describes the extension 
 > compared to the conference paper is a welcome addition, however the 
@@ -125,6 +127,7 @@ We also give a detailed point to point answer to the reviewers.
 > and how the implementation can be used in new contexts. This would help 
 > clarify the complexity aspect discussed in theoretical terms in the paper.
 > 
+We reinserted and developed the section about implementation and experiments.
 
 -------------
 Deatailed responses to the comments by reviewers on our fist submission
