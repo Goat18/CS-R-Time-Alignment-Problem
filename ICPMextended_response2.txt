@@ -162,7 +162,7 @@ Here is a summary of the changes made to the extended journal version of the Tim
 
 4. The preliminaries have been edited to be easier to grasp, and typographical errors have been addressed.
 
-5. The implementation section has been reinserted.
+5. The implementation section has been reinserted, and additional details have been provided about the experiments that were run.
 
 6. A related work section has been added, which details several other approaches to distances for timed words, and alignments over time-series.
 
