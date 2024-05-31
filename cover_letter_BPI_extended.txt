@@ -1,0 +1,202 @@
+Dear editor,
+
+We thank you and the reviewers for the careful reading and the useful comments.
+
+> Dear author,
+> 
+> thank you again for submitting your manuscript!
+> 
+> The manuscript has received positive reviews. The problem is relevant 
+> and the solution is sound. However, the reviewers have pointed out 
+> several concerns including: highlighting the contribution, clarifying 
+> some technical details, and presentation improvements. In particular, 
+> the reviewers are pointing that the manuscript should address further 
+> reviews that the original paper [13] received in the BPI 2023 workshop. 
+One reviewer of the BPI paper questioned the limitations of the paper and raised
+interesting perspectives. We added a long discussion in the conclusion.
+Other reviewers did suggestions to improve the presentation. We worked a lot on
+this, as detailed below.
+> Addressing further reviews will also ensure the expected extension 
+> beyond [13].
+This article is an extended version of our paper presented at BPI'23.
+This version includes many more detailed incremental explanations and
+detailed proofs, which really help the reader to understand all the
+progression toward the result.
+> 
+> I recommend a major a revision and kindly invite the author to address 
+> all reviewer comments. While revising your manuscript, please consider 
+> highlighting the added/updated parts. Additionally, please write a 
+> separate document that clearly explains how you addressed each of the 
+> reviewers' comments with a pointer to the reflected changes in the 
+> manuscript.
+We highlighted the main changes in red.
+> 
+> I also suggest that the authors clarify in the paper why this 
+> contribution is a good fit for the DKE journal by, for example, adding 
+> some references to previous DKE contributions on the same paper's topic.
+The data that we consider in our paper are event logs recording process executions. This is indeed very dense data which can be analyzed using dedicated tools. Inferring process models is a task of engineering this data in order to extract knowledge. Our paper focuses precisely on the timestamps of the events.
+Our paper is indeed related with the topic of [11] for instance.
+> 
+> Looking forward to receiving your revised manuscript!
+> 
+> Best regards,
+> Guest editor
+> 
+
+Here is a summary of changes made. Then we give precise responses to the comments given.
+
+1. Time Petri net process models have some implicit assumptions about the independence of the resources employed for different events, but of course more sophisticated models exist that explicitly express data and resource constraints. This is a very interesting consideration, and has been duly mentioned in section 6 now as an important possible future extension, but the matter is outside the scope of this paper.
+
+2. Example 1 has been corrected, and the argument should work well now.
+
+3. Definition 5 is correct. We emphasise in the paper now that in our definition we disallow costs being zero, as if either cost was zero the distance would be trivially zero for all pairs of words. d_0, the stamp only distance, is only achievable if the stamp cost is a finite number, and the delay cost is infinite, and hence any minimal cost sequence of moves will be delay only.
+
+4. The use of mixed move notation on page 5 has been replaced with an English description.
+
+5. The typo in Lemma 1 has been fixed, the definition is now correct.
+
+6. Sections 3, 4 and 5 have been edited, and more explanation has been added especially for algorithms and the theorems in section 3.5 and 4. More motivation is provided, and the overall structure of the argument should be much clearer now.
+
+7. The implementation section has received more explanation and context. We consider the main result of this paper to be the theoretical results on runtime complexity, and the results presented in Section 5 are simply an empirical confirmation of the same. Comments from the BPI 2023 workshop also discussed extending the scope of this implementation, but the algorithms presented and the implementation here are very straightforward. As such we believe that focusing on the fact that this nonconstructive distance and alignment setting still has such simple algorithms that are provably correct and efficient are the main takeaway of the paper. Hence, the significance of the implementation should not be overestimated.
+
+8. Section 6 now makes clear that the given approach only applies to a structurally restricted class of models, and calls for work that will incorporate parallelism, branching, synchronisation, resources, and data, in addition to a wider variety of distances.
+
+9. Hyphenation should look smoother now throughout the paper.
+
+10. The arXiv version mentioned by reviewer 1 is a preprint, submitted to allow the submission to be accessible before formal publication, a standard practice. We do not believe that the existence of a preprint should be an argument against acceptance.
+
+
+----
+
+> 
+> Reviewer #1: This submission proposes an approach to align series of 
+> timestamps for which certain constraints hold. These constraints are all 
+> of the form that the next timestamp in the event should be in some 
+> predefined interval. The authors apply this approach to the situation 
+> where models and event logs need to be aligned (called conformance 
+> checking in the area of process mining). They propose first to align a 
+> trace from the event log to the model, and second to align the 
+> timestamps. The authors report that the approach does not work for 
+> models where concurrency (parallelism) is present, as the timestamp of 
+> the next event should be causally related to the timestamp of the 
+> current event in their approach. For aligning the timestamps, they 
+> propose two alignment moves: a stamp move, which changes only the 
+> timestamp of the current event, and a delay move, which changes the 
+> timestamp of the current and all following events. A linear algorithm is 
+> provided to solve this alignment problem.
+> 
+> A shorter version of this submission was accepted at the BPI 2023 
+> workshop. This submission includes the proofs that were omitted from the 
+> BPI 2023 version. However, the BPI 2023 version referred to a 
+> publication ([13], published on arXiv) for the proofs, and it seems that 
+> this submission corresponds to [13], be it that in [13] the proofs were 
+> in an appendix and in this submission they appear in-line. This begs the 
+> question why this submission should be published, as it seems that it 
+> has already been published (be it in a slightly different form, and 
+> perhaps this submission has some minor corrections).
+The arXiv version is a preprint, submitted to allow the submission to be
+accessible before formal publication, a standard practice. We do not believe
+that the existence of a preprint should be an argument against acceptance.
+> 
+> What also bothers me, is that the BPI 2023 reviewers had comments on the 
+> content of the BPI 2023 version, and that this submission does not take 
+> any of these comments into account. Some minor textual comments may have 
+> been taken into account, but the more major question are left 
+> unanswered. As an example, the approach proposed by the author could 
+> propose to change a timestamp from, say, 3 to 4, but if the 
+> corresponding resource (say, an employee) is working on another activity 
+> at time 4 according to that event log, then we cannot simply do this as 
+> we would introduce another issue.
+Time Petri net process models have some implicit assumptions about the
+independence of the resources employed for different events, but of course more
+sophisticated models exist that explicitly express data and resource
+constraints. This is a very interesting consideration, and has been duly
+mentioned in section 6 now as an important possible future extension, but the
+matter is outside the scope of this paper.
+> 
+> Some more minor comments:
+> 
+> On page 2 the word timestamp is hyphenated in a bad way.
+Hyphenation should look smoother now throughout the paper.
+> 
+> The figure for Example 1 contains an error: the omega for dispatch 
+> should be 1. This was correct in the BPI 2023 version. As is, the 
+> example does not work as the timestamp for dispatch is not too late. 
+> Below the figure, (draft, 5) should be (save draft, 5).
+Example 1 has been corrected, and the argument should work well now.
+> 
+> The last sentence on page 3 can be removed, as this submission contains 
+> the proofs.
+Done.
+> 
+> Definition 5: shouldn't c_s/c_d be c_d/c_s? As is, for d_0 we have 
+> c_s=0, and hence only delay moves matter. But d_0 is mentioned to have 
+> only stamp moves.
+Definition 5 is correct. We emphasise in the paper now that in our definition we
+disallow costs being zero, as if either cost was zero the distance would be
+trivially zero for all pairs of words. d_0, the stamp only distance, is only
+achievable if the stamp cost is a finite number, and the delay cost is infinite,
+and hence any minimal cost sequence of moves will be delay only.
+> 
+> On page 5, the notation for mixed moves has not been introduced yet. 
+> This appears only in Definition 6.
+The use of mixed move notation on page 5 has been replaced with an English
+description.
+> 
+> Lemma 1: Is this correct? Suppose I have a flow function f=(1,4,4) and a 
+> mixed move (2,3,2). Then according to this definition, the result would 
+> be (1-2,4+2+3,4)=(-1,9,4). Shouldn't j-1 be j+1 on the second line of 
+> the equation? Shouldn't there also be a third line for the other cases 
+> (otherwise)?
+The typo in Lemma 1 has been fixed, the definition is now correct.
+> 
+> 
+> 
+> 
+> Reviewer #2: This paper comes as an extended version of the BPI 2023 
+> paper "Timed Alignments with Mixed Moves" and it presents a study on 
+> alignments of traces when the time dimension is taken into account. That 
+> BPI 2024 paper, in turn, is an extension of 10.1109/ICPM57379.2022.9980687.
+> 
+> Compared to the previously published version, it seems that the main 
+> differences lie in the depth of discussion of the properties (i.e., 
+> chronology, co-operation, and stability), and that Theorem 2 has been 
+> proved in detail.
+> 
+> I think the contribution is enough to justify the new version, though 
+> barely. The presentation, however, requires some improvement. Sections 
+> like 3.5 and section 4, in particular, require proper explanation (3.5 
+> looks very unfinished and, to me, it presents itself just as some notes, 
+> not a scientific journal paper) and the algorithms require proper 
+> explanation in the text! In general, the reading is a bit problematic 
+> and the theorems are hard to follow thus, it becomes tricky to assess 
+> their correctness. Helping the reader throughout the paper is necessary.
+Sections 3, 4 and 5 have been edited, and more explanation has been added
+especially for algorithms and the theorems in section 3.5 and 4. More motivation
+is provided, and the overall structure of the argument should be much clearer
+now.
+> 
+> Section 6 discusses the limitations of the approach to a limited extent, 
+> and it requires the reader to infer quite a bit about themselves. It 
+> would be nice to have a proper section discussing limitations to the 
+> applicability of the proposed approach in a broader sense, thus allowing 
+> the reader to understand if and to what extent they can use the 
+> technique for their problems.
+Section 6 now makes clear that the given approach only applies to a structurally
+restricted class of models, and calls for work that will incorporate
+parallelism, branching, synchronisation, resources, and data, in addition to a
+wider variety of distances.
+> 
+> It is very nice to see that an implementation is provided. However, 
+> Section 5 should elaborate on it a bit more. The table in that section 
+> is completely ununderstandable and requires proper discussion!
+The implementation section has received more explanation and context. We
+consider the main result of this paper to be the theoretical results on runtime
+complexity, and the results presented in Section 5 are simply an empirical
+confirmation of the same. Comments from the BPI 2023 workshop also discussed
+extending the scope of this implementation, but the algorithms presented and the
+implementation here are very straightforward. As such we believe that focusing
+on the fact that this nonconstructive distance and alignment setting still has
+such simple algorithms that are provably correct and efficient are the main
+takeaway of the paper. Hence, the significance of the implementation should not
+be overestimated.
