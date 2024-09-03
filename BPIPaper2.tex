@@ -133,7 +133,7 @@ Here we study and generalise the distances defined in \cite{CR22}, whose crucial
 
 As for process models, there are ways to use existing process mining notation to denote time constraints. BPMN 2.0 comes equipped with \emph{timer events}. 
     For our purposes, we use time Petri nets, an extension of Petri nets equipped with the ability to express constraints on the duration of time between an action being enabled, and its actual occurrence. 
-    In particular, in this paper, we restrict ourselves to time Petri nets with no branching transitions. 
+    In particular, in this paper, we restrict ourselves to time Petri nets with \color{blue}no branching transitions. \color{black}
     
     As time-aware process mining grows popular, new quality measures and conformance-checking techniques must be developed that are sensitive to temporal constraints, but so far in the study of alignments, we notice that the process model used is rarely time-aware. 
     
@@ -308,7 +308,7 @@ The cost of a sequence of moves is the sum of the costs of the moves. Armed with
         If any part of this initial move was a delay, we would push the second component even further away from $2.5$ than it already was, and if any part of the delay were negative, then it seems to counter the effect of the stamp part, so we should only use stamp here. 
         For move two, we again incur a minimum cost of $0.5$. 
         If the stamp part of this move were positive, it would leave the third component further off from the goal $3.5$ than if the whole move used delay, and so a pure delay move seems best. 
-        \color{red}This gives a cost 1 alignment, a stamp move of value 0.5 at the first position followed by a delay move of value -0.5 at the second.\color{black}
+        \color{red}This gives a cost 1 alignment, a stamp move of value 0.5 at the first position followed by a delay move of \color{blue}value -0.5 at the second.\color{black}
         All the intuitive reasoning given above will be justified in subsequent sections, and in fact, distance 1 is the best we can do here even in the mixed case. 
     \end{example}
     
@@ -389,7 +389,7 @@ We say a sequence of moves $m_1m_2\dots m_n = m \in Moves^*$ \textit{aligns} $\t
     \end{definition}
     
     \begin{definition}[Reverse Chronology]
-        A sequence of moves aligning $\gamma$ to $\sigma$ is said to be \textit{reverse chronological} if for all positions $i < j \leq n = |\gamma|$, all the moves at position $i$ are performed after any move at position $j$ and exactly one mixed move (where one or both components may be zero) takes place at each position, that is $\rho \in Moves^*$ is reverse chronological iff  $\forall i \in \{1, 2, \dots n\},  \exists s_i, d_i \in \mathbb{R}:  \rho = (s_n, d_n, n)(s_{n-1}, d_{n-1}, n-1)\dots (s_1, d_1, 1) $. 
+        A sequence of moves aligning $\gamma$ to $\sigma$ is said to be \textit{reverse chronological} if for all positions $i < j \leq n = |\gamma|$, all the moves at position $i$ are performed after any move at position $j$ and exactly one mixed move (where one or both components may be zero) takes place at each position, that is $\rho \in Moves^*$ \color{blue}is reverse chronological \color{black}iff  $\forall i \in \{1, 2, \dots n\},  \exists s_i, d_i \in \mathbb{R}:  \rho = (s_n, d_n, n)(s_{n-1}, d_{n-1}, n-1)\dots (s_1, d_1, 1) $. 
         Such that $\forall i \in \{1, 2, \dots n\}: \sigma_i = \gamma_i + s_i + \sum_{j=1}^{i} d_j$. 
     \end{definition}
     
@@ -930,10 +930,10 @@ This is to say, that the closest aligning trace for $d_1$ can be calculated by g
 As shown in the previous sections, both distance computation and alignment tasks for a large class of mixed distances is efficiently computable, in fact the provided algorithms have been proven to run in time directly proportional to the size of the model alone.\color{black}
 
 We have implemented the $d_1$ computation algorithm and the $d_1$ alignment algorithm for sequential process models in Python, available at \url{https://github.com/NehaRino/TimedAlignments}. 
-We chose the first six powers of ten as possible trace lengths. 
+\color{blue}We chose the first six powers of ten as possible input trace lengths. 
 Then, using python's random integer generator we ran the alignment algorithm and distance calculation algorithm on 1,000,000 different randomly generated traces, wherein each gap between events was a random integer between 0 and 1,000,000. 
 We then averaged the running time for each input length, and report the same here. 
-These tests allow us to empirically confirm the linear relationship between model size and running time, as can be clearly seen in the run-time table below. 
+\color{black}These tests allow us to empirically confirm the linear relationship between model size and running time, as can be clearly seen in the run-time table below. 
 These running times were obtained on an Apple M1 chip with 8 cores, running at 3.2 GHz, 8GB RAM machine.
 \centerline{
 \begin{tabular}{|c| c|}
