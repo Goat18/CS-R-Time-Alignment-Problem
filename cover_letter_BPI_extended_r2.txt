@@ -1,0 +1,76 @@
+Dear editor,
+
+We thank you and the reviewers for the careful reading and the useful comments.
+
+> Dear authors,
+> 
+> thank you for submitting your revised manuscript that addressed most 
+> reviewer comments. This was perceived positively by the reviewers, 
+> however minor issues are still to be considered regarding Section 5 and 
+> also highlighting whether (and why not) the work does not/can not 
+> consider other perspectives (e.g. organizational perspectives). I 
+> recommend a minor revision, and kindly ask the authors to address those 
+> in a 2nd revision as soon as possible.
+We present our second revision, with modifications highlighted in red. We give
+answers to the reviewers comments below.
+>
+> Looking forward to receiving your revised manuscript!
+> 
+> Best regards,
+> Guest Editors
+> 
+> Reviewer #1: This paper presents an approach to align misaligned 
+> timestamps, providing that the traces are already aligned on the 
+> activities. The approach allows for so-called mixed moves, where a mixed 
+> move is a combination of a stamp move and a delay move. A stamp move 
+> only effects the timestamp of the current event, whereas the delay move 
+> effects the current event and all succeeding events. The paper shows 
+> that in two cases an alignment can be computed in linear (w.r.t. the 
+> length of the trace) time:
+> 1. If the costs of a stamp move are at least twice the costs of a delay 
+> move. This is a bit trivial, as then every stamp move can be replaced by 
+> two delay moves, hence we only need to consider delay moves.
+> 2. If the costs of a stamp move are identical to the costs of a delay 
+> move. This is more involved, and requires clever choosing between stamp 
+> moves and delay moves.
+> 
+> The approach does not take any other perspectives into account. Like if 
+> an event was performed by some resource (organizational perspective) and 
+> that it is somehow clear that a resource could not have performed an 
+> activity on a certain time, then the approach may still decide that this 
+> is the best solution.
+We agree with this comment. Indeed our setting does not take this kind of
+situations into account. These things could be modeled with richer formalisms;
+here we focus on the more uniform setting, which already poses interesting
+questions.
+We added a comment in the perspectives.
+> 
+> Minor comments:
+> - page 2: "with no branching points" => "with no branching transitions". 
+> One may branch from a place, but not from a transition.
+Done
+> - page 6: "a delay move of 0.5 at the second" => "a delay move of -0.5 
+> at the second" (note the minus sign). The move is done with value -0.5 
+> and hence as costs 0.5. I guess, the value should be listed here.
+Done
+> - Definition 9: second line from bottom: "is chronological" => "is 
+> reverse chronological"(?).
+Done
+> 
+> 
+> 
+> Reviewer #2: Thanks for the new version of the paper.
+> 
+> I think authors handled my comments properly. The only aspect that I do 
+> not consider properly handled is section 5 "Implementation". While I 
+> understand that the main results are theoretical, is authors want to 
+> have an "empirical confirmation" they need to do a proper empirical 
+> evaluation. Right now, the table in section 5 is not an empirical 
+> evaluation! I suggest authors to either perform a proper empirical 
+> evaluation or just remove the claim as well as the table and just 
+> mention that the technique has an implementation.
+We acknowledge that this section is not a proper empirical evaluation on real
+data, but simply shows that we have an implementation.
+Yet we chose to keep it and add more details to convince that our implementation
+is robust enough to handle relatively large models.
+Anyway, if the editor or reviewers insist, we would simply drop this section.
