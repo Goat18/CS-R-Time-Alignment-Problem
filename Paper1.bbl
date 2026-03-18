@@ -1,0 +1,83 @@
+\begin{thebibliography}{10}
+
+\bibitem{SSA11}
+Wil Aalst, Helen Schonenberg, and Minseok Song.
+\newblock Time prediction based on process mining.
+\newblock {\em Inf. Syst.}, 36:450--475, 04 2011.
+
+\bibitem{Adriansyah2014AligningOA}
+Arya Adriansyah.
+\newblock {\em Aligning observed and modeled behavior}.
+\newblock PhD thesis, Technische Universiteit Eindhoven, 2014.
+
+\bibitem{AL97}
+Tuomas Aura and Johan Lilius.
+\newblock Time processes for time petri-nets.
+\newblock In Pierre Az{\'{e}}ma and Gianfranco Balbo, editors, {\em Application and Theory of Petri Nets 1997, 18th International Conference, {ICATPN} '97, Proceedings}, volume 1248 of {\em LNCS}, pages 136--155. Springer, 1997.
+
+\bibitem{berthomieu1982state}
+Bernard Berthomieu and Maurice Menasche.
+\newblock A state enumeration approach for analyzing time petri nets.
+\newblock In {\em Application and Theory of Petri Nets}, Varenna, Italy, 1982.
+
+\bibitem{BCC21}
+Mathilde Boltenhagen, Thomas Chatain, and Josep Carmona.
+\newblock A discounted cost function for fast alignments of business processes.
+\newblock In {\em {BPM} 2021, Proceedings}, volume 12875 of {\em LNCS}, pages 252--269. Springer, 2021.
+
+\bibitem{BV2014}
+Stephen~P. Boyd and Lieven Vandenberghe.
+\newblock {\em Convex Optimization}.
+\newblock Cambridge University Press, 2014.
+
+\bibitem{DBLP:books/sp/CarmonaDSW18}
+Josep Carmona, Boudewijn~F. van Dongen, Andreas Solti, and Matthias Weidlich.
+\newblock {\em Conformance Checking - Relating Processes and Models}.
+\newblock Springer, 2018.
+
+\bibitem{CBC21}
+Thomas Chatain, Mathilde Boltenhagen, and Josep Carmona.
+\newblock Anti-alignments - measuring the precision of process models and event logs.
+\newblock {\em Inf. Syst.}, 98:101708, 2021.
+
+\bibitem{CR22}
+Thomas Chatain and Neha Rino.
+\newblock Timed alignments.
+\newblock In {\em 4th International Conference on Process Mining, {ICPM} 2022}, pages 112--119. {IEEE}, 2022.
+
+\bibitem{Cheikhrouhou2014TheTP}
+Saoussen Cheikhrouhou, Slim Kallel, Nawal Guermouche, and Mohamed Jmaiel.
+\newblock The temporal perspective in business process modeling: a survey and research challenges.
+\newblock {\em Service Oriented Computing and Applications}, 9:75--85, 2014.
+
+\bibitem{CRHA20}
+Raffaele Conforti, Marcello~La Rosa, Arthur H.~M. ter Hofstede, and Adriano Augusto.
+\newblock Automatic repair of same-timestamp errors in business process event logs.
+\newblock In {\em {BPM} 2020, Proceedings}, volume 12168 of {\em LNCS}, pages 327--345. Springer, 2020.
+
+\bibitem{Eder1999TimeCI}
+Johann Eder, Euthimios Panagos, and Michael Rabinovich.
+\newblock Time constraints in workflow systems.
+\newblock In {\em CAiSE'99, Proceedings}, volume 1626 of {\em Lecture Notes in Computer Science}, pages 286--300. Springer, 1999.
+
+\bibitem{DBLP:conf/icpm/NguyenCWSME20}
+An~Nguyen, Srijeet Chatterjee, Sven Weinzierl, Leo Schwinn, Martin Matzner, and Bjoern~M. Eskofier.
+\newblock Time matters: Time-aware lstms for predictive business process monitoring.
+\newblock In Sander J.~J. Leemans and Henrik Leopold, editors, {\em Process Mining Workshops - {ICPM} 2020 International Workshops, Padua, Italy, October 5-8, 2020, Revised Selected Papers}, volume 406 of {\em Lecture Notes in Business Information Processing}, pages 112--123. Springer, 2020.
+
+\bibitem{RMAW13}
+Andreas Rogge{-}Solti, Ronny Mans, Wil M.~P. van~der Aalst, and Mathias Weske.
+\newblock Repairing event logs using timed process models.
+\newblock In {\em On the Move to Meaningful Internet Systems: {OTM} 2013, Proceedings}, volume 8186 of {\em LNCS}, pages 705--708. Springer, 2013.
+
+\bibitem{DBLP:books/sp/Aalst16}
+Wil M.~P. van~der Aalst.
+\newblock {\em Process Mining - Data Science in Action, Second Edition}.
+\newblock Springer, 2016.
+
+\bibitem{AS21}
+Wil M.~P. van~der Aalst and Luis F.~R. Santos.
+\newblock May {I} take your order? - on the interplay between time and order in process mining.
+\newblock In {\em {BPM} 2021 International Workshops}, volume 436 of {\em Lecture Notes in Business Information Processing}, pages 99--110. Springer, 2021.
+
+\end{thebibliography}

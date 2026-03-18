@@ -1,0 +1,39 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{mathtools}
+
+\begin{document}
+
+\section*{Piecewise Function Bracket Examples}
+
+\subsection*{Using \texttt{cases} (Recommended)}
+
+$$f(x) = \begin{cases}
+  x^2 & \text{if } x \geq 0 \\
+  -x & \text{if } x < 0
+\end{cases}$$
+
+\subsection*{Using \texttt{dcases} (Display Style)}
+
+$$g(x) = \begin{dcases}
+  \frac{x^2}{2} & \text{for } x \geq 0 \\
+  -x & \text{for } x < 0
+\end{dcases}$$
+
+\subsection*{Using \texttt{array} with manual braces}
+
+$$h(x) = \left\{
+\begin{array}{ll}
+  x^2 & \text{if } x \geq 0 \\
+  -x & \text{if } x < 0
+\end{array}
+\right.$$
+
+\subsection*{Right bracket only}
+
+$$\text{Condition} = \begin{cases}
+  \text{True} & \text{if } P \\
+  \text{False} & \text{otherwise}
+\end{cases}$$
+
+\end{document}
