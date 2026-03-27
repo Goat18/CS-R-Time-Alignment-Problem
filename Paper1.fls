@@ -481,6 +481,16 @@ INPUT ./slides/g_3.png
 INPUT ./slides/g_3.png
 INPUT ./slides/g_3.png
 INPUT ./slides/g_3.png
+INPUT ./slides/g3.png
+INPUT ./slides/g3.png
+INPUT ./slides/g3.png
+INPUT ./slides/g3.png
+INPUT ./slides/g3.png
+INPUT ./slides/g4.png
+INPUT ./slides/g4.png
+INPUT ./slides/g4.png
+INPUT ./slides/g4.png
+INPUT ./slides/g4.png
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/ec-lmcsc10.tfm
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/ec-lmcsc10.tfm
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/ec-lmcsco10.tfm
@@ -502,6 +512,8 @@ INPUT ./images/d_a.png
 INPUT ./images/d_a.png
 INPUT ./images/d_a.png
 INPUT ./images/d_a.png
+INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/ec-lmcsco10.tfm
+INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/ec-lmcsco10.tfm
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/lmmib10.tfm
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/lmmib7.tfm
 INPUT /usr/local/texlive/2025/texmf-dist/fonts/tfm/public/lm/lmmib5.tfm

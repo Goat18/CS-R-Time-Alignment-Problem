@@ -1,14 +1,14 @@
 # Fdb version 4
-["bibtex Paper1"] 1773352404.02262 "Paper1.aux" "Paper1.bbl" "Paper1" 1773352467.24337 0
+["bibtex Paper1"] 1774608947.67502 "Paper1.aux" "Paper1.bbl" "Paper1" 1774609222.98943 0
   "./Conformanceieee.bib" 1765969588.41687 17305 7043d9df85fdc7b01c47af62f35db6df ""
   "/usr/local/texlive/2025/texmf-dist/bibtex/bst/base/plain.bst" 1292289607 20613 bd3fbfa9f64872b81ac57a0dd2ed855f ""
-  "Paper1.aux" 1773352464.51404 6919 b7eddc3ebfd66e43dd4f5837d82c88f3 "pdflatex"
+  "Paper1.aux" 1774609220.20086 7313 4ea671433bae69d5c8596b18917a623d "pdflatex"
   (generated)
   "Paper1.bbl"
   "Paper1.blg"
   (rewritten before read)
-["pdflatex"] 1773352454.1012 "/Users/tranngoclong/time-aware-conformance-checking/Paper1.tex" "Paper1.pdf" "Paper1" 1773352467.2438 0
-  "/Users/tranngoclong/time-aware-conformance-checking/Paper1.tex" 1773352451.79552 96755 57cda1d306f7821a3e43a98cddb56bff ""
+["pdflatex"] 1774609214.17928 "/Users/tranngoclong/time-aware-conformance-checking/Paper1.tex" "Paper1.pdf" "Paper1" 1774609222.99014 0
+  "/Users/tranngoclong/time-aware-conformance-checking/Paper1.tex" 1774609201.20207 97594 f4d7751a820cfecc124008d0526ecb65 ""
   "/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc" 1254269338 2375 baa924870cfb487815765f9094cf3728 ""
   "/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc" 1202520719 3486 c7eadf5dcc57b3b2d11736679f6636ba ""
   "/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc" 1202520719 2405 5dcf2c1b967ee25cc46c58cd52244aed ""
@@ -292,14 +292,16 @@
   "/usr/local/texlive/2025/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1741450490 5467155 19efa205003f9ecad95fbbaa6ff24da1 ""
   "/usr/local/texlive/2025/texmf-var/web2c/pdftex/pdflatex.fmt" 1765627352 3345735 45bee5d4d7fa93c763ae0a5905d5fd7c ""
   "/usr/local/texlive/2025/texmf.cnf" 1741450484 577 418a7058ec8e006d8704f60ecd22c938 ""
-  "Paper1.aux" 1773352464.51404 6919 b7eddc3ebfd66e43dd4f5837d82c88f3 "pdflatex"
-  "Paper1.bbl" 1773352404.39291 4057 e43c6f6770f5f0eebbf26b6dd3c1a315 "bibtex Paper1"
-  "Paper1.out" 1773352464.51955 2607 748f3e148225f508e4c68834c7dab7bd "pdflatex"
-  "Paper1.tex" 1773352451.79552 96755 57cda1d306f7821a3e43a98cddb56bff ""
+  "Paper1.aux" 1774609220.20086 7313 4ea671433bae69d5c8596b18917a623d "pdflatex"
+  "Paper1.bbl" 1774608948.37826 4057 e43c6f6770f5f0eebbf26b6dd3c1a315 "bibtex Paper1"
+  "Paper1.out" 1774609220.20367 2607 748f3e148225f508e4c68834c7dab7bd "pdflatex"
+  "Paper1.tex" 1774609201.20207 97594 f4d7751a820cfecc124008d0526ecb65 ""
   "images/complexity_plot.png" 1767647494.46049 34209 e283c892652980dbaddade19b0e165b0 ""
   "images/d_a.png" 1758466976 33426 ed1dabfdc1e0d7b9baf887ccff54f09e ""
   "images/translation.png" 1758466976 36396 c01523ccce363c2f156832c4dca7545c ""
   "quiver.sty" 1764842453.95641 1590 808940c6ecf4cdde8dd489c9e79f5e4a ""
+  "slides/g3.png" 1773852486.23481 69377 56d97eb9faf75a6a0873213eb1d2fb1b ""
+  "slides/g4.png" 1773920495.10153 66549 dfaf3dbe7854da630bfc0c2a6efd5465 ""
   "slides/g_3.png" 1773245810.60235 101121 7f124521e9e30486345b63677d598899 ""
   "slides/g_4.png" 1773245785.72572 84541 162cd1906fb2cf145429e4d5f84ec31b ""
   (generated)
