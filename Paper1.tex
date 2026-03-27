@@ -485,7 +485,7 @@ $$\eye \longrightarrow \underset{[0,1]}{\square} \longrightarrow \bigcirc \longr
 This lemma also allows us to restate the alignment problem for $d_t$, as we see below. 
 
 \subsection{Casting Alignment as a Linear Programming Problem}\label{lpp}
-The alignment problem in the stamp-only setting can be viewed as a problem of convex optimization, minimizing the stamp only cost from a fixed observed trace $\sigma$, which by Lemma \ref{manhattan} is $cost(\tau|_i) = \sum_{j = 1}^{i} |\tau_j - \sigma_j|$ over the set of valid timestamp series $\tau$ for the model $N$. 
+The alignment problem in the stamp-only setting can be viewed as a problem of convex optimization, minimizing the stamp only cost from a fixed observed trace $\sigma$, which by Lemma \ref{manhattan} is $cost(\tau) = \sum_{i = 1}^{n} |\tau_i - \sigma_i|$ over the set of valid timestamp series $\tau$ for the model $N$. 
 What remains is to show that the space of valid runs of the model is a convex set, as shown in \cite{berthomieu1982state}. 
 %In this paper, the concept of a firing domain is proposed, that is, at each configuration of the time Petri net, the set of valid time intervals in which a transition enabled at that configuration can fire. Using these firing domains, states are grouped into state classes,which are sets of states with clock functions in the same firing domain, and for bounded time Petri nets there are finitely many such state classes. 
 %Calculating equivalence classes of the same, successively, till we find final configurations, gives a characterisation of the solution set of all valid timestamp series, and this is proved to be of the following form, which is a set of constraints defining a convex set. 
@@ -520,16 +520,31 @@ This bound is not necessarily tight, but either improving it or proving its tigh
 
 \subsection{A Direct Algorithm for Sequential Models}\label{mcg}
 
-We are given a process model $N$, an observed trace $\sigma$, and its underlying sequential causal process $CN = (B, E, G)$ with homomorphism $p$ for the untimed run of $\sigma$ on $N$. 
-We express the cost of aligning a suffix of $\sigma$ to some timing function $\tau$ on the truncation of the sequential causal process from the end up to the $i$th transition, call it $cost$. 
-$$cost(\tau|_{[i,n]}) = \sum_{j \geq_G i} |\tau_j - \sigma_j| = |\tau_i - \sigma_i| + cost(\tau|_{[i+1,n]})$$
-Observe that the minimum cost to align $\sigma$ then depends on exactly two things, the cost of aligning the first stamp, and the minimum cost of aligning the $n-1$ length suffix of $\sigma$, such that the first and second first timestamps comply with the first and second static interval constraints.  
-This suggests that the minimal cost of aligning suffixes of $\sigma$ to suffixes of the model can be recursively calculated as sum of the first timestamp aligning cost with the alignment cost of the rest. 
+In this section, we reintroduce a result in ~\cite{CR22} in a sligtly different way for the sake of coherence. Given a process model $N$, an observed trace $\sigma$, and its underlying sequential causal process $CN = (B, E, G)$ with homomorphism $p$ for the untimed run of $\sigma$ on $N$, we express the cost of aligning a suffix of $\sigma$ to the corresponding part of a timed trace $\tau \in \mathcal{L}(N)$ on the truncation of the sequential causal process starting from the $i^{th}$ transition, call it $cost(\tau|_{[i,n]})$. 
+By definition, we have that
+\begin{equation}
+	\begin{split}
+		cost(\tau|_{[i,n]}) &= d_t(\tau|_{[i,n]},\sigma|_{[i,n]}) = \sum_{j = i}^{n}|\tau_i-\sigma_i|\\
+												&= |\tau_i - \sigma_i| + cost(\tau|_{[i+1,n]})\\
+	\end{split}
+	\label{eq:cost_function}
+\end{equation}
 
-Let $g_i(d) = \min\{cost(\tau|_{[i,n]}) \text{ s.t } \tau|_{[i,n]} \in \mathcal{L}(N)|_{[i,n]} \text{ and } \tau_i = d\} $. The recursive relation $g$ functions obey is then :
+Observe that aligning $\sigma|_{[i,n]}$ to $\tau|_{[i,n]}$ then can be devided into two steps : First, aligning $\sigma_i$ with $\tau_i$ and then, aligning the remaining suffix $\sigma|_{[i+1,n]}$ to $\tau|_{[i+1,n]}$. 
+Then, for all timing function $\tau$ complying with the causal process and $\tau_i = d$, the minimum cost of aligning the suffix $\sigma|_{[i,n]}$ to the corresponding part of $\tau|_{[i,n]}$ is 
+\begin{equation*}
+	\begin{split}
+		g_i(d) &= \min_{\substack{\tau \in \mathcal{L}(N) \\ \tau_i = d}}cost(\tau|_{[i,n]}) \\
+				 	 &= \min_{\substack{\tau \in \mathcal{L}(N) \\ \tau_i = d}}\big[|\tau_i - \sigma_i| + cost(\tau|_{[i+1,n]})\big] \\
+					 &= |d - \sigma_i| + \min_{\substack{\tau \in \mathcal{L}(N) \\ \tau_i = d \\ \tau_{i+1} - \tau_i \in [a_{i+1},b_{i+1}]}}cost(\tau|_{[i+1,n]}) \\
+					 &= |d - \sigma_i| + \min_{\substack{\tau \in \mathcal{L}(N) \\ \tau_{i+1} \in [d + a_{i+1}, d + b_{i+1}]}}cost(\tau|_{[i+1,n]}) \\
+					 &= |d - \sigma_i| + \min_{d' \in [d + a_{i+1}, d + b_{i+1}]} \min_{\substack{\tau \in \mathcal{L}(N) \\ \tau_{i+1} = d'}} cost(\tau|_{[i+1,n]}) \\
+					 &= |d - \sigma_i| + \min_{d' \in [d + a_{i+1}, d + b_{i+1}]}g_{i+1}(d') \\
+	\end{split}
+\end{equation*}
+Thus, for all g function, it follows this recurrent relation :
 \begin{align*}
-g_{i}(d) &= |d - \sigma_{i}| + \min_{d'-d \in [a_{i+1},b_{i+1}]} g_{i+1}(d') \\
-				 &= |d - \sigma_{i}| + \min_{d' \in [d+a_{i+1},d+b_{i+1}]} g_{i+1}(d')
+g_{i}(d) &= |d - \sigma_{i}| + \min_{d' \in [d+a_{i+1},d+b_{i+1}]} g_{i+1}(d')
 \end{align*}
 If we can calculate the family of functions $\forall i \leq n : g_i$ efficiently, then the minimal cost for aligning $\sigma$ to $N$ is simply $\min_{d \in [a_1,b_1]} g_1(d)$. 
 \begin{example}\label{stampcomp}
@@ -572,11 +587,11 @@ $x \mapsto \min_{t \in [x+0, x+1]} g_4(t) = x \mapsto \begin{dcases}
 \end{dcases}$ \ref{fig:g_4}. We can then sum this with $|4-x|$ to get $g_3$.
 	\begin{figure}[!t]
 		\centering
-		\begin{minipage}{0.24\textwidth}
+		\begin{minipage}{0.4\textwidth}
 			\centering
 			\includegraphics[width=\linewidth]{slides/g_4.png}
 		\end{minipage}\hfill
-		\begin{minipage}{0.24\textwidth}
+		\begin{minipage}{0.4\textwidth}
 			\centering
 			\includegraphics[width=\linewidth]{slides/g_3.png}
 		\end{minipage}
@@ -584,15 +599,26 @@ $x \mapsto \min_{t \in [x+0, x+1]} g_4(t) = x \mapsto \begin{dcases}
 		\label{fig:g_4}
 	\end{figure}
 	
-	We construct $g_2$ similarly, by summing the contribution of the next timestamp aligning cost, $|x - 2|$, to  $\min_{x' - x \in [2,4]}g_3(x')$. 
-	We now find an orange segment in the second component. This is used to demarcate any additional segments in  $\min_{x' - x \in [a_i, b_i]}g_{i-1}(x')$ not present in $g_{i-1}$. 
-	We see the effect of the $\min$ operation is to attach a segment with the same length as the $i$th static interval constraint, at the lowest point of $g_{i-1}$. 
-	We continue similarly : The next black graph is a translation of the previous blue one, with an orange line segment or the same length as the next static interval constraint inserted at the lowest point, and the next green graph is $|x-\sigma_i|$ in the new domain, and summing these two gives the next blue graph. 
-	As these are all piecewise linear graphs, summing is simply incrementing the slopes of all the segments of the black-orange curve by one if they're to the right of $\sigma_i$, and by minus one if they're to the left, and translating the height up as needed. 
+	We construct $g_2$ similarly, by summing the contribution of the next timestamp aligning cost, $|x - 2|$, to  $\min_{x' \in [x+2,x+4]}g_3(x')$ to obtain the purple graph in the figure below.
+	By the same reasoning as before, the orange graph of $\min_{x' \in [x+2,x+4]}g_3(x')$ is obtained by translating the domain $[2,4]$ from left to right and taking the minimum of $g_3$ in this domain, and then summing it with $|x-2|$ gives us the purple graph.
+	We continue this process to get $g_1$ by summing $|x-1|$ to $\min_{x' \in [x+0,x+1]}g_2(x')$, which is the green graph in the last figure. 
 	%Clearly the orange, black and green segments of the next graph are obtained like this, and $g_4$ is their sum. 
+	\begin{figure}[!t]
+		\centering
+		\begin{minipage}{0.45\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{slides/g3.png}
+		\end{minipage}\hfill
+		\begin{minipage}{0.45\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{slides/g4.png}
+		\end{minipage}
+		\caption{Illustration of a run of the algorithm on Example \ref{stampcomp}.}
+		\label{fig:g_1}
+	\end{figure}
 	
-	The procedure for constructing $g_4$ is identical, and now finally we see that the minimum cost of $2$ is achieved in $g_4$ by paying at time 6. 
-	Now, we know the contribution of the $(pay,6)$ to the error is 0, so this means we can deduce the corresponding value in $g_3$ must have been 2, achieved when $dec$ fires at 5. 
+	The procedure for constructing $g_1$ is identical, and now finally we see that the minimum cost of $2$ is achieved in $g_1$ by paying at time 0 or 1. Suppose we choose to register at time 1, which makes
+	means that we can deduce the corresponding value of $check$ is $\argmin_{t\in[1+2,1+2]}g_2(t) = 3$, and the corresponding value of $dec$ is $\argmin_{t\in[3+0,3+1]}g_3(t) = 4$, and by consequence, the corresponding value of $pay$ is $\argmin_{t\in[4+0,4+1]}g_4(t) = 6$. 
 	We can backtrack in this manner to build an optimal alignment, such as in this case, $(reg,1)(check,3)(dec,5)(pay,6)$. 
 \end{example}
 
@@ -601,7 +627,7 @@ The algorithm precisely executes the above procedure, where the subfunction \tex
 	g(d-a) & l + a \leq d < m + a \\
 	g(m) & m+a \leq d \leq m' + b \\
 	g(d+b) & m' + b < d \leq h + b   \\
-\end{cases}$$ Which is exactly the process of taking the last blue graph and creating the next orange-black graph, and subfunction \textsc{graphAddMod} takes $\min_{d-d' \in [a,b]} g(d')$ and adds $|d - \sigma_{i+1}|$ to it, i.e., adding the green component. The proof of the nature of the functions and how they are constructed will be given in the next section \ref{tree_like structures} when we discuss more general cases. Lastly, the \textsc{backTrack} algorithm backtracks through the list of graphs $\{g_i\}_n$ constructed to reverse engineer a word that aligns with the minimal cost calculated. Again, a more detailed algorithm for backtracking will be proposed in the next section \ref{tree_like structures}. 
+\end{cases}$$ which is exactly the process of looking for the minimum value of a function over an interval while it translates, and subfunction \textsc{graphAddMod} takes $\min_{d-d' \in [a,b]} g(d')$ and adds $|d - \sigma_{i-1}|$ to it. The proof of the nature of the functions and how they are constructed will be given in the next section \ref{tree_like structures} when we discuss more general cases. Lastly, the \textsc{backTrack} algorithm backtracks through the list of graphs $\{g_i\}_n$ constructed to reverse engineer a word that aligns with the minimal cost calculated. Again, a more detailed algorithm for backtracking will be proposed in the next section \ref{tree_like structures}. 
 
 \begin{figure}
 	\removelatexerror
@@ -612,33 +638,29 @@ The algorithm precisely executes the above procedure, where the subfunction \tex
 		\LinesNumbered
 		\KwIn{$\sigma$, $SI$}  
 		\KwOut{$cost = \min_{x \in \mathcal{L}(N)}{d_t(x, \sigma)}$, $\gamma \in \mathcal{L}(N)$ such that $d_t(\gamma, \sigma) = cost$}
-		\KwData{$graph = \{(left, slope, right) | graph[i].left = graph[i-1].right\}$}
+		\textbf{Type:} Graph \\
+		\Indp
+			left\_slope : real \\
+			right\_slope : real \\
+			endpoints : list of coordinates \\
+		\Indm
+		\KwData{$graph\_list$ = list of Graphs, $graphmin\_list$ = list of Graphs}
 		\SetKwProg{Fn}{Procedure}{:}{end}
 
 		\Fn{StampOnlyAlgo($\sigma, SI$)}{
-			Initialise System \\
-			$[a, b] \gets SI[i]$ \\
-			$graph \gets \{(a, 0, b)\}$ \\
-			\textsc{graphAddMod}($graph, \sigma[0]$) \\
-			$graphlist \gets \{graph\}$ \\ 
-			$i \gets 1$ \\
-			$cost \gets |a - \sigma[0]|$ \\ 
-			\While{$i < |sigma|$}{
+			Initialise System : \\
+			\Indp
+					$graph\_list[n] \gets Graph(-1,1,[(\sigma[n],0)])$ \\
+			\Indm
+			\While{$i > 1$}{
 				$[a, b] \gets SI[i]$ \\ 
-				\textsc{graphMin}($graph, a, b$) \\ 
-				\textsc{graphAddMod}($graph, \sigma[i]$) \\
-				$graphlist.append(graph)$ \\
-				$cost \gets cost + |a - \sigma[i]|$ \\
+				$graphmin\_list[i] \gets \textsc{graphMin}(graph\_list[i], a, b)$ \\ 
+				$i \gets i - 1$ \\
+				$graph\_list[i] \gets \textsc{graphAddMod}(graphmin\_list[i], \sigma[i])$ \\
 			}
-			$i \gets 0$ \\
-			$s \gets graph[0].slope$ \\
-			
-			\While{$graph[i].slope < 0$}{
-				$s \gets graph[i].slope$ \\
-				$cost \gets cost + s * (graph[i].right - graph[i].left)$ \\
-				$i \gets i + 1$ \\
-			}
-			$\gamma \gets \textsc{backTrack}(\sigma, graphlist, cost, SI)$ \\
+			$[a, b] \gets SI[1]$ \\ 
+			$cost \gets \textsc{graphMin}(graph\_list[1], a, b)$ \\
+			$\gamma \gets \textsc{backTrack} (\sigma, graph\_list, cost, SI)$ \\
 			\Return{$cost, \gamma$}
 		}
 	\end{algorithm}
@@ -650,7 +672,7 @@ The algorithm precisely executes the above procedure, where the subfunction \tex
 	to the trace $\sigma$.
 \end{theorem}
 		
-\begin{remark} Note that the subfunctions \textsc{graphMin} and  \textsc{graphAddMod} both run through the list of segments of the graph once each, and hence are linear in the sizes of their inputs, and Algorithm \ref{StampAlgo} calls each of these subfunctions once for each letter of the observed trace, each time on a graph with size linear in the current prefix.  
+\begin{remark} Note that the subfunctions \textsc{graphMin} and  \textsc{graphAddMod} both run through the list of endpoints of the graph once each, and hence are linear in the sizes of their inputs, and Algorithm \ref{StampAlgo} calls each of these subfunctions once for each letter of the observed trace, each time on a graph with size linear in the current suffix.  
 	So the cost calculation section of Algorithm \ref{StampAlgo} has quadratic time complexity in the size of the input. 
 	
 	The subfunction \textsc{backTrack} runs a binary search on each stored graph in $graphlist$ to find a trace in the language that does indeed give the minimum cost, letter by letter, and so overall takes $O(n \log(n))$ time, keeping the overall time complexity  $O(n^2)$ where $n = |\sigma|$.
@@ -896,17 +918,17 @@ To sum up the method shown above, the pseudocode \ref{alg:Cost_function_computin
 	Before proving the correctness of the algorithm, since the net is tree-like, so confusion-free, there is no need to worry about the condition of urgency. Therefore,
 	three conditions cited in the theorem \ref{thm35} are reduced to one : The execution moment of each transition must respect its static interval constraint.	Now, we prove the correctness of each function used in the algorithm.
 	\begin{itemize}
-		\item Firstly, we prove the correctness of the function $Compute\_cost\_function$ by induction on the height of the tree.
+		\item Firstly, we prove the correctness of the function \textsc{ComputeCostFunc} by induction on the height of the tree.
 		Initially, if $i$ is a leaf, the function returns $g_{i}(x) = |\sigma_{i} - x|$ which is correct (Line 4).
 		By defining the height of a node its biggest distance to a leaf in its subtree, the inital case was showing the that the function works for nodes of height 0.
 		We climb up the tree and suppose that for every node $j$ of height less than $h$, the function returns the correct cost function $g_{j}(\cdot)$.
 		Let $i$ be a node of height $h$. All children of $i$ have height at most $h-1$, so by induction hypothesis, the function returns the correct cost functions $g_{j}(\cdot)$ for all $j \in \text{Child}(i)$.
 		Then, according to the recurrent relation shown above, the function computes correctly $g_{i}(\cdot)$ from these functions (Lines 7-13). So the function works for nodes of height $h$. Hence, its correctness for all nodes of the tree.
-		\item Now we prove the correctness of the function $Align\_trace$ once every cost function $g_{i}(\cdot)$ is computed.
-		According to the recurrent relation shown above \[g_{i}(x) = |\sigma_{i}-x| + \sum_{j \in \text{Child}(i)}\min_{x_{j}\in[x+a_{j},x+b_{j}]}\{g_{j}(x_{j})\}\]
+		\item Now we prove the correctness of the function \textsc{backTrack} once every cost function $g_{i}(\cdot)$ is computed.
+		According to the recurrent relation shown above \[g_{i}(x) = |\sigma_{i}-x| + \sum_{j \in \text{Child}(i)}\min_{x_{j}\in[x+a_{j},x+b_{j}]}g_{j}(x_{j})\]
 		the execution moment of each node $j$ in the optimal alignment can be computed from the execution moment of its parent (to minimize the cost).
-		By following the structure of Depth-First Search (Lines 16-22), we suppose that the parent of the $root$ is executed at 0, then we can compute the execution moment of each node in the optimal alignment correctly. Hence, the correctness of the function $Align\_trace$.
-		\item The correctness of $Main$ is then straightforward since it just calls the two previous functions in order (Lines 24-27).
+		By following the structure of Depth-First Search (Lines 16-22), we suppose that the parent of the $root$ is executed at 0, then we can compute the execution moment of each node in the optimal alignment correctly. Hence, the correctness of the function \textsc{backTrack}.
+		\item The correctness of \textsc{Main} is then straightforward since it just calls the two previous functions in order (Lines 24-27).
 	\end{itemize}
 \end{proof}
 
@@ -962,44 +984,44 @@ We can now conclude by giving the pseudocode of the algorithm for tree-like mode
 		\caption{Aligning a timed trace with a Tree-like Time Petri Net under Stamp Only Distance}
 		\SetAlgoLined
 		\LinesNumbered
-		\KwIn{A tree-like Time Petri Net N = (P,T,F,SI,$\Sigma,\lambda,M_0,M_f$) modelized by $G = (V,E)$ where 
-		$V = T$ and $(t_i,t_j)\in E$ iff $t_j \in t_i^{\bullet\bullet}$ and a timed trace $\boldsymbol{\sigma} = (a_1,t_1)(a_2,t_2)...(a_n,t_n)$}
-		\KwOut{The minimal cost of aligning $\boldsymbol{\sigma}$ with N and the aligned trace $\boldsymbol{\sigma_{aligned}}$}
+		\KwIn{Tree-like Time Petri Net N = (P,T,F,SI,$\Sigma,\lambda,M_0,M_f$) modelized by $G = (V,E)$ where 
+		$V = T$ and $(t_i,t_j)\in E$ iff $t_j \in t_i^{\bullet\bullet}$, timed trace $\sigma = (a_1,\sigma_1)(a_2,\sigma_2)...(a_n,\sigma_{n})$}
+		\KwOut{$cost = \min_{x \in \mathcal{L}(N)}{d_t(x, \sigma)}$, $\sigma_{aligned} \in \mathcal{L}(N)$ such that $d_t(\sigma_{aligned}, \sigma) = cost$}
 		\KwData{$\sigma_{aligned} \gets [], x_{parent} \gets 0$}
 		\SetKwProg{Fn}{Function}{:}{end}
-			\Fn{Compute\_cost\_function($node$)}{
+			\Fn{\textsc{ComputeCostFunc}($node$)}{
 					\lIf{$g_{node}$ is calculated}{
-							\Return{$g_{node}(x)$}
+							\Return{$g_{node}$}
 					}
 					\ElseIf{$node$ is a leaf}{
-							\Return{$g_{node}(x) \gets |\sigma_{node} - x|$}\\
+							\Return{$g_{node}(x) \gets \textsc{absFunc}(\sigma_{node})$}\\
 					}
 					\Else{
-							$g_{node}(x) = |\sigma_{node} - x|$\\
+							$g_{node} = \textsc{absFunc}(\sigma_{node})$\\
 							\ForEach{$child$ in Child($node$)}{
-									$g_{child}(x)$ $\gets$ Compute\_cost\_function($child$)\\
-									$min\_g_{child}(x)\gets \min_{x_{child} \in [a_{child}+x,b_{child}+x]}g_{child}(x_{child})$\\
-									$g_{node}(x) \gets g_{node}(x) + min\_g_{child}(x)$
+									$g_{child}$ $\gets$ \textsc{ComputeCostFunc}($child$)\\
+									$min\_g_{child}\gets \textsc{graphMin}(g_{child},a_{child},b_{child})$\\
+									$g_{node} \gets \textsc{graphAddMod}(g_{node}, min\_g_{child})$
 							}
-							\Return{$g_{node}(x)$}
+							\Return{$g_{node}$}
 					}
 			}
 
-			\Fn{Align\_trace($node$, $x_{parent}$)}{
+			\Fn{\textsc{backTrack}($node$, $x_{parent}$)}{
 					$x_{node} \gets argmin_{x_{node}-x_{parent} \in [a_{node},b_{node}]}g_{node}(x_{node})$\\
 					\If{$node$ is a leaf}{
 							\Return
 					}
 					\ForEach{$child$ in Child($node$)}{
-							Align\_trace($child$, $x_{node}$)
+							\textsc{backTrack}($child$, $x_{node}$)
 					} 
 			}
 
-			\Fn{Main()}{
+			\Fn{\textsc{Main}()}{
 					$root \gets$ root of the tree\\
-					$g_{root}(x) \gets$ Compute\_cost\_function($root$)\\
+					$g_{root} \gets$ \textsc{ComputeCostFunc}($root$)\\
 					$cost \gets \min_{x \in [a_{root},b_{root}]}g_{root}(x)$\\
-					Align\_trace($root$, 0)\\
+					\textsc{backTrack}($root$, 0)\\
 					\Return{$cost$, $\boldsymbol{\sigma_{aligned}}$}
 			}
 	\end{algorithm}
@@ -1020,7 +1042,7 @@ is the number of transitions in the Petri net. This quadratic
 complexity arises from the need to compute and store the cost 
 functions for each node and their children.
 
-Function Align\_trace traverses the tree once, and at each node,
+Function \textsc{backTrack} traverses the tree once, and at each node,
 determines the optimal execution moment based on the precomputed cost functions 
 in $O(1)$ time. In total, this function runs in $O(|T|)$ time and 
 so the overall time complexity of the algorithm is
